@@ -2,11 +2,9 @@
 using Microsoft.Win32;
 using Octokit;
 using osu.Game.IO;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Taiko.Objects;
+using osu.Game.Rulesets.Scoring;
 using OsuMemoryDataProvider;
 using OsuMemoryDataProvider.OsuMemoryModels;
-using OsuMemoryDataProvider.OsuMemoryModels.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -381,7 +379,7 @@ namespace RealtimePPUR
                     _currentGamemode = _currentBeatmapGamemode;
 
                     if (_currentBeatmapGamemode == 0) _currentGamemode = _currentOsuGamemode;
-                    
+
 
                     if (_calculator == null)
                     {
@@ -497,7 +495,7 @@ namespace RealtimePPUR
                     calcArgs.Score = _baseAddresses.Player.Score;
                 }
 
-                var result = _calculator.Calculate(calcArgs, currentStatus == OsuMemoryStatus.Playing || _isplaying, _isResultScreen && !_isplaying);
+                var result = _calculator.Calculate(calcArgs, currentStatus == OsuMemoryStatus.Playing || _isplaying, _isResultScreen && !_isplaying, hits);
                 stopwatch.Stop();
                 if (result.DifficultyAttributes == null || result.PerformanceAttributes == null || result.CurrentDifficultyAttributes == null || result.CurrentPerformanceAttributes == null) throw new Exception("Can't calculate PP;-;");
 
@@ -506,7 +504,7 @@ namespace RealtimePPUR
                 double fullSr = IsNaNWithNum(Math.Round(result.DifficultyAttributes.StarRating, 2));
                 double sspp = IsNaNWithNum(result.PerformanceAttributes.Total);
                 double currentPp = IsNaNWithNum(result.CurrentPerformanceAttributes.Total);
-                double ifFcpp = 100;
+                double ifFcpp = IsNaNWithNum(result.PerformanceAttributesIFFC.Total);
 
                 int geki = hits.HitGeki;
                 int good = hits.Hit300;
@@ -526,9 +524,15 @@ namespace RealtimePPUR
                 }
 
                 int currentCalculationSpeed = 0;
-                int ifFcGood = 100;
-                int ifFcOk = 100;
-                int ifFcBad = 100;
+                int ifFcGood = result.IfFcHitResult[HitResult.Great];
+                int ifFcOk = _currentGamemode == 2 ? result.IfFcHitResult[HitResult.LargeTickHit] : result.IfFcHitResult[HitResult.Ok];
+                int ifFcBad = _currentGamemode switch
+                {
+                    0 => result.IfFcHitResult[HitResult.Meh],
+                    1 => 0,
+                    2 => result.IfFcHitResult[HitResult.SmallTickHit],
+                    _ => 0
+                };
                 int ifFcMiss = 0;
                 double healthPercentage = IsNaNWithNum(Math.Round(_baseAddresses.Player.HP / 2, 1));
                 int userScore = hits.Score;
@@ -1041,42 +1045,6 @@ namespace RealtimePPUR
             }
         }
 
-        private static string[] ParseMods(int mods)
-        {
-            List<string> activeMods = new();
-            for (int i = 0; i < 14; i++)
-            {
-                int bit = 1 << i;
-                if (bit is 4 or 4096 or 8192) continue;
-                if ((mods & bit) == bit) activeMods.Add(OsuMods[bit]);
-            }
-            if (activeMods.Contains("nc") && activeMods.Contains("dt")) activeMods.Remove("nc");
-            return activeMods.ToArray();
-        }
-
-        private static double IsNaNWithNum(double number) => double.IsNaN(number) ? 0 : number;
-
-        public static Task<int> GetMapMode(string file)
-        {
-            using var stream = File.OpenRead(file);
-            using var reader = new LineBufferedReader(stream);
-            int count = 0;
-            while (reader.ReadLine() is { } line)
-            {
-                if (count > 20) return Task.FromResult(-1);
-                if (line.StartsWith("Mode")) return Task.FromResult(int.Parse(line.Split(':')[1].Trim()));
-                count++;
-            }
-
-            return Task.FromResult(-1);
-        }
-
-        private static double CalculateAverage(IReadOnlyCollection<int> array)
-        {
-            if (array == null || array.Count == 0) return 0;
-            return (double)array.Sum() / array.Count;
-        }
-
         private void UpdateMemoryData()
         {
             while (true)
@@ -1120,6 +1088,42 @@ namespace RealtimePPUR
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        private static string[] ParseMods(int mods)
+        {
+            List<string> activeMods = new();
+            for (int i = 0; i < 14; i++)
+            {
+                int bit = 1 << i;
+                if (bit is 4 or 4096 or 8192) continue;
+                if ((mods & bit) == bit) activeMods.Add(OsuMods[bit]);
+            }
+            if (activeMods.Contains("nc") && activeMods.Contains("dt")) activeMods.Remove("nc");
+            return activeMods.ToArray();
+        }
+
+        private static double IsNaNWithNum(double number) => double.IsNaN(number) ? 0 : number;
+
+        public static Task<int> GetMapMode(string file)
+        {
+            using var stream = File.OpenRead(file);
+            using var reader = new LineBufferedReader(stream);
+            int count = 0;
+            while (reader.ReadLine() is { } line)
+            {
+                if (count > 20) return Task.FromResult(-1);
+                if (line.StartsWith("Mode")) return Task.FromResult(int.Parse(line.Split(':')[1].Trim()));
+                count++;
+            }
+
+            return Task.FromResult(-1);
+        }
+
+        private static double CalculateAverage(IReadOnlyCollection<int> array)
+        {
+            if (array == null || array.Count == 0) return 0;
+            return (double)array.Sum() / array.Count;
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
