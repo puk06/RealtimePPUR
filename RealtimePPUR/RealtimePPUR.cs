@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Octokit;
 using osu.Game.IO;
 using osu.Game.Rulesets.Scoring;
@@ -27,14 +26,11 @@ namespace RealtimePPUR
         private System.Windows.Forms.Label _currentPp, _sr, _sspp, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
         private readonly PrivateFontCollection _fontCollection;
-        private readonly int _calculationSpeedDetectedValue;
-        private readonly bool _speedReduction;
         private readonly string _ingameoverlayPriority;
 
         private Point _mousePoint;
         private string _displayFormat;
         private int _mode, _x, _y;
-        private long _prevCalculationSpeed;
         private bool _isosumode;
         private bool _nowPlaying;
         private int _currentBackgroundImage = 1;
@@ -52,6 +48,8 @@ namespace RealtimePPUR
         private int _currentOsuGamemode;
         private int _currentGamemode;
         private int _preOsuGamemode;
+        private BeatmapData calculatedObject;
+        private OsuMemoryStatus _currentStatus;
 
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
@@ -117,8 +115,6 @@ namespace RealtimePPUR
                 higherScoreToolStripMenuItem.Checked = false;
                 highestScoreToolStripMenuItem.Checked = false;
                 userScoreToolStripMenuItem.Checked = false;
-                _speedReduction = false;
-                _calculationSpeedDetectedValue = 100;
                 _ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
                 inGameValue.Font = new Font(_fontCollection.Families[0], 19F);
             }
@@ -193,7 +189,6 @@ namespace RealtimePPUR
                 higherScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHERSCOREDIFF", out string test19) && test19 == "true";
                 highestScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHESTSCOREDIFF", out string test20) && test20 == "true";
                 userScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("USERSCORE", out string test21) && test21 == "true";
-                _speedReduction = _configDictionary.TryGetValue("SPEEDREDUCTION", out string test10) && test10 == "true";
                 _ingameoverlayPriority = _configDictionary.TryGetValue("INGAMEOVERLAYPRIORITY", out string test16) ? test16 : "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
 
                 if (_configDictionary.TryGetValue("USECUSTOMFONT", out string test12) && test12 == "true")
@@ -315,28 +310,11 @@ namespace RealtimePPUR
                         }
                     }
                 }
-
-                var speedReductionValueResult = _configDictionary.TryGetValue("SPEEDREDUCTIONVALUE", out string speedReductionValue);
-                if (!speedReductionValueResult && _speedReduction)
-                {
-                    MessageBox.Show("Config.cfgにSPEEDREDUCTIONVALUEの値が存在しないため、初期値の100が適用されます。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    _calculationSpeedDetectedValue = 100;
-                }
-                else if (_speedReduction)
-                {
-                    var tryResult = int.TryParse(speedReductionValue, out _calculationSpeedDetectedValue);
-                    if (!tryResult)
-                    {
-                        MessageBox.Show("Config.cfgのSPEEDREDUCTIONVALUEの値が不正であったため、初期値の100が設定されます。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        _calculationSpeedDetectedValue = 100;
-                    }
-                }
             }
-            Thread updateMemoryThread = new(UpdateMemoryData)
-            {
-                IsBackground = true
-            };
+            Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
+            Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
             updateMemoryThread.Start();
+            updatePpDataThread.Start();
             UpdateLoop();
         }
 
@@ -349,69 +327,12 @@ namespace RealtimePPUR
             }
         }
 
-        private async Task Loop()
+        private Task Loop()
         {
             try
             {
                 TopMost = true;
-                var currentStatus = _baseAddresses.GeneralData.OsuStatus;
-                if (currentStatus == OsuMemoryStatus.Playing) _isplaying = true;
-                else if (currentStatus != OsuMemoryStatus.ResultsScreen) _isplaying = false;
-
-                _isResultScreen = currentStatus == OsuMemoryStatus.ResultsScreen;
-
-                string osuBeatmapPath = Path.Combine(_songsPath ?? "", _baseAddresses.Beatmap.FolderName ?? "",
-                    _baseAddresses.Beatmap.OsuFileName ?? "");
-                if (!File.Exists(osuBeatmapPath)) throw new Exception("Can't find Beatmap;-;");
-
-                _currentOsuGamemode = currentStatus switch
-                {
-                    OsuMemoryStatus.Playing => _baseAddresses.Player.Mode,
-                    OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Mode,
-                    _ => _baseAddresses.GeneralData.GameMode
-                };
-
-                if (_preMd5 != _baseAddresses.Beatmap.Md5)
-                {
-                    int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
-                    if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3)) throw new Exception("Can't get Beatmap Mode;-;");
-                    _currentBeatmapGamemode = currentBeatmapGamemodeTemp;
-                    _currentGamemode = _currentBeatmapGamemode;
-
-                    if (_currentBeatmapGamemode == 0) _currentGamemode = _currentOsuGamemode;
-
-
-                    if (_calculator == null)
-                    {
-                        _calculator = new PPCalculator(osuBeatmapPath, _currentGamemode);
-                    }
-                    else
-                    {
-                        _calculator.SetMode(_currentGamemode);
-                        _calculator.SetMap(osuBeatmapPath, _currentGamemode);
-                    }
-
-                    _preMd5 = _baseAddresses.Beatmap.Md5;
-                }
-
-                if (_currentOsuGamemode != _preOsuGamemode)
-                {
-                    if (_currentBeatmapGamemode == 0 && _currentOsuGamemode is 0 or 1 or 2 or 3)
-                    {
-                        _calculator.SetMode(_currentOsuGamemode);
-                        _currentGamemode = _currentOsuGamemode;
-                    }
-                    _preOsuGamemode = _currentOsuGamemode;
-                }
-
-                string[] mods = currentStatus switch
-                {
-                    OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value),
-                    OsuMemoryStatus.ResultsScreen => ParseMods(_baseAddresses.ResultsScreen.Mods.Value),
-                    OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods),
-                    _ => ParseMods(_baseAddresses.GeneralData.Mods)
-                };
-                if (_isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value);
+                var currentStatus = _currentStatus;
 
                 HitsResult hits = new()
                 {
@@ -465,46 +386,26 @@ namespace RealtimePPUR
                     }
                 };
 
-                double acc = Math.Round(CalculateAcc(hits, _currentGamemode), 2);
-
-                Stopwatch stopwatch = new();
-                stopwatch.Start();
-                var calcArgs = new CalculateArgs
-                {
-                    Accuracy = acc,
-                    Greats = hits.Hit300,
-                    Goods = hits.Hit100,
-                    Mehs = hits.Hit50,
-                    Oks = hits.HitKatu,
-                    Misses = hits.HitMiss,
-                    Combo = hits.Combo,
-                    Score = hits.Score,
-                    NoClassicMod = IsNoClassicMod,
-                    Mods = mods,
-                    Time = _baseAddresses.GeneralData.AudioTime
-                };
-
                 if (_isplaying)
                 {
-                    calcArgs.Greats = _baseAddresses.Player.Hit300;
-                    calcArgs.Goods = _baseAddresses.Player.Hit100;
-                    calcArgs.Mehs = _baseAddresses.Player.Hit50;
-                    calcArgs.Oks = _baseAddresses.Player.HitKatu;
-                    calcArgs.Misses = _baseAddresses.Player.HitMiss;
-                    calcArgs.Combo = _baseAddresses.Player.MaxCombo;
-                    calcArgs.Score = _baseAddresses.Player.Score;
+                    hits.HitGeki = _baseAddresses.Player.HitGeki;
+                    hits.Hit300 = _baseAddresses.Player.Hit300;
+                    hits.HitKatu = _baseAddresses.Player.HitKatu;
+                    hits.Hit100 = _baseAddresses.Player.Hit100;
+                    hits.Hit50 = _baseAddresses.Player.Hit50;
+                    hits.HitMiss = _baseAddresses.Player.HitMiss;
+                    hits.Combo = _baseAddresses.Player.MaxCombo;
+                    hits.Score = _baseAddresses.Player.Score;
                 }
 
-                var result = _calculator.Calculate(calcArgs, currentStatus == OsuMemoryStatus.Playing || _isplaying, _isResultScreen && !_isplaying, hits);
-                stopwatch.Stop();
-                if (result.DifficultyAttributes == null || result.PerformanceAttributes == null || result.CurrentDifficultyAttributes == null || result.CurrentPerformanceAttributes == null) throw new Exception("Can't calculate PP;-;");
+                if (calculatedObject == null) return Task.CompletedTask;
 
                 var leaderBoardData = GetLeaderBoard(_baseAddresses.LeaderBoard, _baseAddresses.Player.Score);
-                double sr = IsNaNWithNum(Math.Round(result.CurrentDifficultyAttributes.StarRating, 2));
-                double fullSr = IsNaNWithNum(Math.Round(result.DifficultyAttributes.StarRating, 2));
-                double sspp = IsNaNWithNum(result.PerformanceAttributes.Total);
-                double currentPp = IsNaNWithNum(result.CurrentPerformanceAttributes.Total);
-                double ifFcpp = IsNaNWithNum(result.PerformanceAttributesIFFC.Total);
+                double sr = IsNaNWithNum(Math.Round(calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
+                double fullSr = IsNaNWithNum(Math.Round(calculatedObject.DifficultyAttributes.StarRating, 2));
+                double sspp = IsNaNWithNum(calculatedObject.PerformanceAttributes.Total);
+                double currentPp = IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total);
+                double ifFcpp = IsNaNWithNum(calculatedObject.PerformanceAttributesIFFC.Total);
 
                 int geki = hits.HitGeki;
                 int good = hits.Hit300;
@@ -513,27 +414,16 @@ namespace RealtimePPUR
                 int bad = hits.Hit50;
                 int miss = hits.HitMiss;
 
-                if (_isplaying)
-                {
-                    geki = _baseAddresses.Player.HitGeki;
-                    good = _baseAddresses.Player.Hit300;
-                    katu = _baseAddresses.Player.HitKatu;
-                    ok = _baseAddresses.Player.Hit100;
-                    bad = _baseAddresses.Player.Hit50;
-                    miss = _baseAddresses.Player.HitMiss;
-                }
-
-                int currentCalculationSpeed = 0;
-                int ifFcGood = result.IfFcHitResult[HitResult.Great];
-                int ifFcOk = _currentGamemode == 2 ? result.IfFcHitResult[HitResult.LargeTickHit] : result.IfFcHitResult[HitResult.Ok];
+                int ifFcGood = calculatedObject.IfFcHitResult[HitResult.Great];
+                int ifFcOk = _currentGamemode == 2 ? calculatedObject.IfFcHitResult[HitResult.LargeTickHit] : calculatedObject.IfFcHitResult[HitResult.Ok];
                 int ifFcBad = _currentGamemode switch
                 {
-                    0 => result.IfFcHitResult[HitResult.Meh],
+                    0 => calculatedObject.IfFcHitResult[HitResult.Meh],
                     1 => 0,
-                    2 => result.IfFcHitResult[HitResult.SmallTickHit],
+                    2 => calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
                     _ => 0
                 };
-                int ifFcMiss = 0;
+                const int ifFcMiss = 0;
                 double healthPercentage = IsNaNWithNum(Math.Round(_baseAddresses.Player.HP / 2, 1));
                 int userScore = hits.Score;
 
@@ -547,21 +437,6 @@ namespace RealtimePPUR
                     _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
                 }
                 double avgOffsethelp = _baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -_avgOffset;
-
-                if (_prevCalculationSpeed == 0)
-                {
-                    _prevCalculationSpeed = stopwatch.ElapsedMilliseconds;
-                }
-                else if (currentCalculationSpeed - _prevCalculationSpeed > _calculationSpeedDetectedValue &&
-                         _speedReduction)
-                {
-                    new ToastContentBuilder()
-                        .AddText("Calculation Speed Reduction Detected!")
-                        .AddText("Calculation speed is slower than usual! \nCurrent Calculation speed: " +
-                                 currentCalculationSpeed + "ms")
-                        .Show();
-                }
-                _prevCalculationSpeed = stopwatch.ElapsedMilliseconds;
 
                 _avgoffset.Text = _avgOffset.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "ms";
                 _avgoffset.Width = TextRenderer.MeasureText(_avgoffset.Text, _avgoffset.Font).Width;
@@ -1030,8 +905,9 @@ namespace RealtimePPUR
                     _avgoffsethelp.Visible = true;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                //MessageBox.Show(e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (!_nowPlaying) inGameValue.Text = "";
                 _sr.Text = "0";
                 _sspp.Text = "0";
@@ -1043,6 +919,8 @@ namespace RealtimePPUR
                 _ur.Text = "0";
                 _avgoffsethelp.Text = "0";
             }
+
+            return Task.CompletedTask;
         }
 
         private void UpdateMemoryData()
@@ -1082,6 +960,170 @@ namespace RealtimePPUR
                     _sreader.TryRead(_baseAddresses.GeneralData);
                     _sreader.TryRead(_baseAddresses.LeaderBoard);
                     _sreader.TryRead(_baseAddresses.ResultsScreen);
+
+                    _currentStatus = _baseAddresses.GeneralData.OsuStatus;
+
+                    if (_currentStatus == OsuMemoryStatus.Playing) _isplaying = true;
+                    else if (_currentStatus != OsuMemoryStatus.ResultsScreen) _isplaying = false;
+                    _isResultScreen = _currentStatus == OsuMemoryStatus.ResultsScreen;
+                    _currentOsuGamemode = _currentStatus switch
+                    {
+                        OsuMemoryStatus.Playing => _baseAddresses.Player.Mode,
+                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Mode,
+                        _ => _baseAddresses.GeneralData.GameMode
+                    };
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        private async void UpdatePpData()
+        {
+            while (true)
+            {
+                try
+                {
+                    bool isplaying = _isplaying;
+                    bool isResultScreen = _isResultScreen;
+                    OsuMemoryStatus status = _currentStatus;
+                    OsuBaseAddresses baseAddresses = _baseAddresses;
+                    string osuBeatmapPath = Path.Combine(_songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
+                        baseAddresses.Beatmap.OsuFileName ?? "");
+                    if (!File.Exists(osuBeatmapPath)) continue;
+
+                    if (_preMd5 != baseAddresses.Beatmap.Md5)
+                    {
+                        int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
+                        if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3)) continue;
+                        _currentBeatmapGamemode = currentBeatmapGamemodeTemp;
+                        _currentGamemode = _currentBeatmapGamemode;
+
+                        if (_currentBeatmapGamemode == 0) _currentGamemode = _currentOsuGamemode;
+
+
+                        if (_calculator == null)
+                        {
+                            _calculator = new PPCalculator(osuBeatmapPath, _currentGamemode);
+                        }
+                        else
+                        {
+                            _calculator.SetMode(_currentGamemode);
+                            _calculator.SetMap(osuBeatmapPath, _currentGamemode);
+                        }
+
+                        _preMd5 = _baseAddresses.Beatmap.Md5;
+                    }
+
+                    if (_currentOsuGamemode != _preOsuGamemode)
+                    {
+                        if (_currentBeatmapGamemode == 0 && _currentOsuGamemode is 0 or 1 or 2 or 3)
+                        {
+                            _calculator.SetMode(_currentOsuGamemode);
+                            _currentGamemode = _currentOsuGamemode;
+                        }
+
+                        _preOsuGamemode = _currentOsuGamemode;
+                    }
+
+                    string[] mods = status switch
+                    {
+                        OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value),
+                        OsuMemoryStatus.ResultsScreen => ParseMods(_baseAddresses.ResultsScreen.Mods.Value),
+                        OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods),
+                        _ => ParseMods(_baseAddresses.GeneralData.Mods)
+                    };
+                    if (isplaying) mods = ParseMods(baseAddresses.Player.Mods.Value);
+
+                    HitsResult hits = new()
+                    {
+                        HitGeki = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.HitGeki,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.HitGeki,
+                            _ => 0
+                        },
+                        Hit300 = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.Hit300,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Hit300,
+                            _ => 0
+                        },
+                        HitKatu = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.HitKatu,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.HitKatu,
+                            _ => 0
+                        },
+                        Hit100 = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.Hit100,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Hit100,
+                            _ => 0
+                        },
+                        Hit50 = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.Hit50,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Hit50,
+                            _ => 0
+                        },
+                        HitMiss = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.HitMiss,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.HitMiss,
+                            _ => 0
+                        },
+                        Combo = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.MaxCombo,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.MaxCombo,
+                            _ => 0
+                        },
+                        Score = status switch
+                        {
+                            OsuMemoryStatus.Playing => baseAddresses.Player.Score,
+                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Score,
+                            _ => 0
+                        }
+                    };
+
+                    if (isplaying)
+                    {
+                        hits.HitGeki = baseAddresses.Player.HitGeki;
+                        hits.Hit300 = baseAddresses.Player.Hit300;
+                        hits.HitKatu = baseAddresses.Player.HitKatu;
+                        hits.Hit100 = baseAddresses.Player.Hit100;
+                        hits.Hit50 = baseAddresses.Player.Hit50;
+                        hits.HitMiss = baseAddresses.Player.HitMiss;
+                        hits.Combo = baseAddresses.Player.MaxCombo;
+                        hits.Score = baseAddresses.Player.Score;
+                    }
+
+                    double acc = Math.Round(CalculateAcc(hits, _currentGamemode), 2);
+
+                    var calcArgs = new CalculateArgs
+                    {
+                        Accuracy = acc,
+                        Greats = hits.Hit300,
+                        Goods = hits.Hit100,
+                        Mehs = hits.Hit50,
+                        Oks = hits.HitKatu,
+                        Misses = hits.HitMiss,
+                        Combo = hits.Combo,
+                        Score = hits.Score,
+                        NoClassicMod = IsNoClassicMod,
+                        Mods = mods,
+                        Time = baseAddresses.GeneralData.AudioTime
+                    };
+
+                    var result = _calculator?.Calculate(calcArgs, status == OsuMemoryStatus.Playing || isplaying,
+                        isResultScreen && !isplaying, hits);
+                    if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
+                        result.CurrentDifficultyAttributes == null ||
+                        result.CurrentPerformanceAttributes == null) continue;
+                    calculatedObject = result;
                 }
                 catch (Exception e)
                 {

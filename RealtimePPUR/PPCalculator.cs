@@ -394,13 +394,15 @@ namespace RealtimePPUR
                 case 2:
                     {
                         var maxCombo = GetMaxCombo(beatmap, mode);
-                        var missing = maxCombo - hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitMiss;
-                        var missingFruits = Math.Max(0, missing - Math.Max(0, beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - hits.Hit100));
+                        int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
+                        int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
+                        var missing = maxCombo - hits.Hit300 + hits.Hit100 + hits.HitMiss;
+                        var missingFruits = Math.Max(0, missing - Math.Max(0, maxDroplets - hits.Hit100));
                         var missingDroplets = missing - missingFruits;
                         var nFruits = hits.Hit300 + missingFruits;
                         var nDroplets = hits.Hit100 + missingDroplets;
                         var nTinyDropletMisses = hits.HitKatu;
-                        var nTinyDroplets = Math.Max(0, beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count()) - nTinyDropletMisses);
+                        var nTinyDroplets = Math.Max(0, maxTinyDroplets - nTinyDropletMisses);
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, nFruits },
