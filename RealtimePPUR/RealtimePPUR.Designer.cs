@@ -78,7 +78,7 @@ namespace RealtimePPUR
             // 
             _currentPp.BackColor = Color.Transparent;
             _currentPp.ForeColor = Color.White;
-            _currentPp.Location = new Point(247, 18);
+            _currentPp.Location = new Point(249, 18);
             _currentPp.Name = "_currentPp";
             _currentPp.Size = new Size(30, 39);
             _currentPp.TabIndex = 0;

@@ -42,6 +42,7 @@ namespace RealtimePPUR
         private bool _isplaying;
         private bool _isResultScreen;
         private double _avgOffset;
+        private double _avgOffsethelp;
         private int _urValue;
         private const bool IsNoClassicMod = true;
         private int _currentBeatmapGamemode;
@@ -433,18 +434,11 @@ namespace RealtimePPUR
                 int higherScore = leaderBoardData["higherScore"];
                 int highestScore = leaderBoardData["highestScore"];
 
-                if (status == OsuMemoryStatus.Playing)
-                {
-                    _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors));
-                    _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
-                }
-                double avgOffsethelp = _baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -_avgOffset;
-
                 _avgoffset.Text = _avgOffset.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "ms";
                 _avgoffset.Width = TextRenderer.MeasureText(_avgoffset.Text, _avgoffset.Font).Width;
                 _ur.Text = _urValue.ToString("F0");
                 _ur.Width = TextRenderer.MeasureText(_ur.Text, _ur.Font).Width;
-                _avgoffsethelp.Text = avgOffsethelp.ToString("F0");
+                _avgoffsethelp.Text = _avgOffsethelp.ToString();
                 _avgoffsethelp.Width = TextRenderer.MeasureText(_avgoffsethelp.Text, _avgoffsethelp.Font).Width;
                 _sr.Text = sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us"));
                 _sr.Width = TextRenderer.MeasureText(_sr.Text, _sr.Font).Width;
@@ -620,7 +614,7 @@ namespace RealtimePPUR
                         case 8:
                             if (offsetHelpToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "OffsetHelp: " + avgOffsethelp.ToString("F0") + "\n";
+                                _displayFormat += "OffsetHelp: " + _avgOffsethelp.ToString("F0") + "\n";
                             }
 
                             break;
@@ -1039,6 +1033,13 @@ namespace RealtimePPUR
                     };
                     if (isplaying) mods = ParseMods(baseAddresses.Player.Mods.Value);
 
+                    if (status == OsuMemoryStatus.Playing)
+                    {
+                        _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors, mods));
+                        _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
+                        _avgOffsethelp = (int)Math.Round(-_avgOffset);
+                    }
+
                     HitsResult hits = new()
                     {
                         HitGeki = status switch
@@ -1221,13 +1222,15 @@ namespace RealtimePPUR
             return Path.Combine(osuDirectory, "Songs");
         }
 
-        private static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors)
+        private static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors, string[] mods)
         {
             if (hitErrors == null || hitErrors.Count == 0) return 0;
-            double sum = hitErrors.Sum(Math.Abs);
-            double mean = sum / hitErrors.Count;
-            double sumOfSquares = hitErrors.Sum(hitError => Math.Pow(Math.Abs(hitError) - mean, 2));
-            double variance = sumOfSquares / hitErrors.Count;
+            double totalAll = hitErrors.Sum();
+            double average = totalAll / hitErrors.Count;
+            double variance = hitErrors.Sum(hit => Math.Pow(hit - average, 2)) / hitErrors.Count;
+            double unstableRate = Math.Sqrt(variance) * 10;
+            if (mods.Contains("dt")) unstableRate /= 1.5;
+            if (mods.Contains("ht")) unstableRate *= 1.33;
             return Math.Sqrt(variance) * 10;
         }
 
