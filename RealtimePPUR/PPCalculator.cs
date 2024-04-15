@@ -24,22 +24,22 @@ using System;
 
 namespace RealtimePPUR
 {
-    public class PPCalculator(string file, int mode)
+    public class PpCalculator(string file, int mode)
     {
-        private Ruleset ruleset = SetRuleset(mode);
+        private Ruleset _ruleset = SetRuleset(mode);
         private ProcessorWorkingBeatmap _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
 
-        public void SetMap(string file, int _mode)
+        public void SetMap(string file, int givenmode)
         {
             _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
-            ruleset = SetRuleset(_mode);
-            mode = _mode;
+            _ruleset = SetRuleset(givenmode);
+            mode = givenmode;
         }
 
-        public void SetMode(int _mode)
+        public void SetMode(int givenmode)
         {
-            ruleset = SetRuleset(_mode);
-            mode = _mode;
+            _ruleset = SetRuleset(givenmode);
+            mode = givenmode;
         }
 
         private static Ruleset SetRuleset(int mode)
@@ -64,10 +64,10 @@ namespace RealtimePPUR
         public BeatmapData Calculate(CalculateArgs args, bool playing, bool resultScreen, HitsResult hits)
         {
             var data = new BeatmapData();
-            var mods = args.NoClassicMod ? GetMods(ruleset, args) : LegacyHelper.FilterDifficultyAdjustmentMods(_workingBeatmap.BeatmapInfo, ruleset, GetMods(ruleset, args));
-            var beatmap = _workingBeatmap.GetPlayableBeatmap(ruleset.RulesetInfo, mods);
+            var mods = args.NoClassicMod ? GetMods(_ruleset, args) : LegacyHelper.FilterDifficultyAdjustmentMods(_workingBeatmap.BeatmapInfo, _ruleset, GetMods(_ruleset, args));
+            var beatmap = _workingBeatmap.GetPlayableBeatmap(_ruleset.RulesetInfo, mods);
             var staticsSs = GenerateHitResultsForSs(beatmap, mode);
-            var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
+            var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
             {
                 Accuracy = 1,
                 MaxCombo = GetMaxCombo(beatmap, mode),
@@ -75,32 +75,32 @@ namespace RealtimePPUR
                 Mods = mods
             };
             if (mods is { Length: > 0 }) scoreInfo.Mods = mods;
-            var difficultyCalculator = ruleset.CreateDifficultyCalculator(_workingBeatmap);
+            var difficultyCalculator = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
-            var performanceCalculator = ruleset.CreatePerformanceCalculator();
+            var performanceCalculator = _ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
             data.DifficultyAttributes = difficultyAttributes;
             data.PerformanceAttributes = performanceAttributes;
             data.CurrentDifficultyAttributes = difficultyAttributes;
             data.CurrentPerformanceAttributes = performanceAttributes;
-            data.DifficultyAttributesIFFC = difficultyAttributes;
-            data.PerformanceAttributesIFFC = performanceAttributes;
+            data.DifficultyAttributesIffc = difficultyAttributes;
+            data.PerformanceAttributesIffc = performanceAttributes;
             data.IfFcHitResult = staticsSs;
             data.ExpectedManiaScore = 0;
 
             var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
             if (resultScreen)
             {
-                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
+                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
                     Accuracy = args.Accuracy / 100,
                     MaxCombo = GetMaxCombo(beatmap, mode),
                     Statistics = statisticsCurrent,
                     Mods = mods
                 };
-                var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(_workingBeatmap);
+                var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
                 var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
+                var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
                 var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
                 data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                 data.CurrentPerformanceAttributes = performanceAttributesCurrent;
@@ -112,20 +112,19 @@ namespace RealtimePPUR
                 if (mode != 3)
                 {
                     var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
-                    var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
+                    var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
                         MaxCombo = GetMaxCombo(beatmap, mode),
                         Statistics = staticsForCalcIfFc,
                         Mods = mods
                     };
-                    var difficultyCalculatorIFFC = ruleset.CreateDifficultyCalculator(_workingBeatmap);
-                    var difficultyAttributesIFFC = difficultyCalculatorIFFC.Calculate(mods);
-                    var performanceCalculatorIFFC = ruleset.CreatePerformanceCalculator();
-                    var performanceAttributesIFFC =
-                        performanceCalculatorIFFC?.Calculate(iffcScoreInfo, difficultyAttributesIFFC);
-                    data.DifficultyAttributesIFFC = difficultyAttributesIFFC;
-                    data.PerformanceAttributesIFFC = performanceAttributesIFFC;
+                    var difficultyCalculatorIffc = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
+                    var difficultyAttributesIffc = difficultyCalculatorIffc.Calculate(mods);
+                    var performanceCalculatorIffc = _ruleset.CreatePerformanceCalculator();
+                    var performanceAttributesIffc = performanceCalculatorIffc?.Calculate(iffcScoreInfo, difficultyAttributesIffc);
+                    data.DifficultyAttributesIffc = difficultyAttributesIffc;
+                    data.PerformanceAttributesIffc = performanceAttributesIffc;
                     data.IfFcHitResult = staticsForCalcIfFc;
                 }
                 else
@@ -138,7 +137,7 @@ namespace RealtimePPUR
                 beatmapCurrent.HitObjects.AddRange(hitObjects);
                 beatmapCurrent.ControlPointInfo = _workingBeatmap.Beatmap.ControlPointInfo;
                 beatmapCurrent.BeatmapInfo = _workingBeatmap.Beatmap.BeatmapInfo;
-                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
+                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
                     Accuracy = args.Accuracy / 100,
                     MaxCombo = args.Combo,
@@ -147,9 +146,9 @@ namespace RealtimePPUR
                     TotalScore = args.Score
                 };
                 var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
-                var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
+                var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
                 var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
+                var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
                 var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
                 data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                 data.CurrentPerformanceAttributes = performanceAttributesCurrent;
@@ -498,11 +497,11 @@ namespace RealtimePPUR
             };
         }
 
-        private const LegacyMods key_mods = LegacyMods.Key1 | LegacyMods.Key2 | LegacyMods.Key3 | LegacyMods.Key4 |
+        private const LegacyMods KeyMods = LegacyMods.Key1 | LegacyMods.Key2 | LegacyMods.Key3 | LegacyMods.Key4 |
                                             LegacyMods.Key5 | LegacyMods.Key6 | LegacyMods.Key7 | LegacyMods.Key8
                                             | LegacyMods.Key9 | LegacyMods.KeyCoop;
 
-        private static LegacyMods maskRelevantMods(LegacyMods mods, bool isConvertedBeatmap, int rulesetId)
+        private static LegacyMods MaskRelevantMods(LegacyMods mods, bool isConvertedBeatmap, int rulesetId)
         {
             LegacyMods relevantMods =
                 LegacyMods.DoubleTime | LegacyMods.HalfTime | LegacyMods.HardRock | LegacyMods.Easy;
@@ -518,14 +517,14 @@ namespace RealtimePPUR
 
                 case 3:
                     if (isConvertedBeatmap)
-                        relevantMods |= key_mods;
+                        relevantMods |= KeyMods;
                     break;
             }
 
             return mods & relevantMods;
         }
 
-        private static LegacyMods convertToLegacyDifficultyAdjustmentMods(BeatmapInfo beatmapInfo, Ruleset ruleset,
+        private static LegacyMods ConvertToLegacyDifficultyAdjustmentMods(BeatmapInfo beatmapInfo, Ruleset ruleset,
             Mod?[] mods)
         {
             var legacyMods = ruleset.ConvertToLegacyMods(mods!);
@@ -534,12 +533,12 @@ namespace RealtimePPUR
             if (mods.Any(mod => mod is ModDaycore))
                 legacyMods |= LegacyMods.HalfTime;
 
-            return maskRelevantMods(legacyMods, ruleset.RulesetInfo.OnlineID != beatmapInfo.Ruleset.OnlineID,
+            return MaskRelevantMods(legacyMods, ruleset.RulesetInfo.OnlineID != beatmapInfo.Ruleset.OnlineID,
                 ruleset.RulesetInfo.OnlineID);
         }
 
         public static Mod?[] FilterDifficultyAdjustmentMods(BeatmapInfo beatmapInfo, Ruleset ruleset, Mod?[] mods)
-            => ruleset.ConvertFromLegacyMods(convertToLegacyDifficultyAdjustmentMods(beatmapInfo, ruleset, mods))
+            => ruleset.ConvertFromLegacyMods(ConvertToLegacyDifficultyAdjustmentMods(beatmapInfo, ruleset, mods))
                 .ToArray();
     }
 
@@ -549,8 +548,8 @@ namespace RealtimePPUR
         public PerformanceAttributes? CurrentPerformanceAttributes { get; set; }
         public DifficultyAttributes? DifficultyAttributes { get; set; }
         public PerformanceAttributes? PerformanceAttributes { get; set; }
-        public DifficultyAttributes? DifficultyAttributesIFFC { get; set; }
-        public PerformanceAttributes? PerformanceAttributesIFFC { get; set; }
+        public DifficultyAttributes? DifficultyAttributesIffc { get; set; }
+        public PerformanceAttributes? PerformanceAttributesIffc { get; set; }
         public Dictionary<HitResult, int> IfFcHitResult { get; set; }
         public int ExpectedManiaScore { get; set; }
     }

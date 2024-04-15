@@ -37,7 +37,7 @@ namespace RealtimePPUR
         private string _osuDirectory;
         private string _songsPath;
         private string _preMd5;
-        private PPCalculator _calculator;
+        private PpCalculator _calculator;
         private bool _isplaying;
         private bool _isResultScreen;
         private double _avgOffset;
@@ -428,7 +428,7 @@ namespace RealtimePPUR
                 double fullSr = IsNaNWithNum(Math.Round(_calculatedObject.DifficultyAttributes.StarRating, 2));
                 double sspp = IsNaNWithNum(_calculatedObject.PerformanceAttributes.Total);
                 double currentPp = IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total);
-                double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIFFC.Total);
+                double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIffc.Total);
                 int geki = hits.HitGeki;
                 int good = hits.Hit300;
                 int katu = hits.HitKatu;
@@ -1014,7 +1014,7 @@ namespace RealtimePPUR
 
                         if (_calculator == null)
                         {
-                            _calculator = new PPCalculator(osuBeatmapPath, _currentGamemode);
+                            _calculator = new PpCalculator(osuBeatmapPath, _currentGamemode);
                         }
                         else
                         {
