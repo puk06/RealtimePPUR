@@ -409,7 +409,6 @@ namespace RealtimePPUR
                 double sspp = IsNaNWithNum(_calculatedObject.PerformanceAttributes.Total);
                 double currentPp = IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total);
                 double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIFFC.Total);
-
                 int geki = hits.HitGeki;
                 int good = hits.Hit300;
                 int katu = hits.HitKatu;
@@ -1033,13 +1032,6 @@ namespace RealtimePPUR
                     };
                     if (isplaying) mods = ParseMods(baseAddresses.Player.Mods.Value);
 
-                    if (status == OsuMemoryStatus.Playing)
-                    {
-                        _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors, mods));
-                        _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
-                        _avgOffsethelp = (int)Math.Round(-_avgOffset);
-                    }
-
                     HitsResult hits = new()
                     {
                         HitGeki = status switch
@@ -1120,6 +1112,13 @@ namespace RealtimePPUR
                         Mods = mods,
                         Time = baseAddresses.GeneralData.AudioTime
                     };
+
+                    if (status == OsuMemoryStatus.Playing)
+                    {
+                        _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors));
+                        _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
+                        _avgOffsethelp = (int)Math.Round(-_avgOffset);
+                    }
 
                     var result = _calculator?.Calculate(calcArgs, status == OsuMemoryStatus.Playing || isplaying,
                         isResultScreen && !isplaying, hits);
@@ -1222,16 +1221,14 @@ namespace RealtimePPUR
             return Path.Combine(osuDirectory, "Songs");
         }
 
-        private static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors, string[] mods)
+        private static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors)
         {
             if (hitErrors == null || hitErrors.Count == 0) return 0;
             double totalAll = hitErrors.Sum();
             double average = totalAll / hitErrors.Count;
             double variance = hitErrors.Sum(hit => Math.Pow(hit - average, 2)) / hitErrors.Count;
             double unstableRate = Math.Sqrt(variance) * 10;
-            if (mods.Contains("dt")) unstableRate /= 1.5;
-            if (mods.Contains("ht")) unstableRate *= 1.33;
-            return Math.Sqrt(variance) * 10;
+            return unstableRate;
         }
 
         private static async void GithubUpdateChecker()
