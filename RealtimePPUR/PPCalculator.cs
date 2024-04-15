@@ -344,6 +344,7 @@ namespace RealtimePPUR
                         n300 += Math.Max(0, hits.HitMiss - new100S);
                         var n100 = hits.Hit100 + new100S;
                         var n50 = hits.Hit50;
+
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, n300 },
@@ -363,6 +364,7 @@ namespace RealtimePPUR
                         var new100S = (int)Math.Ceiling(ratio * hits.HitMiss);
                         n300 += Math.Max(0, hits.HitMiss - new100S);
                         var n100 = hits.Hit100 + new100S;
+
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, n300 },
