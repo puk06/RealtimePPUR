@@ -1111,7 +1111,7 @@ namespace RealtimePPUR
                     };
                     if (isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value);
 
-                    double acc = _baseAddresses.Player.Accuracy;
+                    double acc = CalculateAcc(hits, _currentGamemode);
 
                     var calcArgs = new CalculateArgs
                     {
@@ -1148,6 +1148,21 @@ namespace RealtimePPUR
             }
             if (activeMods.Contains("nc") && activeMods.Contains("dt")) activeMods.Remove("nc");
             return activeMods.ToArray();
+        }
+
+        private static double CalculateAcc(HitsResult hits, int mode)
+        {
+            return mode switch
+            {
+                0 => (double)(100 * (6 * hits.Hit300 + 2 * hits.Hit100 + hits.Hit50)) /
+                     (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss)),
+                1 => (double)(100 * (2 * hits.Hit300 + hits.Hit100)) / (2 * (hits.Hit300 + hits.Hit100 + hits.HitMiss)),
+                2 => (double)(100 * (hits.Hit300 + hits.Hit100 + hits.Hit50)) /
+                     (hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitKatu + hits.HitMiss),
+                3 => (double)(100 * (6 * hits.HitGeki + 6 * hits.Hit300 + 4 * hits.HitKatu + 2 * hits.Hit100 + hits.Hit50)) /
+                     (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss + hits.HitGeki + hits.HitKatu)),
+                _ => 100
+            };
         }
 
         private static double IsNaNWithNum(double number) => double.IsNaN(number) ? 0 : number;
