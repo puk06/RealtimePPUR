@@ -27,7 +27,7 @@ namespace RealtimePPUR
     public class PPCalculator(string file, int mode)
     {
         private Ruleset ruleset = SetRuleset(mode);
-        ProcessorWorkingBeatmap _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
+        private ProcessorWorkingBeatmap _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
 
         public void SetMap(string file, int _mode)
         {
@@ -66,12 +66,12 @@ namespace RealtimePPUR
             var data = new BeatmapData();
             var mods = args.NoClassicMod ? GetMods(ruleset, args) : LegacyHelper.FilterDifficultyAdjustmentMods(_workingBeatmap.BeatmapInfo, ruleset, GetMods(ruleset, args));
             var beatmap = _workingBeatmap.GetPlayableBeatmap(ruleset.RulesetInfo, mods);
-            var staticsSS = GenerateHitResultsForSs(beatmap, mode);
+            var staticsSs = GenerateHitResultsForSs(beatmap, mode);
             var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
             {
                 Accuracy = 1,
                 MaxCombo = GetMaxCombo(beatmap, mode),
-                Statistics = staticsSS,
+                Statistics = staticsSs,
                 Mods = mods
             };
             if (mods is { Length: > 0 }) scoreInfo.Mods = mods;
@@ -85,16 +85,17 @@ namespace RealtimePPUR
             data.CurrentPerformanceAttributes = performanceAttributes;
             data.DifficultyAttributesIFFC = difficultyAttributes;
             data.PerformanceAttributesIFFC = performanceAttributes;
-            data.IfFcHitResult = staticsSS;
+            data.IfFcHitResult = staticsSs;
+            data.ExpectedManiaScore = 0;
 
-            var statistics = GenerateHitResults(args.Accuracy / 100, beatmap, args.Misses, args.Mehs, args.Goods, mode, args);
+            var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
             if (resultScreen)
             {
                 var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                 {
                     Accuracy = args.Accuracy / 100,
                     MaxCombo = GetMaxCombo(beatmap, mode),
-                    Statistics = statistics,
+                    Statistics = statisticsCurrent,
                     Mods = mods
                 };
                 var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(_workingBeatmap);
@@ -110,7 +111,7 @@ namespace RealtimePPUR
             {
                 if (mode != 3)
                 {
-                    var staticsForCalcIfFc = calcIfFC(beatmap, hits, mode);
+                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
                     var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
@@ -121,10 +122,15 @@ namespace RealtimePPUR
                     var difficultyCalculatorIFFC = ruleset.CreateDifficultyCalculator(_workingBeatmap);
                     var difficultyAttributesIFFC = difficultyCalculatorIFFC.Calculate(mods);
                     var performanceCalculatorIFFC = ruleset.CreatePerformanceCalculator();
-                    var performanceAttributesIFFC = performanceCalculatorIFFC?.Calculate(iffcScoreInfo, difficultyAttributesIFFC);
+                    var performanceAttributesIFFC =
+                        performanceCalculatorIFFC?.Calculate(iffcScoreInfo, difficultyAttributesIFFC);
                     data.DifficultyAttributesIFFC = difficultyAttributesIFFC;
                     data.PerformanceAttributesIFFC = performanceAttributesIFFC;
                     data.IfFcHitResult = staticsForCalcIfFc;
+                }
+                else
+                {
+                    data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
                 }
 
                 Beatmap beatmapCurrent = new Beatmap();
@@ -136,7 +142,7 @@ namespace RealtimePPUR
                 {
                     Accuracy = args.Accuracy / 100,
                     MaxCombo = args.Combo,
-                    Statistics = statistics,
+                    Statistics = statisticsCurrent,
                     Mods = mods,
                     TotalScore = args.Score
                 };
@@ -149,133 +155,6 @@ namespace RealtimePPUR
                 data.CurrentPerformanceAttributes = performanceAttributesCurrent;
 
                 return data;
-            }
-        }
-
-        private static Dictionary<HitResult, int> GenerateHitResults(double accuracy, IBeatmap beatmap, int countMiss, int? countMeh, int? countGood, int mode, CalculateArgs args)
-        {
-            switch (mode)
-            {
-                case 0:
-                    {
-                        int countGreat;
-                        int totalResultCount = beatmap.HitObjects.Count;
-
-                        if (countMeh != null || countGood != null)
-                        {
-                            countGreat = totalResultCount - (countGood ?? 0) - (countMeh ?? 0) - countMiss;
-                        }
-                        else
-                        {
-                            int targetTotal = (int)Math.Round(accuracy * totalResultCount * 6);
-                            int delta = targetTotal - (totalResultCount - countMiss);
-                            countGreat = delta / 5;
-                            countGood = delta % 5;
-                            countMeh = totalResultCount - countGreat - countGood - countMiss;
-                        }
-
-                        return new Dictionary<HitResult, int>
-                        {
-                            { HitResult.Great, countGreat },
-                            { HitResult.Ok, countGood ?? 0 },
-                            { HitResult.Meh, countMeh ?? 0 },
-                            { HitResult.Miss, countMiss }
-                        };
-                    }
-
-                case 1:
-                    {
-                        int totalResultCount = GetMaxCombo(beatmap, mode);
-
-                        int countGreat;
-
-                        if (countGood != null)
-                        {
-                            countGreat = (int)(totalResultCount - countGood - countMiss)!;
-                        }
-                        else
-                        {
-                            int targetTotal = (int)Math.Round(accuracy * totalResultCount * 2);
-
-                            countGreat = targetTotal - (totalResultCount - countMiss);
-                            countGood = totalResultCount - countGreat - countMiss;
-                        }
-
-                        return new Dictionary<HitResult, int>
-                        {
-                            { HitResult.Great, countGreat },
-                            { HitResult.Ok, (int)countGood },
-                            { HitResult.Meh, 0 },
-                            { HitResult.Miss, countMiss }
-                        };
-                    }
-
-                case 2:
-                    {
-                        int maxCombo = GetMaxCombo(beatmap, mode);
-                        int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
-                        int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
-                        int maxFruits = beatmap.HitObjects.Sum(h => h is Fruit ? 1 : (h as JuiceStream)?.NestedHitObjects.Count(n => n is Fruit) ?? 0);
-                        int countDroplets = countGood ?? Math.Max(0, maxDroplets - countMiss);
-                        int countFruits = maxFruits - (countMiss - (maxDroplets - countDroplets));
-                        int countTinyDroplets = countMeh ?? (int)Math.Round(accuracy * (maxCombo + maxTinyDroplets)) - countFruits - countDroplets;
-                        int countTinyMisses = maxTinyDroplets - countTinyDroplets;
-
-                        return new Dictionary<HitResult, int>
-                        {
-                            { HitResult.Great, countFruits },
-                            { HitResult.LargeTickHit, countDroplets },
-                            { HitResult.SmallTickHit, countTinyDroplets },
-                            { HitResult.SmallTickMiss, countTinyMisses },
-                            { HitResult.Miss, countMiss }
-                        };
-                    }
-
-                case 3:
-                    {
-                        int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
-
-                        if (countMeh != null || countGood != null || args.Greats != null)
-                        {
-                            int countPerfect = totalHits - (countMiss + (countMeh ?? 0) + (args.Oks) + (countGood ?? 0) + (args.Greats ?? 0));
-
-                            return new Dictionary<HitResult, int>
-                            {
-                                [HitResult.Perfect] = countPerfect,
-                                [HitResult.Great] = args.Greats ?? 0,
-                                [HitResult.Good] = countGood ?? 0,
-                                [HitResult.Ok] = args.Oks,
-                                [HitResult.Meh] = countMeh ?? 0,
-                                [HitResult.Miss] = countMiss
-                            };
-                        }
-
-                        int targetTotal = (int)Math.Round(accuracy * totalHits * 6);
-                        int remainingHits = totalHits - countMiss;
-                        int delta = targetTotal - remainingHits;
-                        args.Greats = Math.Min(delta / 5, remainingHits) / 2;
-                        int perfects = args.Greats.Value;
-                        delta -= (args.Greats.Value + perfects) * 5;
-                        remainingHits -= (args.Greats.Value + perfects);
-                        countGood = Math.Min(delta / 3, remainingHits);
-                        delta -= countGood.Value * 3;
-                        remainingHits -= countGood.Value;
-                        args.Oks = delta;
-                        countMeh = remainingHits;
-
-                        return new Dictionary<HitResult, int>
-                        {
-                            { HitResult.Perfect, perfects },
-                            { HitResult.Great, args.Greats.Value },
-                            { HitResult.Ok, args.Oks },
-                            { HitResult.Good, countGood.Value },
-                            { HitResult.Meh, countMeh.Value },
-                            { HitResult.Miss, countMiss }
-                        };
-                    }
-
-                default:
-                    throw new ArgumentException("Invalid ruleset ID provided.");
             }
         }
 
@@ -349,7 +228,108 @@ namespace RealtimePPUR
             }
         }
 
-        private static Dictionary<HitResult, int> calcIfFC(IBeatmap beatmap, HitsResult hits, int mode)
+        private static Dictionary<HitResult, int> GenerateHitResultsForCurrent(HitsResult hits, int mode)
+        {
+            return mode switch
+            {
+                0 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, hits.Hit300 },
+                    { HitResult.Ok, hits.Hit100 },
+                    { HitResult.Meh, hits.Hit50 },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                1 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, hits.Hit300 },
+                    { HitResult.Ok, hits.Hit100 },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                2 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, hits.Hit300 },
+                    { HitResult.LargeTickHit, hits.Hit100 },
+                    { HitResult.SmallTickHit, hits.Hit50 },
+                    { HitResult.SmallTickMiss, hits.HitKatu },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                3 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Perfect, hits.HitGeki },
+                    { HitResult.Great, hits.Hit300 },
+                    { HitResult.Good, hits.HitKatu },
+                    { HitResult.Ok, hits.Hit100 },
+                    { HitResult.Meh, hits.Hit50 },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                _ => throw new ArgumentException("Invalid mode provided.")
+            };
+        }
+
+        private struct ModMultiplierModDivider
+        {
+            public double ModMultiplier;
+            public double ModDivider;
+        }
+
+        private static ModMultiplierModDivider ModMultiplierModDividerCalculator(string[] mods)
+        {
+            double modMultiplier = 1;
+            double modDivider = 1;
+            if (mods.Contains("ez")) modMultiplier *= 0.5;
+            if (mods.Contains("nf")) modMultiplier *= 0.5;
+            if (mods.Contains("ht")) modMultiplier *= 0.5;
+            if (mods.Contains("hr")) modDivider /= 1.08;
+            if (mods.Contains("dt")) modDivider /= 1.1;
+            if (mods.Contains("nc")) modDivider /= 1.1;
+            if (mods.Contains("fi")) modDivider /= 1.06;
+            if (mods.Contains("hd")) modDivider /= 1.06;
+            if (mods.Contains("fl")) modDivider /= 1.06;
+            return new ModMultiplierModDivider { ModMultiplier = modMultiplier, ModDivider = modDivider };
+        }
+
+        private static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
+        {
+            var judgement = new
+            {
+                HitValue = 320,
+                HitBonusValue = 32,
+                HitBonus = 2,
+                HitPunishment = 0
+            };
+
+            int totalNotes = hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss;
+            int objectCount = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+
+            const int maxScore = 1000000;
+            double bonus = 100;
+            double baseScore = 0;
+            double bonusScore = 0;
+            var modValues = ModMultiplierModDividerCalculator(mods);
+
+            for (int i = 0; i < totalNotes; i++)
+            {
+                bonus = Math.Max(0, Math.Min(100, (bonus + judgement.HitBonus - judgement.HitPunishment) / modValues.ModDivider));
+                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitValue / 320.0;
+                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitBonusValue * Math.Sqrt(bonus) / 320.0;
+            }
+
+            double ratio = (double)totalNotes / objectCount;
+            double score = 0;
+            if (totalNotes == hits.HitGeki)
+            {
+                score = (int)(maxScore * modValues.ModMultiplier);
+            }
+            else if (totalNotes != hits.HitMiss)
+            {
+                score = Math.Max((int)(maxScore * modValues.ModMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
+            }
+            if (double.IsNaN(score)) score = 0;
+
+            return (int)Math.Round(score);
+        }
+
+        private static Dictionary<HitResult, int> CalcIfFc(IBeatmap beatmap, HitsResult hits, int mode)
         {
             switch (mode)
             {
@@ -425,7 +405,7 @@ namespace RealtimePPUR
             }
         }
 
-        private double GetAccuracy(Dictionary<HitResult, int> statistics, int mode)
+        private static double GetAccuracy(IReadOnlyDictionary<HitResult, int> statistics, int mode)
         {
             switch (mode)
             {
@@ -459,7 +439,7 @@ namespace RealtimePPUR
                     }
 
                 default:
-                    return 0;
+                    throw new ArgumentException("Invalid mode provided.");
             }
         }
 
@@ -487,17 +467,14 @@ namespace RealtimePPUR
             beatmap.BeatmapInfo.Ruleset = LegacyHelper.GetRulesetFromLegacyId(beatmap.BeatmapInfo.Ruleset.OnlineID).RulesetInfo;
         }
 
-        private static Beatmap readFromFile(string filename)
+        private static Beatmap ReadFromFile(string filename)
         {
             using var stream = File.OpenRead(filename);
             using var reader = new LineBufferedReader(stream);
             return Decoder.GetDecoder<Beatmap>(reader).Decode(reader);
         }
 
-        public static ProcessorWorkingBeatmap FromFile(string file)
-        {
-            return new ProcessorWorkingBeatmap(readFromFile(file));
-        }
+        public static ProcessorWorkingBeatmap FromFile(string file) => new(ReadFromFile(file));
 
         protected override IBeatmap GetBeatmap() => _beatmap;
         public override Texture GetBackground() => null!;
@@ -574,6 +551,7 @@ namespace RealtimePPUR
         public DifficultyAttributes? DifficultyAttributesIFFC { get; set; }
         public PerformanceAttributes? PerformanceAttributesIFFC { get; set; }
         public Dictionary<HitResult, int> IfFcHitResult { get; set; }
+        public int ExpectedManiaScore { get; set; }
     }
 
     public class HitsResult
@@ -591,11 +569,6 @@ namespace RealtimePPUR
     public class CalculateArgs
     {
         public double Accuracy { get; set; } = 100;
-        public int Misses { get; set; }
-        public int? Mehs { get; set; }
-        public int Goods { get; set; }
-        public int Oks { get; set; }
-        public int? Greats { get; set; }
         public int Combo { get; set; }
         public int Score { get; set; }
         public bool NoClassicMod { get; set; }

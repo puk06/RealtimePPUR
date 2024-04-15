@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Octokit;
+﻿using Octokit;
 using osu.Game.IO;
 using osu.Game.Rulesets.Scoring;
 using OsuMemoryDataProvider;
@@ -57,18 +56,38 @@ namespace RealtimePPUR
         private readonly OsuBaseAddresses _baseAddresses = new();
         public static readonly Dictionary<int, string> OsuMods = new()
         {
-            { 1, "nf" },
-            { 2, "ez" },
-            { 8, "hd" },
-            { 16, "hr" },
-            { 32, "sd" },
-            { 64, "dt" },
-            { 128, "rx" },
-            { 256, "ht" },
-            { 512, "nc" },
-            { 1024, "fl" },
-            { 2048, "at" },
-            { 16384, "pf" }
+            { 0, "NM" },
+            { 1, "NF" },
+            { 2, "EZ" },
+            { 4, "TD" },
+            { 8, "HD" },
+            { 16, "HR" },
+            { 32, "SD" },
+            { 64, "DT" },
+            { 128, "RX" },
+            { 256, "HT" },
+            { 512, "NC" },
+            { 1024, "FL" },
+            { 2048, "AT" },
+            { 4096, "SO" },
+            { 8192, "RX2" },
+            { 16384, "PF" },
+            { 32768, "4K" },
+            { 65536, "5K" },
+            { 131072, "6K" },
+            { 262144, "7K" },
+            { 524288, "8K" },
+            { 1048576, "FI" },
+            { 2097152, "RD" },
+            { 4194304, "CM" },
+            { 8388608, "TP" },
+            { 16777216, "9K" },
+            { 33554432, "CP" },
+            { 67108864, "1K" },
+            { 134217728, "3K" },
+            { 268435456, "2K" },
+            { 536870912, "SV2" },
+            { 1073741824, "MR" }
         };
         private readonly Dictionary<string, int> _osuModeValue = new()
         {
@@ -333,6 +352,7 @@ namespace RealtimePPUR
             try
             {
                 TopMost = true;
+                if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                 bool isplaying = _isplaying;
                 int currentGamemode = _currentGamemode;
                 OsuMemoryStatus status = _currentStatus;
@@ -426,6 +446,7 @@ namespace RealtimePPUR
                     _ => 0
                 };
                 const int ifFcMiss = 0;
+
                 double healthPercentage = IsNaNWithNum(Math.Round(_baseAddresses.Player.HP / 2, 1));
                 int userScore = hits.Score;
 
@@ -621,7 +642,7 @@ namespace RealtimePPUR
                         case 9:
                             if (expectedManiaScoreToolStripMenuItem.Checked && currentGamemode == 3)
                             {
-                                _displayFormat += "ManiaScore: " + 0 + "\n";
+                                _displayFormat += "ManiaScore: " + _calculatedObject.ExpectedManiaScore + "\n";
                             }
 
                             break;
@@ -900,9 +921,8 @@ namespace RealtimePPUR
                     _avgoffsethelp.Visible = true;
                 }
             }
-            catch (Exception e)
+            catch
             {
-                //MessageBox.Show(e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (!_nowPlaying) inGameValue.Text = "";
                 _sr.Text = "0";
                 _sspp.Text = "0";
@@ -914,7 +934,6 @@ namespace RealtimePPUR
                 _ur.Text = "0";
                 _avgoffsethelp.Text = "0";
             }
-
             return Task.CompletedTask;
         }
 
@@ -924,22 +943,11 @@ namespace RealtimePPUR
             {
                 try
                 {
+                    if (Process.GetProcessesByName("osu!").Length == 0) continue;
                     if (!_isDbLoaded)
                     {
-                        if (Process.GetProcessesByName("osu!").Length > 0)
-                        {
-                            Process osuProcess = Process.GetProcessesByName("osu!")[0];
-                            _osuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
-                        }
-                        else
-                        {
-                            using RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey("osu\\DefaultIcon");
-                            if (registryKey != null)
-                            {
-                                string str = registryKey.GetValue(null).ToString().Remove(0, 1);
-                                _osuDirectory = str.Remove(str.Length - 11);
-                            }
-                        }
+                        Process osuProcess = Process.GetProcessesByName("osu!")[0];
+                        _osuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
 
                         if (string.IsNullOrEmpty(_osuDirectory) || !Directory.Exists(_osuDirectory))
                             continue;
@@ -981,23 +989,28 @@ namespace RealtimePPUR
             {
                 try
                 {
+                    if (Process.GetProcessesByName("osu!").Length == 0) continue;
                     bool isplaying = _isplaying;
                     bool isResultScreen = _isResultScreen;
                     OsuMemoryStatus status = _currentStatus;
-                    OsuBaseAddresses baseAddresses = _baseAddresses;
-                    string osuBeatmapPath = Path.Combine(_songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
-                        baseAddresses.Beatmap.OsuFileName ?? "");
+
+                    if (status == OsuMemoryStatus.Playing)
+                    {
+                        _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors));
+                        _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
+                        _avgOffsethelp = (int)Math.Round(-_avgOffset);
+                    }
+
+                    string osuBeatmapPath = Path.Combine(_songsPath ?? "", _baseAddresses.Beatmap.FolderName ?? "",
+                        _baseAddresses.Beatmap.OsuFileName ?? "");
                     if (!File.Exists(osuBeatmapPath)) continue;
 
-                    if (_preMd5 != baseAddresses.Beatmap.Md5)
+                    if (_preMd5 != _baseAddresses.Beatmap.Md5)
                     {
                         int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
                         if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3)) continue;
                         _currentBeatmapGamemode = currentBeatmapGamemodeTemp;
-                        _currentGamemode = _currentBeatmapGamemode;
-
-                        if (_currentBeatmapGamemode == 0) _currentGamemode = _currentOsuGamemode;
-
+                        _currentGamemode = _currentBeatmapGamemode == 0 ? _currentOsuGamemode : _currentBeatmapGamemode;
 
                         if (_calculator == null)
                         {
@@ -1023,6 +1036,72 @@ namespace RealtimePPUR
                         _preOsuGamemode = _currentOsuGamemode;
                     }
 
+                    if (status == OsuMemoryStatus.EditingMap) _currentGamemode = _currentBeatmapGamemode;
+
+                    HitsResult hits = new()
+                    {
+                        HitGeki = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.HitGeki,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitGeki,
+                            _ => 0
+                        },
+                        Hit300 = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Hit300,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit300,
+                            _ => 0
+                        },
+                        HitKatu = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.HitKatu,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitKatu,
+                            _ => 0
+                        },
+                        Hit100 = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Hit100,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit100,
+                            _ => 0
+                        },
+                        Hit50 = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Hit50,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit50,
+                            _ => 0
+                        },
+                        HitMiss = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.HitMiss,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitMiss,
+                            _ => 0
+                        },
+                        Combo = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.MaxCombo,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.MaxCombo,
+                            _ => 0
+                        },
+                        Score = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Score,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Score,
+                            _ => 0
+                        }
+                    };
+
+                    if (isplaying)
+                    {
+                        hits.HitGeki = _baseAddresses.Player.HitGeki;
+                        hits.Hit300 = _baseAddresses.Player.Hit300;
+                        hits.HitKatu = _baseAddresses.Player.HitKatu;
+                        hits.Hit100 = _baseAddresses.Player.Hit100;
+                        hits.Hit50 = _baseAddresses.Player.Hit50;
+                        hits.HitMiss = _baseAddresses.Player.HitMiss;
+                        hits.Combo = _baseAddresses.Player.MaxCombo;
+                        hits.Score = _baseAddresses.Player.Score;
+                    }
+
                     string[] mods = status switch
                     {
                         OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value),
@@ -1030,101 +1109,26 @@ namespace RealtimePPUR
                         OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods),
                         _ => ParseMods(_baseAddresses.GeneralData.Mods)
                     };
-                    if (isplaying) mods = ParseMods(baseAddresses.Player.Mods.Value);
+                    if (isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value);
 
-                    HitsResult hits = new()
-                    {
-                        HitGeki = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.HitGeki,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.HitGeki,
-                            _ => 0
-                        },
-                        Hit300 = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.Hit300,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Hit300,
-                            _ => 0
-                        },
-                        HitKatu = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.HitKatu,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.HitKatu,
-                            _ => 0
-                        },
-                        Hit100 = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.Hit100,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Hit100,
-                            _ => 0
-                        },
-                        Hit50 = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.Hit50,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Hit50,
-                            _ => 0
-                        },
-                        HitMiss = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.HitMiss,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.HitMiss,
-                            _ => 0
-                        },
-                        Combo = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.MaxCombo,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.MaxCombo,
-                            _ => 0
-                        },
-                        Score = status switch
-                        {
-                            OsuMemoryStatus.Playing => baseAddresses.Player.Score,
-                            OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Score,
-                            _ => 0
-                        }
-                    };
-
-                    if (isplaying)
-                    {
-                        hits.HitGeki = baseAddresses.Player.HitGeki;
-                        hits.Hit300 = baseAddresses.Player.Hit300;
-                        hits.HitKatu = baseAddresses.Player.HitKatu;
-                        hits.Hit100 = baseAddresses.Player.Hit100;
-                        hits.Hit50 = baseAddresses.Player.Hit50;
-                        hits.HitMiss = baseAddresses.Player.HitMiss;
-                        hits.Combo = baseAddresses.Player.MaxCombo;
-                        hits.Score = baseAddresses.Player.Score;
-                    }
-
-                    double acc = Math.Round(CalculateAcc(hits, _currentGamemode), 2);
+                    double acc = _baseAddresses.Player.Accuracy;
 
                     var calcArgs = new CalculateArgs
                     {
                         Accuracy = acc,
-                        Greats = hits.Hit300,
-                        Goods = hits.Hit100,
-                        Mehs = hits.Hit50,
-                        Oks = hits.HitKatu,
-                        Misses = hits.HitMiss,
                         Combo = hits.Combo,
                         Score = hits.Score,
                         NoClassicMod = IsNoClassicMod,
                         Mods = mods,
-                        Time = baseAddresses.GeneralData.AudioTime
+                        Time = _baseAddresses.GeneralData.AudioTime
                     };
 
-                    if (status == OsuMemoryStatus.Playing)
-                    {
-                        _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors));
-                        _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
-                        _avgOffsethelp = (int)Math.Round(-_avgOffset);
-                    }
-
-                    var result = _calculator?.Calculate(calcArgs, status == OsuMemoryStatus.Playing || isplaying,
+                    var result = _calculator?.Calculate(calcArgs, isplaying,
                         isResultScreen && !isplaying, hits);
                     if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
                         result.CurrentDifficultyAttributes == null ||
                         result.CurrentPerformanceAttributes == null) continue;
+
                     _calculatedObject = result;
                 }
                 catch (Exception e)
@@ -1137,11 +1141,10 @@ namespace RealtimePPUR
         private static string[] ParseMods(int mods)
         {
             List<string> activeMods = new();
-            for (int i = 0; i < 14; i++)
+            for (int i = 0; i < 32; i++)
             {
                 int bit = 1 << i;
-                if (bit is 4 or 4096 or 8192) continue;
-                if ((mods & bit) == bit) activeMods.Add(OsuMods[bit]);
+                if ((mods & bit) == bit) activeMods.Add(OsuMods[bit].ToLower());
             }
             if (activeMods.Contains("nc") && activeMods.Contains("dt")) activeMods.Remove("nc");
             return activeMods.ToArray();
@@ -1167,7 +1170,7 @@ namespace RealtimePPUR
         private static double CalculateAverage(IReadOnlyCollection<int> array)
         {
             if (array == null || array.Count == 0) return 0;
-            return (double)array.Sum() / array.Count;
+            return (double)array.Sum(item => (long)item) / array.Count;
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
@@ -1192,21 +1195,6 @@ namespace RealtimePPUR
             };
         }
 
-        private static double CalculateAcc(HitsResult hits, int mode)
-        {
-            return mode switch
-            {
-                0 => (double)(100 * (6 * hits.Hit300 + 2 * hits.Hit100 + hits.Hit50)) /
-                     (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss)),
-                1 => (double)(100 * (2 * hits.Hit300 + hits.Hit100)) / (2 * (hits.Hit300 + hits.Hit100 + hits.HitMiss)),
-                2 => (double)(100 * (hits.Hit300 + hits.Hit100 + hits.Hit50)) /
-                     (hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitKatu + hits.HitMiss),
-                3 => (double)(100 * (6 * hits.HitGeki + 6 * hits.Hit300 + 4 * hits.HitKatu + 2 * hits.Hit100 + hits.Hit50)) /
-                     (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss + hits.HitGeki + hits.HitKatu)),
-                _ => 100
-            };
-        }
-
         private static string GetSongsFolderLocation(string osuDirectory)
         {
             foreach (string file in Directory.GetFiles(osuDirectory))
@@ -1224,7 +1212,7 @@ namespace RealtimePPUR
         private static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors)
         {
             if (hitErrors == null || hitErrors.Count == 0) return 0;
-            double totalAll = hitErrors.Sum();
+            double totalAll = hitErrors.Sum(hit => (long)hit);
             double average = totalAll / hitErrors.Count;
             double variance = hitErrors.Sum(hit => Math.Pow(hit - average, 2)) / hitErrors.Count;
             double unstableRate = Math.Sqrt(variance) * 10;
