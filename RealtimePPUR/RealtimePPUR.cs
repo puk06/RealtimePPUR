@@ -48,7 +48,7 @@ namespace RealtimePPUR
         private int _currentOsuGamemode;
         private int _currentGamemode;
         private int _preOsuGamemode;
-        private BeatmapData calculatedObject;
+        private BeatmapData _calculatedObject;
         private OsuMemoryStatus _currentStatus;
 
         private readonly Dictionary<string, string> _configDictionary = new();
@@ -332,53 +332,55 @@ namespace RealtimePPUR
             try
             {
                 TopMost = true;
-                var currentStatus = _currentStatus;
+                bool isplaying = _isplaying;
+                int currentGamemode = _currentGamemode;
+                OsuMemoryStatus status = _currentStatus;
 
                 HitsResult hits = new()
                 {
-                    HitGeki = currentStatus switch
+                    HitGeki = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.HitGeki,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitGeki,
                         _ => 0
                     },
-                    Hit300 = currentStatus switch
+                    Hit300 = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.Hit300,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit300,
                         _ => 0
                     },
-                    HitKatu = currentStatus switch
+                    HitKatu = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.HitKatu,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitKatu,
                         _ => 0
                     },
-                    Hit100 = currentStatus switch
+                    Hit100 = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.Hit100,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit100,
                         _ => 0
                     },
-                    Hit50 = currentStatus switch
+                    Hit50 = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.Hit50,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit50,
                         _ => 0
                     },
-                    HitMiss = currentStatus switch
+                    HitMiss = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.HitMiss,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitMiss,
                         _ => 0
                     },
-                    Combo = currentStatus switch
+                    Combo = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.MaxCombo,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.MaxCombo,
                         _ => 0
                     },
-                    Score = currentStatus switch
+                    Score = status switch
                     {
                         OsuMemoryStatus.Playing => _baseAddresses.Player.Score,
                         OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Score,
@@ -386,7 +388,7 @@ namespace RealtimePPUR
                     }
                 };
 
-                if (_isplaying)
+                if (isplaying)
                 {
                     hits.HitGeki = _baseAddresses.Player.HitGeki;
                     hits.Hit300 = _baseAddresses.Player.Hit300;
@@ -398,14 +400,14 @@ namespace RealtimePPUR
                     hits.Score = _baseAddresses.Player.Score;
                 }
 
-                if (calculatedObject == null) return Task.CompletedTask;
+                if (_calculatedObject == null) return Task.CompletedTask;
 
                 var leaderBoardData = GetLeaderBoard(_baseAddresses.LeaderBoard, _baseAddresses.Player.Score);
-                double sr = IsNaNWithNum(Math.Round(calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
-                double fullSr = IsNaNWithNum(Math.Round(calculatedObject.DifficultyAttributes.StarRating, 2));
-                double sspp = IsNaNWithNum(calculatedObject.PerformanceAttributes.Total);
-                double currentPp = IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total);
-                double ifFcpp = IsNaNWithNum(calculatedObject.PerformanceAttributesIFFC.Total);
+                double sr = IsNaNWithNum(Math.Round(_calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
+                double fullSr = IsNaNWithNum(Math.Round(_calculatedObject.DifficultyAttributes.StarRating, 2));
+                double sspp = IsNaNWithNum(_calculatedObject.PerformanceAttributes.Total);
+                double currentPp = IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total);
+                double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIFFC.Total);
 
                 int geki = hits.HitGeki;
                 int good = hits.Hit300;
@@ -414,13 +416,13 @@ namespace RealtimePPUR
                 int bad = hits.Hit50;
                 int miss = hits.HitMiss;
 
-                int ifFcGood = calculatedObject.IfFcHitResult[HitResult.Great];
-                int ifFcOk = _currentGamemode == 2 ? calculatedObject.IfFcHitResult[HitResult.LargeTickHit] : calculatedObject.IfFcHitResult[HitResult.Ok];
-                int ifFcBad = _currentGamemode switch
+                int ifFcGood = _calculatedObject.IfFcHitResult[HitResult.Great];
+                int ifFcOk = currentGamemode == 2 ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit] : _calculatedObject.IfFcHitResult[HitResult.Ok];
+                int ifFcBad = currentGamemode switch
                 {
-                    0 => calculatedObject.IfFcHitResult[HitResult.Meh],
+                    0 => _calculatedObject.IfFcHitResult[HitResult.Meh],
                     1 => 0,
-                    2 => calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
+                    2 => _calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
                     _ => 0
                 };
                 const int ifFcMiss = 0;
@@ -431,7 +433,7 @@ namespace RealtimePPUR
                 int higherScore = leaderBoardData["higherScore"];
                 int highestScore = leaderBoardData["highestScore"];
 
-                if (currentStatus == OsuMemoryStatus.Playing)
+                if (status == OsuMemoryStatus.Playing)
                 {
                     _urValue = (int)Math.Round(CalculateUnstableRate(_baseAddresses.Player.HitErrors));
                     _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
@@ -540,7 +542,7 @@ namespace RealtimePPUR
                         case 3:
                             if (currentPPToolStripMenuItem.Checked)
                             {
-                                if (ifFCPPToolStripMenuItem.Checked && _currentGamemode != 3)
+                                if (ifFCPPToolStripMenuItem.Checked && currentGamemode != 3)
                                 {
                                     _displayFormat += "PP: " + currentPp.ToString("F0") + " / " + ifFcpp.ToString("F0") +
                                                      "pp\n";
@@ -564,7 +566,7 @@ namespace RealtimePPUR
                         case 5:
                             if (hitsToolStripMenuItem.Checked)
                             {
-                                switch (_currentGamemode)
+                                switch (currentGamemode)
                                 {
                                     case 0:
                                         _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
@@ -589,7 +591,7 @@ namespace RealtimePPUR
                         case 6:
                             if (ifFCHitsToolStripMenuItem.Checked)
                             {
-                                switch (_currentGamemode)
+                                switch (currentGamemode)
                                 {
                                     case 0:
                                         _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
@@ -624,7 +626,7 @@ namespace RealtimePPUR
                             break;
 
                         case 9:
-                            if (expectedManiaScoreToolStripMenuItem.Checked && _currentGamemode == 3)
+                            if (expectedManiaScoreToolStripMenuItem.Checked && currentGamemode == 3)
                             {
                                 _displayFormat += "ManiaScore: " + 0 + "\n";
                             }
@@ -1123,7 +1125,7 @@ namespace RealtimePPUR
                     if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
                         result.CurrentDifficultyAttributes == null ||
                         result.CurrentPerformanceAttributes == null) continue;
-                    calculatedObject = result;
+                    _calculatedObject = result;
                 }
                 catch (Exception e)
                 {
