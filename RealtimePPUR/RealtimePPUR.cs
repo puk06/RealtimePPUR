@@ -50,6 +50,7 @@ namespace RealtimePPUR
         private int _preOsuGamemode;
         private BeatmapData _calculatedObject;
         private OsuMemoryStatus _currentStatus;
+        private bool _pplossMode = false;
 
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
@@ -135,6 +136,7 @@ namespace RealtimePPUR
                 higherScoreToolStripMenuItem.Checked = false;
                 highestScoreToolStripMenuItem.Checked = false;
                 userScoreToolStripMenuItem.Checked = false;
+                _pplossMode = false;
                 _ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
                 inGameValue.Font = new Font(_fontCollection.Families[0], 19F);
             }
@@ -209,6 +211,7 @@ namespace RealtimePPUR
                 higherScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHERSCOREDIFF", out string test19) && test19 == "true";
                 highestScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHESTSCOREDIFF", out string test20) && test20 == "true";
                 userScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("USERSCORE", out string test21) && test21 == "true";
+                _pplossMode = _configDictionary.TryGetValue("PPLOSSMODE", out string test22) && test22 == "true";
                 _ingameoverlayPriority = _configDictionary.TryGetValue("INGAMEOVERLAYPRIORITY", out string test16) ? test16 : "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
 
                 if (_configDictionary.TryGetValue("USECUSTOMFONT", out string test12) && test12 == "true")
@@ -1120,7 +1123,8 @@ namespace RealtimePPUR
                         Score = hits.Score,
                         NoClassicMod = IsNoClassicMod,
                         Mods = mods,
-                        Time = _baseAddresses.GeneralData.AudioTime
+                        Time = _baseAddresses.GeneralData.AudioTime,
+                        PplossMode = _pplossMode
                     };
 
                     var result = _calculator?.Calculate(calcArgs, isplaying,

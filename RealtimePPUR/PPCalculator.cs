@@ -74,7 +74,6 @@ namespace RealtimePPUR
                 Statistics = staticsSs,
                 Mods = mods
             };
-            if (mods is { Length: > 0 }) scoreInfo.Mods = mods;
             var difficultyCalculator = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
             var performanceCalculator = _ruleset.CreatePerformanceCalculator();
@@ -98,11 +97,8 @@ namespace RealtimePPUR
                     Statistics = statisticsCurrent,
                     Mods = mods
                 };
-                var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
-                var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
-                var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
-                data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
+                var performanceAttributesCurrent = performanceCalculator?.Calculate(currentScoreInfo, difficultyAttributes);
+                data.CurrentDifficultyAttributes = difficultyAttributes;
                 data.CurrentPerformanceAttributes = performanceAttributesCurrent;
                 return data;
             }
@@ -119,11 +115,8 @@ namespace RealtimePPUR
                         Statistics = staticsForCalcIfFc,
                         Mods = mods
                     };
-                    var difficultyCalculatorIffc = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
-                    var difficultyAttributesIffc = difficultyCalculatorIffc.Calculate(mods);
-                    var performanceCalculatorIffc = _ruleset.CreatePerformanceCalculator();
-                    var performanceAttributesIffc = performanceCalculatorIffc?.Calculate(iffcScoreInfo, difficultyAttributesIffc);
-                    data.DifficultyAttributesIffc = difficultyAttributesIffc;
+                    var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
+                    data.DifficultyAttributesIffc = difficultyAttributes;
                     data.PerformanceAttributesIffc = performanceAttributesIffc;
                     data.IfFcHitResult = staticsForCalcIfFc;
                 }
@@ -137,21 +130,39 @@ namespace RealtimePPUR
                 beatmapCurrent.HitObjects.AddRange(hitObjects);
                 beatmapCurrent.ControlPointInfo = _workingBeatmap.Beatmap.ControlPointInfo;
                 beatmapCurrent.BeatmapInfo = _workingBeatmap.Beatmap.BeatmapInfo;
-                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+
+                if (args.PplossMode)
                 {
-                    Accuracy = args.Accuracy / 100,
-                    MaxCombo = args.Combo,
-                    Statistics = statisticsCurrent,
-                    Mods = mods,
-                    TotalScore = args.Score
-                };
-                var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
-                var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
-                var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
-                var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
-                data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
-                data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                    var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, mode);
+                    var LossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                    {
+                        Accuracy = GetAccuracy(staticsLoss, mode),
+                        MaxCombo = args.Combo,
+                        Statistics = staticsLoss,
+                        Mods = mods
+                    };
+                    var performanceAttributesCurrent = performanceCalculator?.Calculate(LossScoreInfo, difficultyAttributes);
+                    data.CurrentDifficultyAttributes = difficultyAttributes;
+                    data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                }
+                else
+                {
+                    var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                    {
+                        Accuracy = args.Accuracy / 100,
+                        MaxCombo = args.Combo,
+                        Statistics = statisticsCurrent,
+                        Mods = mods,
+                        TotalScore = args.Score
+                    };
+                    var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
+                    var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
+                    var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
+                    var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
+                    var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
+                    data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
+                    data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                }
 
                 return data;
             }
@@ -174,15 +185,12 @@ namespace RealtimePPUR
 
                 case 1:
                     {
-                        int totalResultCount = GetMaxCombo(beatmap, mode);
-                        int targetTotal = totalResultCount * 2;
-                        var countGreat = targetTotal - totalResultCount;
+                        int countGreat = GetMaxCombo(beatmap, mode);
 
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, countGreat },
                             { HitResult.Ok, 0 },
-                            { HitResult.Meh, 0 },
                             { HitResult.Miss, 0 }
                         };
                     }
@@ -263,6 +271,74 @@ namespace RealtimePPUR
                 },
                 _ => throw new ArgumentException("Invalid mode provided.")
             };
+        }
+
+        private static Dictionary<HitResult, int> GenerateHitResultsForLossMode(IBeatmap beatmap, HitsResult hits, int mode)
+        {
+            //100の状態から減らすというもの
+            switch (mode)
+            {
+                case 0:
+                    {
+                        return new Dictionary<HitResult, int>
+                        {
+                            { HitResult.Great, beatmap.HitObjects.Count - hits.Hit100 - hits.Hit50 - hits.HitMiss },
+                            { HitResult.Ok, hits.Hit100 },
+                            { HitResult.Meh, hits.Hit50 },
+                            { HitResult.Miss, hits.HitMiss }
+                        };
+                    }
+
+                case 1:
+                    {
+                        int countGreat = GetMaxCombo(beatmap, mode);
+
+                        return new Dictionary<HitResult, int>
+                        {
+                            { HitResult.Great, countGreat - hits.Hit100 - hits.HitMiss },
+                            { HitResult.Ok, hits.Hit100 },
+                            { HitResult.Miss, hits.HitMiss }
+                        };
+                    }
+
+                case 2:
+                    {
+                        int maxCombo = GetMaxCombo(beatmap, mode);
+                        int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
+                        int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
+                        int maxFruits = beatmap.HitObjects.Sum(h => h is Fruit ? 1 : (h as JuiceStream)?.NestedHitObjects.Count(n => n is Fruit) ?? 0);
+                        int countDroplets = Math.Max(0, maxDroplets);
+                        int countFruits = maxFruits + (maxDroplets - countDroplets);
+                        int countTinyDroplets = maxCombo + maxTinyDroplets - countFruits - countDroplets;
+                        int countTinyMisses = maxTinyDroplets - countTinyDroplets;
+
+                        return new Dictionary<HitResult, int>
+                        {
+                            { HitResult.Great, countFruits },
+                            { HitResult.LargeTickHit, countDroplets },
+                            { HitResult.SmallTickHit, countTinyDroplets },
+                            { HitResult.SmallTickMiss, countTinyMisses },
+                            { HitResult.Miss, 0 }
+                        };
+                    }
+
+                case 3:
+                    {
+                        int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+                        return new Dictionary<HitResult, int>
+                        {
+                            [HitResult.Perfect] = totalHits - hits.Hit300 - hits.HitKatu - hits.Hit100 - hits.Hit50 - hits.HitMiss,
+                            [HitResult.Great] = hits.Hit300,
+                            [HitResult.Good] = hits.HitKatu,
+                            [HitResult.Ok] = hits.Hit100,
+                            [HitResult.Meh] = hits.Hit50,
+                            [HitResult.Miss] = hits.HitMiss
+                        };
+                    }
+
+                default:
+                    throw new ArgumentException("Invalid ruleset ID provided.");
+            }
         }
 
         private struct ModMultiplierModDivider
@@ -574,5 +650,6 @@ namespace RealtimePPUR
         public bool NoClassicMod { get; set; }
         public string[] Mods { get; set; } = Array.Empty<string>();
         public int? Time { get; set; }
+        public bool PplossMode { get; set; }
     }
 }
