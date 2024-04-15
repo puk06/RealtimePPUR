@@ -340,9 +340,9 @@ namespace RealtimePPUR
                         var n300 = hits.Hit300 + Math.Max(0, objects - passedObjects);
                         var countHits = objects - hits.HitMiss;
                         var ratio = 1.0 - ((double)n300 / countHits);
-                        var new100s = (int)Math.Ceiling(ratio * hits.HitMiss);
-                        n300 += Math.Max(0, hits.HitMiss - new100s);
-                        var n100 = hits.Hit100 + new100s;
+                        var new100S = (int)Math.Ceiling(ratio * hits.HitMiss);
+                        n300 += Math.Max(0, hits.HitMiss - new100S);
+                        var n100 = hits.Hit100 + new100S;
                         var n50 = hits.Hit50;
                         return new Dictionary<HitResult, int>
                         {
@@ -360,9 +360,9 @@ namespace RealtimePPUR
                         var n300 = hits.Hit300 + Math.Max(0, objects - passedObjects);
                         var countHits = objects - hits.HitMiss;
                         var ratio = 1.0 - ((double)n300 / countHits);
-                        var new100s = (int)Math.Ceiling(ratio * hits.HitMiss);
-                        n300 += Math.Max(0, hits.HitMiss - new100s);
-                        var n100 = hits.Hit100 + new100s;
+                        var new100S = (int)Math.Ceiling(ratio * hits.HitMiss);
+                        n300 += Math.Max(0, hits.HitMiss - new100S);
+                        var n100 = hits.Hit100 + new100S;
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, n300 },
@@ -373,22 +373,21 @@ namespace RealtimePPUR
 
                 case 2:
                     {
-                        var maxCombo = GetMaxCombo(beatmap, mode);
+                        int maxCombo = GetMaxCombo(beatmap, mode);
                         int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
                         int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
-                        var missing = maxCombo - hits.Hit300 + hits.Hit100 + hits.HitMiss;
-                        var missingFruits = Math.Max(0, missing - Math.Max(0, maxDroplets - hits.Hit100));
-                        var missingDroplets = missing - missingFruits;
-                        var nFruits = hits.Hit300 + missingFruits;
-                        var nDroplets = hits.Hit100 + missingDroplets;
-                        var nTinyDropletMisses = hits.HitKatu;
-                        var nTinyDroplets = Math.Max(0, maxTinyDroplets - nTinyDropletMisses);
+                        int maxFruits = beatmap.HitObjects.Sum(h => h is Fruit ? 1 : (h as JuiceStream)?.NestedHitObjects.Count(n => n is Fruit) ?? 0);
+                        int countDroplets = Math.Max(0, maxDroplets);
+                        int countFruits = maxFruits + (maxDroplets - countDroplets);
+                        int countTinyDroplets = maxCombo + maxTinyDroplets - countFruits - countDroplets;
+                        int countTinyMisses = maxTinyDroplets - countTinyDroplets;
+
                         return new Dictionary<HitResult, int>
                         {
-                            { HitResult.Great, nFruits },
-                            { HitResult.LargeTickHit, nDroplets },
-                            { HitResult.SmallTickHit, nTinyDroplets },
-                            { HitResult.SmallTickMiss, nTinyDropletMisses },
+                            { HitResult.Great, countFruits },
+                            { HitResult.LargeTickHit, countDroplets },
+                            { HitResult.SmallTickHit, countTinyDroplets },
+                            { HitResult.SmallTickMiss, countTinyMisses },
                             { HitResult.Miss, 0 }
                         };
                     }
