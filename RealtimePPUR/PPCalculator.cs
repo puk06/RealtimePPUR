@@ -74,7 +74,6 @@ namespace RealtimePPUR
                 Statistics = staticsSs,
                 Mods = mods
             };
-            if (mods is { Length: > 0 }) scoreInfo.Mods = mods;
             var difficultyCalculator = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
             var performanceCalculator = _ruleset.CreatePerformanceCalculator();
@@ -91,19 +90,16 @@ namespace RealtimePPUR
             var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
             if (resultScreen)
             {
-                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                var resultScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
                     Accuracy = args.Accuracy / 100,
-                    MaxCombo = GetMaxCombo(beatmap, mode),
+                    MaxCombo = args.Combo,
                     Statistics = statisticsCurrent,
                     Mods = mods
                 };
-                var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
-                var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
-                var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
-                data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
-                data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
+                data.CurrentDifficultyAttributes = difficultyAttributes;
+                data.CurrentPerformanceAttributes = performanceAttributesResult;
                 return data;
             }
 
@@ -119,11 +115,8 @@ namespace RealtimePPUR
                         Statistics = staticsForCalcIfFc,
                         Mods = mods
                     };
-                    var difficultyCalculatorIffc = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
-                    var difficultyAttributesIffc = difficultyCalculatorIffc.Calculate(mods);
-                    var performanceCalculatorIffc = _ruleset.CreatePerformanceCalculator();
-                    var performanceAttributesIffc = performanceCalculatorIffc?.Calculate(iffcScoreInfo, difficultyAttributesIffc);
-                    data.DifficultyAttributesIffc = difficultyAttributesIffc;
+                    var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
+                    data.DifficultyAttributesIffc = difficultyAttributes;
                     data.PerformanceAttributesIffc = performanceAttributesIffc;
                     data.IfFcHitResult = staticsForCalcIfFc;
                 }
@@ -132,26 +125,44 @@ namespace RealtimePPUR
                     data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
                 }
 
-                Beatmap beatmapCurrent = new Beatmap();
-                var hitObjects = _workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
-                beatmapCurrent.HitObjects.AddRange(hitObjects);
-                beatmapCurrent.ControlPointInfo = _workingBeatmap.Beatmap.ControlPointInfo;
-                beatmapCurrent.BeatmapInfo = _workingBeatmap.Beatmap.BeatmapInfo;
-                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                if (args.PplossMode && mode is 1 or 3)
                 {
-                    Accuracy = args.Accuracy / 100,
-                    MaxCombo = args.Combo,
-                    Statistics = statisticsCurrent,
-                    Mods = mods,
-                    TotalScore = args.Score
-                };
-                var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
-                var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
-                var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
-                var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
-                data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
-                data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                    var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, mode);
+                    var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                    {
+                        Accuracy = GetAccuracy(staticsLoss, mode),
+                        MaxCombo = args.Combo,
+                        Statistics = staticsLoss,
+                        Mods = mods
+                    };
+                    var performanceAttributesCurrent = performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
+                    data.CurrentDifficultyAttributes = difficultyAttributes;
+                    data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                }
+                else
+                {
+                    Beatmap beatmapCurrent = new();
+                    var hitObjects = _workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
+                    beatmapCurrent.HitObjects.AddRange(hitObjects);
+                    beatmapCurrent.ControlPointInfo = _workingBeatmap.Beatmap.ControlPointInfo;
+                    beatmapCurrent.BeatmapInfo = _workingBeatmap.Beatmap.BeatmapInfo;
+
+                    var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                    {
+                        Accuracy = args.Accuracy / 100,
+                        MaxCombo = args.Combo,
+                        Statistics = statisticsCurrent,
+                        Mods = mods,
+                        TotalScore = args.Score
+                    };
+                    var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
+                    var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
+                    var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
+                    var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
+                    var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
+                    data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
+                    data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+                }
 
                 return data;
             }
@@ -174,15 +185,12 @@ namespace RealtimePPUR
 
                 case 1:
                     {
-                        int totalResultCount = GetMaxCombo(beatmap, mode);
-                        int targetTotal = totalResultCount * 2;
-                        var countGreat = targetTotal - totalResultCount;
+                        int countGreat = GetMaxCombo(beatmap, mode);
 
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, countGreat },
                             { HitResult.Ok, 0 },
-                            { HitResult.Meh, 0 },
                             { HitResult.Miss, 0 }
                         };
                     }
@@ -223,7 +231,7 @@ namespace RealtimePPUR
                     }
 
                 default:
-                    throw new ArgumentException("Invalid ruleset ID provided.");
+                    throw new ArgumentException("Invalid mode provided.");
             }
         }
 
@@ -265,67 +273,39 @@ namespace RealtimePPUR
             };
         }
 
-        private struct ModMultiplierModDivider
+        private static Dictionary<HitResult, int> GenerateHitResultsForLossMode(IBeatmap beatmap, HitsResult hits, int mode)
         {
-            public double ModMultiplier;
-            public double ModDivider;
-        }
-
-        private static ModMultiplierModDivider ModMultiplierModDividerCalculator(string[] mods)
-        {
-            double modMultiplier = 1;
-            double modDivider = 1;
-            if (mods.Contains("ez")) modMultiplier *= 0.5;
-            if (mods.Contains("nf")) modMultiplier *= 0.5;
-            if (mods.Contains("ht")) modMultiplier *= 0.5;
-            if (mods.Contains("hr")) modDivider /= 1.08;
-            if (mods.Contains("dt")) modDivider /= 1.1;
-            if (mods.Contains("nc")) modDivider /= 1.1;
-            if (mods.Contains("fi")) modDivider /= 1.06;
-            if (mods.Contains("hd")) modDivider /= 1.06;
-            if (mods.Contains("fl")) modDivider /= 1.06;
-            return new ModMultiplierModDivider { ModMultiplier = modMultiplier, ModDivider = modDivider };
-        }
-
-        private static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
-        {
-            var judgement = new
+            switch (mode)
             {
-                HitValue = 320,
-                HitBonusValue = 32,
-                HitBonus = 2,
-                HitPunishment = 0
-            };
+                case 1:
+                    {
+                        int countGreat = GetMaxCombo(beatmap, mode);
 
-            int totalNotes = hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss;
-            int objectCount = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+                        return new Dictionary<HitResult, int>
+                        {
+                            { HitResult.Great, countGreat - hits.Hit100 - hits.HitMiss },
+                            { HitResult.Ok, hits.Hit100 },
+                            { HitResult.Miss, hits.HitMiss }
+                        };
+                    }
 
-            const int maxScore = 1000000;
-            double bonus = 100;
-            double baseScore = 0;
-            double bonusScore = 0;
-            var modValues = ModMultiplierModDividerCalculator(mods);
+                case 3:
+                    {
+                        int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+                        return new Dictionary<HitResult, int>
+                        {
+                            [HitResult.Perfect] = totalHits - hits.Hit300 - hits.HitKatu - hits.Hit100 - hits.Hit50 - hits.HitMiss,
+                            [HitResult.Great] = hits.Hit300,
+                            [HitResult.Good] = hits.HitKatu,
+                            [HitResult.Ok] = hits.Hit100,
+                            [HitResult.Meh] = hits.Hit50,
+                            [HitResult.Miss] = hits.HitMiss
+                        };
+                    }
 
-            for (int i = 0; i < totalNotes; i++)
-            {
-                bonus = Math.Max(0, Math.Min(100, (bonus + judgement.HitBonus - judgement.HitPunishment) / modValues.ModDivider));
-                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitValue / 320.0;
-                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitBonusValue * Math.Sqrt(bonus) / 320.0;
+                default:
+                    throw new ArgumentException("Invalid mode provided.");
             }
-
-            double ratio = (double)totalNotes / objectCount;
-            double score = 0;
-            if (totalNotes == hits.HitGeki)
-            {
-                score = (int)(maxScore * modValues.ModMultiplier);
-            }
-            else if (totalNotes != hits.HitMiss)
-            {
-                score = Math.Max((int)(maxScore * modValues.ModMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
-            }
-            if (double.IsNaN(score)) score = 0;
-
-            return (int)Math.Round(score);
         }
 
         private static Dictionary<HitResult, int> CalcIfFc(IBeatmap beatmap, HitsResult hits, int mode)
@@ -394,15 +374,71 @@ namespace RealtimePPUR
                     }
 
                 default:
-                    return new Dictionary<HitResult, int>
-                    {
-                        { HitResult.Great, 0 },
-                        { HitResult.Ok, 0 },
-                        { HitResult.Good, 0 },
-                        { HitResult.Meh, 0 },
-                        { HitResult.Miss, 0 }
-                    };
+                    throw new ArgumentException("Invalid mode provided.");
             }
+        }
+
+        private struct ModMultiplierModDivider
+        {
+            public double ModMultiplier;
+            public double ModDivider;
+        }
+
+        private static ModMultiplierModDivider ModMultiplierModDividerCalculator(string[] mods)
+        {
+            double modMultiplier = 1;
+            double modDivider = 1;
+            if (mods.Contains("ez")) modMultiplier *= 0.5;
+            if (mods.Contains("nf")) modMultiplier *= 0.5;
+            if (mods.Contains("ht")) modMultiplier *= 0.5;
+            if (mods.Contains("hr")) modDivider /= 1.08;
+            if (mods.Contains("dt")) modDivider /= 1.1;
+            if (mods.Contains("nc")) modDivider /= 1.1;
+            if (mods.Contains("fi")) modDivider /= 1.06;
+            if (mods.Contains("hd")) modDivider /= 1.06;
+            if (mods.Contains("fl")) modDivider /= 1.06;
+            return new ModMultiplierModDivider { ModMultiplier = modMultiplier, ModDivider = modDivider };
+        }
+
+        private static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
+        {
+            var judgement = new
+            {
+                HitValue = 320,
+                HitBonusValue = 32,
+                HitBonus = 2,
+                HitPunishment = 0
+            };
+
+            int totalNotes = hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss;
+            int objectCount = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+
+            const int maxScore = 1000000;
+            double bonus = 100;
+            double baseScore = 0;
+            double bonusScore = 0;
+            var modValues = ModMultiplierModDividerCalculator(mods);
+
+            for (int i = 0; i < totalNotes; i++)
+            {
+                bonus = Math.Max(0, Math.Min(100, (bonus + judgement.HitBonus - judgement.HitPunishment) / modValues.ModDivider));
+                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitValue / 320.0;
+                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitBonusValue * Math.Sqrt(bonus) / 320.0;
+            }
+
+            double ratio = (double)totalNotes / objectCount;
+            double score = 0;
+            if (totalNotes == hits.HitGeki)
+            {
+                score = (int)(maxScore * modValues.ModMultiplier);
+            }
+            else if (totalNotes != hits.HitMiss)
+            {
+                score = Math.Max((int)(maxScore * modValues.ModMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
+            }
+            if (double.IsNaN(score)) score = 0;
+
+            return (int)Math.Round(score);
         }
 
         private static double GetAccuracy(IReadOnlyDictionary<HitResult, int> statistics, int mode)
@@ -417,7 +453,7 @@ namespace RealtimePPUR
                         var countMiss = statistics[HitResult.Miss];
                         var total = countGreat + countGood + countMeh + countMiss;
 
-                        return (double)((6 * countGreat) + (2 * countGood) + countMeh) / (6 * total);
+                        return (double)(6 * countGreat + (2 * countGood) + countMeh) / (6 * total);
                     }
 
                 case 1:
@@ -427,13 +463,25 @@ namespace RealtimePPUR
                         var countMiss = statistics[HitResult.Miss];
                         var total = countGreat + countGood + countMiss;
 
-                        return (double)((2 * countGreat) + countGood) / (2 * total);
+                        return (double)(2 * countGreat + countGood) / (2 * total);
                     }
 
                 case 2:
                     {
                         double hits = statistics[HitResult.Great] + statistics[HitResult.LargeTickHit] + statistics[HitResult.SmallTickHit];
                         double total = hits + statistics[HitResult.Miss] + statistics[HitResult.SmallTickMiss];
+
+                        return hits / total;
+                    }
+
+                case 3:
+                    {
+                        double hits = 6 * statistics[HitResult.Perfect] + 6 * statistics[HitResult.Great] +
+                                      4 * statistics[HitResult.Good] + 2 * statistics[HitResult.Ok] +
+                                      statistics[HitResult.Meh];
+                        double total = 6 * (statistics[HitResult.Meh] + statistics[HitResult.Ok] +
+                                            statistics[HitResult.Great] + statistics[HitResult.Miss] +
+                                            statistics[HitResult.Perfect] + statistics[HitResult.Good]);
 
                         return hits / total;
                     }
@@ -574,5 +622,6 @@ namespace RealtimePPUR
         public bool NoClassicMod { get; set; }
         public string[] Mods { get; set; } = Array.Empty<string>();
         public int? Time { get; set; }
+        public bool PplossMode { get; set; }
     }
 }
