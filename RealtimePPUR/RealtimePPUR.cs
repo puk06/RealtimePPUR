@@ -541,9 +541,16 @@ namespace RealtimePPUR
                         case 1:
                             if (sRToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "SR: " +
-                                                 sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) +
-                                                 " / " + fullSr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "\n";
+                                if (_pplossMode && _currentGamemode is 1 or 3)
+                                {
+                                    _displayFormat += "SR: " + sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "\n";
+                                }
+                                else
+                                {
+                                    _displayFormat += "SR: " +
+                                                      sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) +
+                                                      " / " + fullSr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "\n";
+                                }
                             }
 
                             break;
