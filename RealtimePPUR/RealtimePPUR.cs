@@ -433,6 +433,7 @@ namespace RealtimePPUR
                 double sspp = IsNaNWithNum(_calculatedObject.PerformanceAttributes.Total);
                 double currentPp = IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total);
                 double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIffc.Total);
+
                 int geki = hits.HitGeki;
                 int good = hits.Hit300;
                 int katu = hits.HitKatu;
