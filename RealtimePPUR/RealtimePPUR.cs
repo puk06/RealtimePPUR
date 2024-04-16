@@ -341,6 +341,8 @@ namespace RealtimePPUR
             UpdateLoop();
         }
 
+        private void RealtimePpur_Shown(object sender, EventArgs e) => TopMost = true;
+
         private async void UpdateLoop()
         {
             while (true)
