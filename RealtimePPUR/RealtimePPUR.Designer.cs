@@ -435,7 +435,6 @@ namespace RealtimePPUR
             MaximizeBox = false;
             Name = "RealtimePpur";
             Text = "RealtimePPUR";
-            TopMost = true;
             TransparencyKey = SystemColors.Control;
             Closed += RealtimePPUR_Closed;
             MouseDown += RealtimePPUR_MouseDown;
@@ -444,6 +443,7 @@ namespace RealtimePPUR
             ResumeLayout(false);
             PerformLayout();
             RoundCorners();
+            this.Shown += RealtimePpur_Shown;
         }
 
         private System.Windows.Forms.ToolStripMenuItem healthPercentageToolStripMenuItem;

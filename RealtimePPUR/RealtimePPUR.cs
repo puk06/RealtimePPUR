@@ -339,7 +339,10 @@ namespace RealtimePPUR
             updateMemoryThread.Start();
             updatePpDataThread.Start();
             UpdateLoop();
+            TopMost = true;
         }
+
+        private void RealtimePpur_Shown(object sender, EventArgs e) => TopMost = true;
 
         private async void UpdateLoop()
         {
