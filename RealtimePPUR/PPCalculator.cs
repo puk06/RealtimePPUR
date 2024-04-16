@@ -125,12 +125,6 @@ namespace RealtimePPUR
                     data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
                 }
 
-                Beatmap beatmapCurrent = new();
-                var hitObjects = _workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
-                beatmapCurrent.HitObjects.AddRange(hitObjects);
-                beatmapCurrent.ControlPointInfo = _workingBeatmap.Beatmap.ControlPointInfo;
-                beatmapCurrent.BeatmapInfo = _workingBeatmap.Beatmap.BeatmapInfo;
-
                 if (args.PplossMode && mode is 1 or 3)
                 {
                     var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, mode);
@@ -147,6 +141,12 @@ namespace RealtimePPUR
                 }
                 else
                 {
+                    Beatmap beatmapCurrent = new();
+                    var hitObjects = _workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
+                    beatmapCurrent.HitObjects.AddRange(hitObjects);
+                    beatmapCurrent.ControlPointInfo = _workingBeatmap.Beatmap.ControlPointInfo;
+                    beatmapCurrent.BeatmapInfo = _workingBeatmap.Beatmap.BeatmapInfo;
+
                     var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
                         Accuracy = args.Accuracy / 100,
@@ -475,16 +475,16 @@ namespace RealtimePPUR
                     }
 
                 case 3:
-                {
-                    double hits = 6 * statistics[HitResult.Perfect] + 6 * statistics[HitResult.Great] +
-                                  4 * statistics[HitResult.Good] + 2 * statistics[HitResult.Ok] +
-                                  statistics[HitResult.Meh];
-                    double total = 6 * (statistics[HitResult.Meh] + statistics[HitResult.Ok] +
-                                        statistics[HitResult.Great] + statistics[HitResult.Miss] +
-                                        statistics[HitResult.Perfect] + statistics[HitResult.Good]);
+                    {
+                        double hits = 6 * statistics[HitResult.Perfect] + 6 * statistics[HitResult.Great] +
+                                      4 * statistics[HitResult.Good] + 2 * statistics[HitResult.Ok] +
+                                      statistics[HitResult.Meh];
+                        double total = 6 * (statistics[HitResult.Meh] + statistics[HitResult.Ok] +
+                                            statistics[HitResult.Great] + statistics[HitResult.Miss] +
+                                            statistics[HitResult.Perfect] + statistics[HitResult.Good]);
 
-                    return hits / total;
-                }
+                        return hits / total;
+                    }
 
                 default:
                     throw new ArgumentException("Invalid mode provided.");
