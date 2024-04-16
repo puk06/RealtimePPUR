@@ -709,6 +709,7 @@ namespace RealtimePPUR
                                 case true when highestScore != 0 && currentPosition == 1:
                                     _displayFormat += "HighestDiff: You're Top!!" + "\n";
                                     break;
+
                                 case true when highestScore != 0:
                                     _displayFormat += "HighestDiff: " + (highestScore - userScore) + "\n";
                                     break;
@@ -1171,7 +1172,7 @@ namespace RealtimePPUR
                      (hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitKatu + hits.HitMiss),
                 3 => (double)(100 * (6 * hits.HitGeki + 6 * hits.Hit300 + 4 * hits.HitKatu + 2 * hits.Hit100 + hits.Hit50)) /
                      (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss + hits.HitGeki + hits.HitKatu)),
-                _ => 100
+                _ => throw new ArgumentException("Invalid mode provided.")
             };
         }
 
@@ -1202,15 +1203,20 @@ namespace RealtimePPUR
         {
             var currentPositionArray = leaderBoard.Players.ToArray();
             var currentPosition = currentPositionArray.Length + 1;
-            if (currentPosition == 1 || !leaderBoard.HasLeaderBoard) return new Dictionary<string, int>
+            if (currentPosition == 1 || !leaderBoard.HasLeaderBoard)
             {
-                { "currentPosition", 0 },
-                { "higherScore", 0 },
-                { "highestScore", 0 }
-            };
+                return new Dictionary<string, int>
+                {
+                    { "currentPosition", 0 },
+                    { "higherScore", 0 },
+                    { "highestScore", 0 }
+                };
+            }
 
             foreach (var _ in leaderBoard.Players.Where(player => player.Score <= score)) currentPosition--;
-            int higherScore = currentPosition - 2 <= 0 ? leaderBoard.Players[0].Score : leaderBoard.Players[currentPosition - 2].Score;
+            int higherScore = currentPosition - 2 <= 0
+                ? leaderBoard.Players[0].Score
+                : leaderBoard.Players[currentPosition - 2].Score;
             int highestScore = leaderBoard.Players[0].Score;
             return new Dictionary<string, int>
             {
