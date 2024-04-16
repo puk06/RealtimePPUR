@@ -1,4 +1,4 @@
-![](https://github.com/puk06/RealtimePPUR/assets/86549420/5a41b979-3176-443a-91f0-6150d9243cda)
+![](https://github.com/puk06/RealtimePPUR-old/assets/86549420/5a41b979-3176-443a-91f0-6150d9243cda)
 
 # RealtimePPUR
 このソフトウェアは、osuのゲーム内でリアルタイムPP、URと、オフセットがどれほどズレているか教えてくれるソフトです。
