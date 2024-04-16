@@ -333,7 +333,7 @@ namespace RealtimePPUR
                         var passedObjects = hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitMiss;
                         var n300 = hits.Hit300 + Math.Max(0, objects - passedObjects);
                         var countHits = objects - hits.HitMiss;
-                        var ratio = 1.0 - ((double)n300 / countHits);
+                        var ratio = 1.0 - (double)n300 / countHits;
                         var new100S = (int)Math.Ceiling(ratio * hits.HitMiss);
                         n300 += Math.Max(0, hits.HitMiss - new100S);
                         var n100 = hits.Hit100 + new100S;
@@ -369,22 +369,23 @@ namespace RealtimePPUR
 
                 case 2:
                     {
-                        int maxCombo = GetMaxCombo(beatmap, mode);
+                        int totalObjects = GetMaxCombo(beatmap, mode);
+                        int passedObjects = hits.Hit300 + hits.Hit100 + hits.HitMiss;
                         int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
                         int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
-                        var missing = maxCombo - hits.Hit300 + hits.Hit100 + hits.HitMiss;
-                        var missingFruits = Math.Max(0, missing - Math.Max(0, maxDroplets - hits.Hit100));
-                        var missingDroplets = missing - missingFruits;
-                        var nFruits = hits.Hit300 + missingFruits;
-                        var nDroplets = hits.Hit100 + missingDroplets;
-                        var nTinyDropletMisses = hits.HitKatu;
-                        var nTinyDroplets = Math.Max(0, maxTinyDroplets - nTinyDropletMisses);
+                        int missing = totalObjects - passedObjects;
+                        int missingFruits = Math.Max(0, missing - Math.Max(0, maxDroplets - hits.Hit100));
+                        int missingDroplets = missing - missingFruits;
+                        int nFruits = hits.Hit300 + missingFruits;
+                        int nDroplets = hits.Hit100 + missingDroplets;
+                        int nTinyDropletMisses = hits.HitKatu;
+                        int nTinyDroplets = Math.Max(0, maxTinyDroplets - nTinyDropletMisses);
 
                         return new Dictionary<HitResult, int>
                         {
                             { HitResult.Great, nFruits },
                             { HitResult.LargeTickHit, nDroplets },
-                            { HitResult.SmallTickHit, nTinyDroplets },
+                            { HitResult.SmallTickHit, nTinyDroplets},
                             { HitResult.SmallTickMiss, nTinyDropletMisses },
                             { HitResult.Miss, 0 }
                         };
