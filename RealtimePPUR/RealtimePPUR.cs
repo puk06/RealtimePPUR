@@ -26,6 +26,7 @@ namespace RealtimePPUR
 
         private readonly PrivateFontCollection _fontCollection;
         private readonly string _ingameoverlayPriority;
+        private readonly bool _pplossMode;
 
         private Point _mousePoint;
         private string _displayFormat;
@@ -50,7 +51,6 @@ namespace RealtimePPUR
         private int _preOsuGamemode;
         private BeatmapData _calculatedObject;
         private OsuMemoryStatus _currentStatus;
-        private bool _pplossMode = false;
 
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
@@ -354,7 +354,6 @@ namespace RealtimePPUR
         {
             try
             {
-                TopMost = true;
                 if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                 bool isplaying = _isplaying;
                 int currentGamemode = _currentGamemode;
@@ -1143,7 +1142,6 @@ namespace RealtimePPUR
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Console.WriteLine(e);
                 }
             }
@@ -1254,24 +1252,58 @@ namespace RealtimePPUR
         {
             try
             {
-                const string softwareReleasesLatest = "https://github.com/puk06/RealtimePPUR/releases/latest";
                 if (!File.Exists("./src/version"))
                 {
                     MessageBox.Show("versionファイルが存在しないのでアップデートチェックは無視されます。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                StreamReader currentVersion = new StreamReader("./src/version");
+                StreamReader currentVersion = new("./src/version");
                 string currentVersionString = await currentVersion.ReadToEndAsync();
                 currentVersion.Close();
-                var githubClient = new GitHubClient(new ProductHeaderValue("RealtimePPUR"));
-                var latestRelease = await githubClient.Repository.Release.GetLatest("puk06", "RealtimePPUR");
-                if (latestRelease.Name == currentVersionString) return;
-                DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {currentVersionString} \n更新後: {latestRelease.Name}\n\nダウンロードページを開きますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if (result == DialogResult.Yes) Process.Start(softwareReleasesLatest);
+                var latestRelease = await GetVersion(currentVersionString);
+                if (latestRelease == currentVersionString) return;
+                DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {currentVersionString} \n更新後: {latestRelease}\n\nダウンロードページを開きますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (result != DialogResult.Yes) return;
+                ProcessStartInfo args = new ProcessStartInfo
+                {
+                    FileName = "https://github.com/puk06/RealtimePPUR/releases/tag/" + latestRelease,
+                    UseShellExecute = true,
+                };
+
+                Process.Start(args);
             }
             catch
             {
                 MessageBox.Show("アップデートチェック中にエラーが発生しました", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static async Task<string> GetVersion(string currentVersion)
+        {
+            try
+            {
+                var releaseType = currentVersion.Split('-')[1];
+                var githubClient = new GitHubClient(new ProductHeaderValue("RealtimePPUR"));
+                var tags = await githubClient.Repository.GetAllTags("puk06", "RealtimePPUR");
+                string latestVersion = currentVersion;
+                foreach (var tag in tags)
+                {
+                    if (releaseType == "Release")
+                    {
+                        if (tag.Name.Split("-")[1] != "Release") return latestVersion;
+                        latestVersion = tag.Name;
+                        break;
+                    }
+
+                    latestVersion = tag.Name;
+                    break;
+                }
+
+                return latestVersion;
+            }
+            catch
+            {
+                throw new Exception("アップデートの取得に失敗しました");
             }
         }
 
