@@ -566,15 +566,13 @@ namespace RealtimePPUR
                         case 3:
                             if (currentPPToolStripMenuItem.Checked)
                             {
-                                if (ifFCPPToolStripMenuItem.Checked && currentGamemode != 3)
+                                _displayFormat += ifFCPPToolStripMenuItem.Checked switch
                                 {
-                                    _displayFormat += "PP: " + currentPp.ToString("F0") + " / " + ifFcpp.ToString("F0") +
-                                                     "pp\n";
-                                }
-                                else
-                                {
-                                    _displayFormat += "PP: " + currentPp.ToString("F0") + "pp\n";
-                                }
+                                    true when currentGamemode != 3 => "PP: " + currentPp.ToString("F0") + " / " +
+                                                                      ifFcpp.ToString("F0") + "pp\n",
+                                    true => "PP: " + currentPp.ToString("F0") + " / " + sspp.ToString("F0") + "pp\n",
+                                    _ => "PP: " + currentPp.ToString("F0") + "pp\n"
+                                };
                             }
 
                             break;
@@ -1144,6 +1142,7 @@ namespace RealtimePPUR
                 }
                 catch (Exception e)
                 {
+                    MessageBox.Show(e.Message + "\n" + e.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Console.WriteLine(e);
                 }
             }

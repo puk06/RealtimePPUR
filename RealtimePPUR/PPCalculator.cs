@@ -453,7 +453,7 @@ namespace RealtimePPUR
                         var countMiss = statistics[HitResult.Miss];
                         var total = countGreat + countGood + countMeh + countMiss;
 
-                        return (double)((6 * countGreat) + (2 * countGood) + countMeh) / (6 * total);
+                        return (double)(6 * countGreat + (2 * countGood) + countMeh) / (6 * total);
                     }
 
                 case 1:
@@ -463,7 +463,7 @@ namespace RealtimePPUR
                         var countMiss = statistics[HitResult.Miss];
                         var total = countGreat + countGood + countMiss;
 
-                        return (double)((2 * countGreat) + countGood) / (2 * total);
+                        return (double)(2 * countGreat + countGood) / (2 * total);
                     }
 
                 case 2:
@@ -473,6 +473,18 @@ namespace RealtimePPUR
 
                         return hits / total;
                     }
+
+                case 3:
+                {
+                    double hits = 6 * statistics[HitResult.Perfect] + 6 * statistics[HitResult.Great] +
+                                  4 * statistics[HitResult.Good] + 2 * statistics[HitResult.Ok] +
+                                  statistics[HitResult.Meh];
+                    double total = 6 * (statistics[HitResult.Meh] + statistics[HitResult.Ok] +
+                                        statistics[HitResult.Great] + statistics[HitResult.Miss] +
+                                        statistics[HitResult.Perfect] + statistics[HitResult.Good]);
+
+                    return hits / total;
+                }
 
                 default:
                     throw new ArgumentException("Invalid mode provided.");
