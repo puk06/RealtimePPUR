@@ -1266,7 +1266,7 @@ namespace RealtimePPUR
                 if (latestRelease == currentVersionString) return;
                 DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {currentVersionString} \n更新後: {latestRelease}\n\nダウンロードページを開きますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result != DialogResult.Yes) return;
-                ProcessStartInfo args = new ProcessStartInfo
+                ProcessStartInfo args = new()
                 {
                     FileName = "https://github.com/puk06/RealtimePPUR/releases/tag/" + latestRelease,
                     UseShellExecute = true,
@@ -1292,7 +1292,7 @@ namespace RealtimePPUR
                 {
                     if (releaseType == "Release")
                     {
-                        if (tag.Name.Split("-")[1] != "Release") return latestVersion;
+                        if (tag.Name.Split("-")[1] != "Release") continue;
                         latestVersion = tag.Name;
                         break;
                     }
@@ -1367,7 +1367,7 @@ namespace RealtimePPUR
             BackgroundImage = Properties.Resources.UR;
             _currentBackgroundImage = 3;
             RoundCorners();
-            if (_mode == 0 || _mode == 1)
+            if (_mode is 0 or 1)
             {
                 foreach (Control control in Controls)
                 {
