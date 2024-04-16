@@ -78,6 +78,7 @@ namespace RealtimePPUR
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
             var performanceCalculator = _ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
+
             data.DifficultyAttributes = difficultyAttributes;
             data.PerformanceAttributes = performanceAttributes;
             data.CurrentDifficultyAttributes = difficultyAttributes;
@@ -88,6 +89,7 @@ namespace RealtimePPUR
             data.ExpectedManiaScore = 0;
 
             var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
+
             if (resultScreen)
             {
                 var resultScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
@@ -97,9 +99,12 @@ namespace RealtimePPUR
                     Statistics = statisticsCurrent,
                     Mods = mods
                 };
+
                 var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
+
                 data.CurrentDifficultyAttributes = difficultyAttributes;
                 data.CurrentPerformanceAttributes = performanceAttributesResult;
+
                 return data;
             }
 
@@ -108,6 +113,7 @@ namespace RealtimePPUR
                 if (mode != 3)
                 {
                     var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+
                     var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
@@ -115,7 +121,9 @@ namespace RealtimePPUR
                         Statistics = staticsForCalcIfFc,
                         Mods = mods
                     };
+
                     var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
+
                     data.DifficultyAttributesIffc = difficultyAttributes;
                     data.PerformanceAttributesIffc = performanceAttributesIffc;
                     data.IfFcHitResult = staticsForCalcIfFc;
@@ -128,6 +136,7 @@ namespace RealtimePPUR
                 if (args.PplossMode && mode is 1 or 3)
                 {
                     var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, mode);
+
                     var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsLoss, mode),
@@ -135,7 +144,9 @@ namespace RealtimePPUR
                         Statistics = staticsLoss,
                         Mods = mods
                     };
+
                     var performanceAttributesCurrent = performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
+
                     data.CurrentDifficultyAttributes = difficultyAttributes;
                     data.CurrentPerformanceAttributes = performanceAttributesCurrent;
                 }
@@ -155,11 +166,13 @@ namespace RealtimePPUR
                         Mods = mods,
                         TotalScore = args.Score
                     };
+
                     var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
                     var difficultyCalculatorCurrent = _ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
                     var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
                     var performanceCalculatorCurrent = _ruleset.CreatePerformanceCalculator();
                     var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
+
                     data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                     data.CurrentPerformanceAttributes = performanceAttributesCurrent;
                 }
@@ -219,6 +232,7 @@ namespace RealtimePPUR
                 case 3:
                     {
                         int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+
                         return new Dictionary<HitResult, int>
                         {
                             [HitResult.Perfect] = totalHits,
@@ -292,6 +306,7 @@ namespace RealtimePPUR
                 case 3:
                     {
                         int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+
                         return new Dictionary<HitResult, int>
                         {
                             [HitResult.Perfect] = totalHits - hits.Hit300 - hits.HitKatu - hits.Hit100 - hits.Hit50 - hits.HitMiss,
@@ -388,6 +403,7 @@ namespace RealtimePPUR
         {
             double modMultiplier = 1;
             double modDivider = 1;
+
             if (mods.Contains("ez")) modMultiplier *= 0.5;
             if (mods.Contains("nf")) modMultiplier *= 0.5;
             if (mods.Contains("ht")) modMultiplier *= 0.5;
@@ -397,6 +413,7 @@ namespace RealtimePPUR
             if (mods.Contains("fi")) modDivider /= 1.06;
             if (mods.Contains("hd")) modDivider /= 1.06;
             if (mods.Contains("fl")) modDivider /= 1.06;
+
             return new ModMultiplierModDivider { ModMultiplier = modMultiplier, ModDivider = modDivider };
         }
 
@@ -436,6 +453,7 @@ namespace RealtimePPUR
             {
                 score = Math.Max((int)(maxScore * modValues.ModMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
             }
+
             if (double.IsNaN(score)) score = 0;
 
             return (int)Math.Round(score);
