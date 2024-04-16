@@ -382,13 +382,13 @@ namespace RealtimePPUR
                         int nTinyDroplets = Math.Max(0, maxTinyDroplets - nTinyDropletMisses);
 
                         return new Dictionary<HitResult, int>
-                         {
-                             { HitResult.Great, nFruits },
-                             { HitResult.LargeTickHit, nDroplets },
-                             { HitResult.SmallTickHit, nTinyDroplets},
-                             { HitResult.SmallTickMiss, nTinyDropletMisses },
-                             { HitResult.Miss, 0 }
-                         };
+                        {
+                            { HitResult.Great, nFruits },
+                            { HitResult.LargeTickHit, nDroplets },
+                            { HitResult.SmallTickHit, nTinyDroplets},
+                            { HitResult.SmallTickMiss, nTinyDropletMisses },
+                            { HitResult.Miss, 0 }
+                        };
                     }
 
                 default:
