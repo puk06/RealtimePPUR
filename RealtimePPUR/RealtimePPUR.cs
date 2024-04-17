@@ -27,6 +27,7 @@ namespace RealtimePPUR
         private readonly PrivateFontCollection _fontCollection;
         private readonly string _ingameoverlayPriority;
         private readonly bool _pplossMode;
+        private const string CurrentVersion = "v1.0.0-Release";
 
         private Point _mousePoint;
         private string _displayFormat;
@@ -1255,17 +1256,9 @@ namespace RealtimePPUR
         {
             try
             {
-                if (!File.Exists("./src/version"))
-                {
-                    MessageBox.Show("versionファイルが存在しないのでアップデートチェックは無視されます。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                StreamReader currentVersion = new("./src/version");
-                string currentVersionString = await currentVersion.ReadToEndAsync();
-                currentVersion.Close();
-                var latestRelease = await GetVersion(currentVersionString);
-                if (latestRelease == currentVersionString) return;
-                DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {currentVersionString} \n更新後: {latestRelease}\n\nダウンロードページを開きますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                var latestRelease = await GetVersion(CurrentVersion);
+                if (latestRelease == CurrentVersion) return;
+                DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {CurrentVersion} \n更新後: {latestRelease}\n\nダウンロードページを開きますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result != DialogResult.Yes) return;
                 ProcessStartInfo args = new()
                 {
