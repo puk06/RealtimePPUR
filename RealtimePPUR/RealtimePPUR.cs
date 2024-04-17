@@ -1186,7 +1186,7 @@ namespace RealtimePPUR
             int count = 0;
             while (reader.ReadLine() is { } line)
             {
-                if (count > 20) return Task.FromResult(-1);
+                if (count > 20) return Task.FromResult(0);
                 if (line.StartsWith("Mode")) return Task.FromResult(int.Parse(line.Split(':')[1].Trim()));
                 count++;
             }
