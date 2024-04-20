@@ -14,8 +14,6 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="icon.ico" />
-		<EmbeddedResource Include="./Fonts/MainFont.ttf" />
-		<EmbeddedResource Include="./Fonts/OverlayFont.otf" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

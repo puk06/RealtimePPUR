@@ -12,7 +12,6 @@ using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,7 +22,7 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.1-Release";
+        private const string CurrentVersion = "v1.0.0-Release";
 
         private System.Windows.Forms.Label _currentPp, _sr, _sspp, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
@@ -98,11 +97,6 @@ namespace RealtimePPUR
             { "left", 0 },
             { "top", 0 }
         };
-        private readonly string[] _fonts =
-        {
-            "RealtimePPUR...Fonts.MainFont.ttf",
-            "RealtimePPUR...Fonts.OverlayFont.otf"
-        };
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -119,18 +113,8 @@ namespace RealtimePPUR
         public RealtimePpur()
         {
             _fontCollection = new PrivateFontCollection();
-            var assembly = Assembly.GetExecutingAssembly();
-            foreach (var fontName in _fonts)
-            {
-                Stream stream = assembly.GetManifestResourceStream(fontName);
-                byte[] fontBytes = new byte[stream.Length];
-                stream.Read(fontBytes, 0, (int)stream.Length);
-                IntPtr data = Marshal.AllocCoTaskMem(fontBytes.Length);
-                Marshal.Copy(fontBytes, 0, data, fontBytes.Length);
-                _fontCollection.AddMemoryFont(data, fontBytes.Length);
-                Marshal.FreeCoTaskMem(data);
-            }
-
+            _fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
+            _fontCollection.AddFontFile("./src/Fonts/Nexa Light.otf");
             InitializeComponent();
 
             if (!File.Exists("Config.cfg"))
