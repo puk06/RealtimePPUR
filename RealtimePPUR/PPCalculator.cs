@@ -211,8 +211,9 @@ namespace RealtimePPUR
                 case 2:
                     {
                         int maxCombo = GetMaxCombo(beatmap, mode);
-                        int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
-                        int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
+                        var juiceStreams = beatmap.HitObjects.OfType<JuiceStream>().ToList();
+                        int maxTinyDroplets = juiceStreams.Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
+                        int maxDroplets = juiceStreams.Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
                         int maxFruits = beatmap.HitObjects.Sum(h => h is Fruit ? 1 : (h as JuiceStream)?.NestedHitObjects.Count(n => n is Fruit) ?? 0);
                         int countDroplets = Math.Max(0, maxDroplets);
                         int countFruits = maxFruits + (maxDroplets - countDroplets);
