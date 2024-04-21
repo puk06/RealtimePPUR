@@ -422,13 +422,10 @@ namespace RealtimePPUR
 
         private static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
         {
-            var judgement = new
-            {
-                HitValue = 320,
-                HitBonusValue = 32,
-                HitBonus = 2,
-                HitPunishment = 0
-            };
+            const int HitValue = 320;
+            const int HitBonusValue = 32;
+            const int HitBonus = 2;
+            const int HitPunishment = 0;
 
             int totalNotes = hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss;
             int objectCount = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
@@ -441,9 +438,9 @@ namespace RealtimePPUR
 
             for (int i = 0; i < totalNotes; i++)
             {
-                bonus = Math.Max(0, Math.Min(100, (bonus + judgement.HitBonus - judgement.HitPunishment) / modValues.ModDivider));
-                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitValue / 320.0;
-                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitBonusValue * Math.Sqrt(bonus) / 320.0;
+                bonus = Math.Max(0, Math.Min(100, (bonus + HitBonus - HitPunishment) / modValues.ModDivider));
+                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * HitValue / 320.0;
+                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * HitBonusValue * Math.Sqrt(bonus) / 320.0;
             }
 
             double ratio = (double)totalNotes / objectCount;
