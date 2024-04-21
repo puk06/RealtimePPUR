@@ -436,22 +436,27 @@ namespace RealtimePPUR
             double bonusScore = 0;
             var modValues = ModMultiplierModDividerCalculator(mods);
 
+            double hitValueRatio = HitValue / 320.0;
+            double hitBounsValueRatio = HitBonusValue / 320;
+            double objectCountRatio = 0.5 / objectCount;
+            double modMultiplier = modValues.ModMultiplier;
+
             for (int i = 0; i < totalNotes; i++)
             {
                 bonus = Math.Max(0, Math.Min(100, (bonus + HitBonus - HitPunishment) / modValues.ModDivider));
-                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * HitValue / 320.0;
-                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * HitBonusValue * Math.Sqrt(bonus) / 320.0;
+                baseScore += maxScore * modMultiplier * objectCountRatio * hitValueRatio;
+                bonusScore += maxScore * modMultiplier * objectCountRatio * hitBounsValueRatio * Math.Sqrt(bonus);
             }
 
             double ratio = (double)totalNotes / objectCount;
             double score = 0;
             if (totalNotes == hits.HitGeki)
             {
-                score = (int)(maxScore * modValues.ModMultiplier);
+                score = (int)(maxScore * modMultiplier);
             }
             else if (totalNotes != hits.HitMiss)
             {
-                score = Math.Max((int)(maxScore * modValues.ModMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
+                score = Math.Max((int)(maxScore * modMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
             }
 
             if (double.IsNaN(score)) score = 0;
