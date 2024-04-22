@@ -211,8 +211,9 @@ namespace RealtimePPUR
                 case 2:
                     {
                         int maxCombo = GetMaxCombo(beatmap, mode);
-                        int maxTinyDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
-                        int maxDroplets = beatmap.HitObjects.OfType<JuiceStream>().Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
+                        var juiceStreams = beatmap.HitObjects.OfType<JuiceStream>().ToList();
+                        int maxTinyDroplets = juiceStreams.Sum(s => s.NestedHitObjects.OfType<TinyDroplet>().Count());
+                        int maxDroplets = juiceStreams.Sum(s => s.NestedHitObjects.OfType<Droplet>().Count()) - maxTinyDroplets;
                         int maxFruits = beatmap.HitObjects.Sum(h => h is Fruit ? 1 : (h as JuiceStream)?.NestedHitObjects.Count(n => n is Fruit) ?? 0);
                         int countDroplets = Math.Max(0, maxDroplets);
                         int countFruits = maxFruits + (maxDroplets - countDroplets);
@@ -422,13 +423,10 @@ namespace RealtimePPUR
 
         private static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
         {
-            var judgement = new
-            {
-                HitValue = 320,
-                HitBonusValue = 32,
-                HitBonus = 2,
-                HitPunishment = 0
-            };
+            const int HitValue = 320;
+            const int HitBonusValue = 32;
+            const int HitBonus = 2;
+            const int HitPunishment = 0;
 
             int totalNotes = hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss;
             int objectCount = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
@@ -439,22 +437,27 @@ namespace RealtimePPUR
             double bonusScore = 0;
             var modValues = ModMultiplierModDividerCalculator(mods);
 
+            double hitValueRatio = HitValue / 320.0;
+            double hitBounsValueRatio = HitBonusValue / 320;
+            double objectCountRatio = 0.5 / objectCount;
+            double modMultiplier = modValues.ModMultiplier;
+
             for (int i = 0; i < totalNotes; i++)
             {
-                bonus = Math.Max(0, Math.Min(100, (bonus + judgement.HitBonus - judgement.HitPunishment) / modValues.ModDivider));
-                baseScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitValue / 320.0;
-                bonusScore += maxScore * modValues.ModMultiplier * 0.5 / objectCount * judgement.HitBonusValue * Math.Sqrt(bonus) / 320.0;
+                bonus = Math.Max(0, Math.Min(100, (bonus + HitBonus - HitPunishment) / modValues.ModDivider));
+                baseScore += maxScore * modMultiplier * objectCountRatio * hitValueRatio;
+                bonusScore += maxScore * modMultiplier * objectCountRatio * hitBounsValueRatio * Math.Sqrt(bonus);
             }
 
             double ratio = (double)totalNotes / objectCount;
             double score = 0;
             if (totalNotes == hits.HitGeki)
             {
-                score = (int)(maxScore * modValues.ModMultiplier);
+                score = (int)(maxScore * modMultiplier);
             }
             else if (totalNotes != hits.HitMiss)
             {
-                score = Math.Max((int)(maxScore * modValues.ModMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
+                score = Math.Max((int)(maxScore * modMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
             }
 
             if (double.IsNaN(score)) score = 0;
