@@ -22,7 +22,7 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.2-beta.1";
+        private const string CurrentVersion = "v1.0.2-beta.2";
 
         private System.Windows.Forms.Label _currentPp, _sr, _sspp, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
@@ -116,6 +116,8 @@ namespace RealtimePPUR
             _fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
             _fontCollection.AddFontFile("./src/Fonts/Nexa Light.otf");
             InitializeComponent();
+
+            if (File.Exists("Error.log")) File.Delete("Error.log");
 
             if (!File.Exists("Config.cfg"))
             {
