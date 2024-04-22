@@ -22,7 +22,7 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.1-Release";
+        private const string CurrentVersion = "v1.0.2-Release";
 
         private System.Windows.Forms.Label _currentPp, _sr, _sspp, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
@@ -1237,7 +1237,7 @@ namespace RealtimePPUR
                 foreach (string readLine in File.ReadLines(file))
                 {
                     if (!readLine.StartsWith("BeatmapDirectory")) continue;
-                    return Path.Combine(osuDirectory, readLine.Split('=')[1].Trim(' '));
+                    return readLine.Split('=')[1].Trim(' ');
                 }
             }
             return Path.Combine(osuDirectory, "Songs");
@@ -1264,7 +1264,7 @@ namespace RealtimePPUR
                 ProcessStartInfo args = new()
                 {
                     FileName = "https://github.com/puk06/RealtimePPUR/releases/tag/" + latestRelease,
-                    UseShellExecute = true,
+                    UseShellExecute = true
                 };
 
                 Process.Start(args);
