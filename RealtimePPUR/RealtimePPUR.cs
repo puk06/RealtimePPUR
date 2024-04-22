@@ -444,7 +444,9 @@ namespace RealtimePPUR
                 int miss = hits.HitMiss;
 
                 int ifFcGood = _calculatedObject.IfFcHitResult[HitResult.Great];
-                int ifFcOk = currentGamemode == 2 ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit] : _calculatedObject.IfFcHitResult[HitResult.Ok];
+                int ifFcOk = currentGamemode == 2
+                    ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit]
+                    : _calculatedObject.IfFcHitResult[HitResult.Ok];
                 int ifFcBad = currentGamemode switch
                 {
                     0 => _calculatedObject.IfFcHitResult[HitResult.Meh],
@@ -547,13 +549,17 @@ namespace RealtimePPUR
                             {
                                 if (_pplossMode && _currentGamemode is 1 or 3)
                                 {
-                                    _displayFormat += "SR: " + sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "\n";
+                                    _displayFormat += "SR: " +
+                                                      sr.ToString(CultureInfo.CurrentCulture =
+                                                          new CultureInfo("en-us")) + "\n";
                                 }
                                 else
                                 {
                                     _displayFormat += "SR: " +
-                                                      sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) +
-                                                      " / " + fullSr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "\n";
+                                                      sr.ToString(CultureInfo.CurrentCulture =
+                                                          new CultureInfo("en-us")) +
+                                                      " / " + fullSr.ToString(CultureInfo.CurrentCulture =
+                                                          new CultureInfo("en-us")) + "\n";
                                 }
                             }
 
@@ -663,7 +669,8 @@ namespace RealtimePPUR
                             if (avgOffsetToolStripMenuItem.Checked)
                             {
                                 _displayFormat += "AvgOffset: " +
-                                                 _avgOffset.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "\n";
+                                                  _avgOffset.ToString(CultureInfo.CurrentCulture =
+                                                      new CultureInfo("en-us")) + "\n";
                             }
 
                             break;
@@ -671,7 +678,8 @@ namespace RealtimePPUR
                         case 11:
                             if (progressToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "Progress: " + (int)Math.Round(_baseAddresses.GeneralData.AudioTime / _baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
+                                _displayFormat += "Progress: " + (int)Math.Round(_baseAddresses.GeneralData.AudioTime /
+                                    _baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
                             }
 
                             break;
@@ -740,7 +748,8 @@ namespace RealtimePPUR
                     {
                         Process osuProcess = processes[0];
                         IntPtr osuMainWindowHandle = osuProcess.MainWindowHandle;
-                        if (GetWindowRect(osuMainWindowHandle, out Rect rect) && _baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing &&
+                        if (GetWindowRect(osuMainWindowHandle, out Rect rect) &&
+                            _baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing &&
                             GetForegroundWindow() == osuMainWindowHandle && osuMainWindowHandle != IntPtr.Zero)
                         {
                             if (!_nowPlaying)
@@ -764,7 +773,8 @@ namespace RealtimePPUR
                             _ur.Visible = false;
                             Region = null;
                             Size = new Size(inGameValue.Width, inGameValue.Height);
-                            Location = new Point(rect.Left + _osuModeValue["left"] + 2, rect.Top + _osuModeValue["top"]);
+                            Location = new Point(rect.Left + _osuModeValue["left"] + 2,
+                                rect.Top + _osuModeValue["top"]);
                         }
                         else if (_nowPlaying)
                         {
@@ -934,8 +944,9 @@ namespace RealtimePPUR
                     _avgoffsethelp.Visible = true;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                ErrorLogger(e);
                 if (!_nowPlaying) inGameValue.Text = "";
                 _sr.Text = "0";
                 _sspp.Text = "0";
@@ -991,7 +1002,7 @@ namespace RealtimePPUR
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    ErrorLogger(e);
                 }
             }
         }
@@ -1147,7 +1158,7 @@ namespace RealtimePPUR
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    ErrorLogger(e);
                 }
             }
         }
@@ -1302,6 +1313,23 @@ namespace RealtimePPUR
             catch
             {
                 throw new Exception("アップデートの取得に失敗しました");
+            }
+        }
+
+        private static void ErrorLogger(Exception error)
+        {
+            try
+            {
+                const string filePath = "Error.log";
+                StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
+                sw.WriteLine("[" + DateTime.Now + "]");
+                sw.WriteLine(error);
+                sw.WriteLine();
+                sw.Close();
+            }
+            catch
+            {
+                Console.WriteLine("エラーログの書き込みに失敗しました");
             }
         }
 
