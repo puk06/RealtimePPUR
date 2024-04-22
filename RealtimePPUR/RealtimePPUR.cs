@@ -1237,7 +1237,8 @@ namespace RealtimePPUR
                 foreach (string readLine in File.ReadLines(file))
                 {
                     if (!readLine.StartsWith("BeatmapDirectory")) continue;
-                    return readLine.Split('=')[1].Trim(' ');
+                    string path = readLine.Split('=')[1].Trim(' ');
+                    return path == "Songs" ? Path.Combine(osuDirectory, "Songs") : path;
                 }
             }
             return Path.Combine(osuDirectory, "Songs");
