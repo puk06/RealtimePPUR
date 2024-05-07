@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using DiscordRPC;
+using Octokit;
 using osu.Game.IO;
 using osu.Game.Rulesets.Scoring;
 using OsuMemoryDataProvider;
@@ -22,7 +23,7 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.2-beta.2";
+        private const string CurrentVersion = "v1.0.2-beta.3";
 
         private System.Windows.Forms.Label _currentPp, _sr, _sspp, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
@@ -53,6 +54,8 @@ namespace RealtimePPUR
         private int _preOsuGamemode;
         private BeatmapData _calculatedObject;
         private OsuMemoryStatus _currentStatus;
+        private static DiscordRpcClient client;
+        private readonly Stopwatch stopwatch = new();
 
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
@@ -140,6 +143,7 @@ namespace RealtimePPUR
                 higherScoreToolStripMenuItem.Checked = false;
                 highestScoreToolStripMenuItem.Checked = false;
                 userScoreToolStripMenuItem.Checked = false;
+                discordRichPresenceToolStripMenuItem.Checked = false;
                 _pplossMode = false;
                 _ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
                 inGameValue.Font = new Font(_fontCollection.Families[0], 19F);
@@ -216,6 +220,7 @@ namespace RealtimePPUR
                 highestScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHESTSCOREDIFF", out string test20) && test20 == "true";
                 userScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("USERSCORE", out string test21) && test21 == "true";
                 _pplossMode = _configDictionary.TryGetValue("PPLOSSMODE", out string test22) && test22 == "true";
+                discordRichPresenceToolStripMenuItem.Checked = _configDictionary.TryGetValue("DISCORDRICHPRESENCE", out string test23) && test23 == "true";
                 _ingameoverlayPriority = _configDictionary.TryGetValue("INGAMEOVERLAYPRIORITY", out string test16) ? test16 : "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
 
                 if (_configDictionary.TryGetValue("USECUSTOMFONT", out string test12) && test12 == "true")
@@ -340,8 +345,10 @@ namespace RealtimePPUR
             }
             Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
             Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
+            Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
             updateMemoryThread.Start();
             updatePpDataThread.Start();
+            updateDiscordRichPresenceThread.Start();
             UpdateLoop();
         }
 
@@ -989,11 +996,15 @@ namespace RealtimePPUR
                     _sreader.TryRead(_baseAddresses.GeneralData);
                     _sreader.TryRead(_baseAddresses.LeaderBoard);
                     _sreader.TryRead(_baseAddresses.ResultsScreen);
+                    _sreader.TryRead(_baseAddresses.BanchoUser);
 
                     _currentStatus = _baseAddresses.GeneralData.OsuStatus;
 
                     if (_currentStatus == OsuMemoryStatus.Playing) _isplaying = true;
                     else if (_currentStatus != OsuMemoryStatus.ResultsScreen) _isplaying = false;
+
+                    if (_currentStatus == OsuMemoryStatus.Playing && !_baseAddresses.Player.IsReplay) stopwatch.Start();
+                    else stopwatch.Reset();
                     _isResultScreen = _currentStatus == OsuMemoryStatus.ResultsScreen;
                     _currentOsuGamemode = _currentStatus switch
                     {
@@ -1163,6 +1174,96 @@ namespace RealtimePPUR
                     ErrorLogger(e);
                 }
             }
+        }
+
+        private void UpdateDiscordRichPresence()
+        {
+            client = new DiscordRpcClient("1237279508239749211");
+            client.Initialize();
+
+            while (true)
+            {
+                Thread.Sleep(5000);
+                if (!discordRichPresenceToolStripMenuItem.Checked) continue;
+
+                if (_baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing && !_baseAddresses.Player.IsReplay)
+                {
+                    HitsResult hits = new()
+                    {
+                        HitGeki = _baseAddresses.Player.HitGeki,
+                        Hit300 = _baseAddresses.Player.Hit300,
+                        HitKatu = _baseAddresses.Player.HitKatu,
+                        Hit100 = _baseAddresses.Player.Hit100,
+                        Hit50 = _baseAddresses.Player.Hit50,
+                        HitMiss = _baseAddresses.Player.HitMiss,
+                        Combo = _baseAddresses.Player.MaxCombo,
+                        Score = _baseAddresses.Player.Score
+                    };
+
+                    client.SetPresence(new()
+                    {
+                        Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
+                        State = _baseAddresses.Beatmap.MapString,
+                        Timestamps = new Timestamps()
+                        {
+                            Start = DateTime.UtcNow - stopwatch.Elapsed
+                        },
+                        Assets = new Assets()
+                        {
+                            LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
+                            LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                            SmallImageKey = "https://i.imgur.com/vWySyXD.png",
+                            SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  {_baseAddresses.Player.Combo}x  {convertHits(_baseAddresses.Player.Mode, hits)}"
+                        }
+                    });
+                }
+                else
+                {
+                    client.SetPresence(new()
+                    {
+                        Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
+                        State = _baseAddresses.Beatmap.MapString,
+                        Assets = new Assets()
+                        {
+                            LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
+                            LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
+                        }
+                    });
+                }
+            }
+        }
+
+        private string convertStatus(OsuMemoryStatus status)
+        {
+            return status switch
+            {
+                OsuMemoryStatus.EditingMap => "Editing maps",
+                OsuMemoryStatus.GameShutdownAnimation => "Shutdown osu!",
+                OsuMemoryStatus.GameStartupAnimation => "Startup osu!",
+                OsuMemoryStatus.MainMenu => "Main Menu",
+                OsuMemoryStatus.MultiplayerRoom => "Multiplayer",
+                OsuMemoryStatus.MultiplayerResultsscreen => "Multiplayer Results",
+                OsuMemoryStatus.MultiplayerSongSelect => "Multiplayer Song Select",
+                OsuMemoryStatus.NotRunning => "Not Running osu!",
+                OsuMemoryStatus.OsuDirect => "Searching maps",
+                OsuMemoryStatus.Playing => "Playing maps",
+                OsuMemoryStatus.ResultsScreen => "Results",
+                OsuMemoryStatus.SongSelect => "Song Select",
+                OsuMemoryStatus.Unknown => "Unknown",
+                _ => "Unknown"
+            };
+        }
+
+        private string convertHits(int mode, HitsResult hits)
+        {
+            return mode switch
+            {
+                0 => $"[{hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}]",
+                1 => $"[{hits.Hit300}/{hits.Hit100}/{hits.HitMiss}]",
+                2 => $"[{hits.Hit300} / {hits.Hit100} / {hits.Hit50} / {hits.HitMiss}]",
+                3 => $"[{hits.HitGeki}/{hits.Hit300}/{hits.HitKatu}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}]",
+                _ => $"[{hits.Hit300}/{hits.Hit100} / {hits.Hit50} / {hits.HitMiss}]"
+            };
         }
 
         private static string[] ParseMods(int mods)
@@ -1603,5 +1704,7 @@ namespace RealtimePPUR
         private void avgOffsetToolStripMenuItem_Click(object sender, EventArgs e) => avgOffsetToolStripMenuItem.Checked = !avgOffsetToolStripMenuItem.Checked;
 
         private void healthPercentageToolStripMenuItem_Click(object sender, EventArgs e) => healthPercentageToolStripMenuItem.Checked = !healthPercentageToolStripMenuItem.Checked;
+
+        private void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e) => discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
     }
 }

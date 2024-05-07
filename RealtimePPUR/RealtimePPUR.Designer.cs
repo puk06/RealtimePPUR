@@ -71,6 +71,7 @@ namespace RealtimePPUR
             resetFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             inGameValue = new System.Windows.Forms.Label();
+            discordRichPresenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -193,15 +194,15 @@ namespace RealtimePPUR
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(156, 180);
+            contextMenuStrip1.Size = new Size(191, 224);
             // 
             // modeToolStripMenuItem
             // 
             modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { realtimePPURToolStripMenuItem, offsetHelperToolStripMenuItem, realtimePPToolStripMenuItem });
             modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            modeToolStripMenuItem.Size = new Size(155, 22);
+            modeToolStripMenuItem.Size = new Size(190, 22);
             modeToolStripMenuItem.Text = "Mode";
             // 
             // realtimePPURToolStripMenuItem
@@ -228,7 +229,7 @@ namespace RealtimePPUR
             // osuModeToolStripMenuItem
             // 
             osuModeToolStripMenuItem.Name = "osuModeToolStripMenuItem";
-            osuModeToolStripMenuItem.Size = new Size(155, 22);
+            osuModeToolStripMenuItem.Size = new Size(190, 22);
             osuModeToolStripMenuItem.Text = "osu! mode";
             osuModeToolStripMenuItem.Click += osuModeToolStripMenuItem_Click;
             // 
@@ -236,7 +237,7 @@ namespace RealtimePPUR
             // 
             inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem });
             inGameOverlayToolStripMenuItem.Name = "inGameOverlayToolStripMenuItem";
-            inGameOverlayToolStripMenuItem.Size = new Size(155, 22);
+            inGameOverlayToolStripMenuItem.Size = new Size(190, 22);
             inGameOverlayToolStripMenuItem.Text = "InGameOverlay";
             // 
             // sRToolStripMenuItem
@@ -361,35 +362,35 @@ namespace RealtimePPUR
             // changePriorityToolStripMenuItem
             // 
             changePriorityToolStripMenuItem.Name = "changePriorityToolStripMenuItem";
-            changePriorityToolStripMenuItem.Size = new Size(155, 22);
+            changePriorityToolStripMenuItem.Size = new Size(190, 22);
             changePriorityToolStripMenuItem.Text = "Change Priority";
             changePriorityToolStripMenuItem.Click += changePriorityToolStripMenuItem_Click;
             // 
             // changeFontToolStripMenuItem
             // 
             changeFontToolStripMenuItem.Name = "changeFontToolStripMenuItem";
-            changeFontToolStripMenuItem.Size = new Size(155, 22);
+            changeFontToolStripMenuItem.Size = new Size(190, 22);
             changeFontToolStripMenuItem.Text = "Change Font";
             changeFontToolStripMenuItem.Click += changeFontToolStripMenuItem_Click;
             // 
             // loadFontToolStripMenuItem
             // 
             loadFontToolStripMenuItem.Name = "loadFontToolStripMenuItem";
-            loadFontToolStripMenuItem.Size = new Size(155, 22);
+            loadFontToolStripMenuItem.Size = new Size(190, 22);
             loadFontToolStripMenuItem.Text = "Load Font";
             loadFontToolStripMenuItem.Click += loadFontToolStripMenuItem_Click;
             // 
             // resetFontToolStripMenuItem
             // 
             resetFontToolStripMenuItem.Name = "resetFontToolStripMenuItem";
-            resetFontToolStripMenuItem.Size = new Size(155, 22);
+            resetFontToolStripMenuItem.Size = new Size(190, 22);
             resetFontToolStripMenuItem.Text = "Reset Font";
             resetFontToolStripMenuItem.Click += resetFontToolStripMenuItem_Click_1;
             // 
             // closeToolStripMenuItem
             // 
             closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            closeToolStripMenuItem.Size = new Size(155, 22);
+            closeToolStripMenuItem.Size = new Size(190, 22);
             closeToolStripMenuItem.Text = "Close";
             closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
             // 
@@ -403,8 +404,16 @@ namespace RealtimePPUR
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
+            // discordRichPresenceToolStripMenuItem
+            // 
+            discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
+            discordRichPresenceToolStripMenuItem.Size = new Size(190, 22);
+            discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
+            discordRichPresenceToolStripMenuItem.Click += discordRichPresenceToolStripMenuItem_Click;
+            // 
             // RealtimePpur
             // 
+
             this._avgoffsethelp.Font = new System.Drawing.Font(_fontCollection.Families[1], 20F, System.Drawing.FontStyle.Bold);
             this._ur.Font = new System.Drawing.Font(_fontCollection.Families[1], 25F, System.Drawing.FontStyle.Bold);
             this._avgoffset.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
@@ -437,13 +446,13 @@ namespace RealtimePPUR
             Text = "RealtimePPUR";
             TransparencyKey = SystemColors.Control;
             Closed += RealtimePPUR_Closed;
+            Shown += RealtimePpur_Shown;
             MouseDown += RealtimePPUR_MouseDown;
             MouseMove += RealtimePPUR_MouseMove;
             contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
             RoundCorners();
-            this.Shown += RealtimePpur_Shown;
         }
 
         private System.Windows.Forms.ToolStripMenuItem healthPercentageToolStripMenuItem;
@@ -479,6 +488,7 @@ namespace RealtimePPUR
         private System.Windows.Forms.ToolStripMenuItem higherScoreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem highestScoreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem userScoreToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem discordRichPresenceToolStripMenuItem;
     }
 }
 
