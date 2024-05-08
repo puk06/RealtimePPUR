@@ -55,8 +55,8 @@ namespace RealtimePPUR
         private int _preOsuGamemode;
         private BeatmapData _calculatedObject;
         private OsuMemoryStatus _currentStatus;
-        private static DiscordRpcClient client;
-        private readonly Stopwatch stopwatch = new();
+        private static DiscordRpcClient _client;
+        private readonly Stopwatch _stopwatch = new();
         private HitsResult _previousHits = new();
 
         private readonly Dictionary<string, string> _configDictionary = new();
@@ -1005,8 +1005,8 @@ namespace RealtimePPUR
                     if (_currentStatus == OsuMemoryStatus.Playing) _isplaying = true;
                     else if (_currentStatus != OsuMemoryStatus.ResultsScreen) _isplaying = false;
 
-                    if (_currentStatus == OsuMemoryStatus.Playing && !_baseAddresses.Player.IsReplay) stopwatch.Start();
-                    else stopwatch.Reset();
+                    if (_currentStatus == OsuMemoryStatus.Playing && !_baseAddresses.Player.IsReplay) _stopwatch.Start();
+                    else _stopwatch.Reset();
                     _isResultScreen = _currentStatus == OsuMemoryStatus.ResultsScreen;
                     _currentOsuGamemode = _currentStatus switch
                     {
@@ -1129,10 +1129,6 @@ namespace RealtimePPUR
                         }
                     };
 
-                    if (hits.Equals(_previousHits)) continue;
-
-                    _previousHits = hits.Clone();
-
                     if (isplaying)
                     {
                         hits.HitGeki = _baseAddresses.Player.HitGeki;
@@ -1144,6 +1140,9 @@ namespace RealtimePPUR
                         hits.Combo = _baseAddresses.Player.MaxCombo;
                         hits.Score = _baseAddresses.Player.Score;
                     }
+
+                    if (hits.Equals(_previousHits) && status == OsuMemoryStatus.Playing) continue;
+                    if (status == OsuMemoryStatus.Playing) _previousHits = hits.Clone();
 
                     string[] mods = status switch
                     {
@@ -1184,8 +1183,8 @@ namespace RealtimePPUR
 
         private void UpdateDiscordRichPresence()
         {
-            client = new DiscordRpcClient("1237279508239749211");
-            client.Initialize();
+            _client = new DiscordRpcClient("1237279508239749211");
+            _client.Initialize();
 
             while (true)
             {
@@ -1207,13 +1206,13 @@ namespace RealtimePPUR
                 switch (_baseAddresses.GeneralData.OsuStatus)
                 {
                     case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
-                        client.SetPresence(new()
+                        _client.SetPresence(new()
                         {
                             Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
                             State = _baseAddresses.Beatmap.MapString,
                             Timestamps = new Timestamps()
                             {
-                                Start = DateTime.UtcNow - stopwatch.Elapsed
+                                Start = DateTime.UtcNow - _stopwatch.Elapsed
                             },
                             Assets = new Assets()
                             {
@@ -1226,7 +1225,7 @@ namespace RealtimePPUR
                         break;
                     case OsuMemoryStatus.Playing when
                         _baseAddresses.Player.IsReplay:
-                        client.SetPresence(new()
+                        _client.SetPresence(new()
                         {
                             Details = $"Watching {_baseAddresses.Player.Username}'s play",
                             State = _baseAddresses.Beatmap.MapString,
@@ -1240,7 +1239,7 @@ namespace RealtimePPUR
                         });
                         break;
                     default:
-                        client.SetPresence(new()
+                        _client.SetPresence(new()
                         {
                             Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
                             State = _baseAddresses.Beatmap.MapString,
