@@ -57,6 +57,7 @@ namespace RealtimePPUR
         private OsuMemoryStatus _currentStatus;
         private static DiscordRpcClient client;
         private readonly Stopwatch stopwatch = new();
+        private HitsResult _previousHits = new();
 
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
@@ -1128,6 +1129,10 @@ namespace RealtimePPUR
                         }
                     };
 
+                    if (hits.Equals(_previousHits)) continue;
+
+                    _previousHits = hits.Clone();
+
                     if (isplaying)
                     {
                         hits.HitGeki = _baseAddresses.Player.HitGeki;
@@ -1142,12 +1147,12 @@ namespace RealtimePPUR
 
                     string[] mods = status switch
                     {
-                        OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value),
-                        OsuMemoryStatus.ResultsScreen => ParseMods(_baseAddresses.ResultsScreen.Mods.Value),
-                        OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods),
-                        _ => ParseMods(_baseAddresses.GeneralData.Mods)
+                        OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value)[0],
+                        OsuMemoryStatus.ResultsScreen => ParseMods(_baseAddresses.ResultsScreen.Mods.Value)[0],
+                        OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods)[0],
+                        _ => ParseMods(_baseAddresses.GeneralData.Mods)[0]
                     };
-                    if (isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value);
+                    if (isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value)[0];
 
                     double acc = CalculateAcc(hits, _currentGamemode);
 
@@ -1204,7 +1209,7 @@ namespace RealtimePPUR
                     case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
                         client.SetPresence(new()
                         {
-                            Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
+                            Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
                             State = _baseAddresses.Beatmap.MapString,
                             Timestamps = new Timestamps()
                             {
@@ -1215,7 +1220,7 @@ namespace RealtimePPUR
                                 LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
                                 LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                 SmallImageKey = "https://i.imgur.com/vWySyXD.png",
-                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  {_baseAddresses.Player.Combo}x  {convertHits(_baseAddresses.Player.Mode, hits)}"
+                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                             }
                         });
                         break;
@@ -1223,21 +1228,21 @@ namespace RealtimePPUR
                         _baseAddresses.Player.IsReplay:
                         client.SetPresence(new()
                         {
-                            Details = $"Watching {_baseAddresses.Player.Username} play",
+                            Details = $"Watching {_baseAddresses.Player.Username}'s play",
                             State = _baseAddresses.Beatmap.MapString,
                             Assets = new Assets()
                             {
                                 LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
                                 LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                 SmallImageKey = "https://i.imgur.com/vWySyXD.png",
-                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  {_baseAddresses.Player.Combo}x  {convertHits(_baseAddresses.Player.Mode, hits)}"
+                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                             }
                         });
                         break;
                     default:
                         client.SetPresence(new()
                         {
-                            Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
+                            Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
                             State = _baseAddresses.Beatmap.MapString,
                             Assets = new Assets()
                             {
@@ -1250,49 +1255,55 @@ namespace RealtimePPUR
             }
         }
 
-        private string convertStatus(OsuMemoryStatus status)
+        private static string ConvertStatus(OsuMemoryStatus status)
         {
             return status switch
             {
-                OsuMemoryStatus.EditingMap => "Editing maps",
+                OsuMemoryStatus.EditingMap => "Editing Map",
                 OsuMemoryStatus.GameShutdownAnimation => "Shutdown osu!",
                 OsuMemoryStatus.GameStartupAnimation => "Startup osu!",
                 OsuMemoryStatus.MainMenu => "Main Menu",
-                OsuMemoryStatus.MultiplayerRoom => "Multiplayer",
+                OsuMemoryStatus.MultiplayerRoom => "Multiplayer Room",
                 OsuMemoryStatus.MultiplayerResultsscreen => "Multiplayer Results",
                 OsuMemoryStatus.MultiplayerSongSelect => "Multiplayer Song Select",
                 OsuMemoryStatus.NotRunning => "Not Running osu!",
-                OsuMemoryStatus.OsuDirect => "Searching maps",
-                OsuMemoryStatus.Playing => "Playing maps",
+                OsuMemoryStatus.OsuDirect => "Searching Maps",
+                OsuMemoryStatus.Playing => "Playing Map",
                 OsuMemoryStatus.ResultsScreen => "Results",
-                OsuMemoryStatus.SongSelect => "Song Select",
+                OsuMemoryStatus.SongSelect => "Selecting Songs",
                 OsuMemoryStatus.Unknown => "Unknown",
                 _ => "Unknown"
             };
         }
 
-        private string convertHits(int mode, HitsResult hits)
+        private static string ConvertHits(int mode, HitsResult hits)
         {
             return mode switch
             {
                 0 => $"[{hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}]",
                 1 => $"[{hits.Hit300}/{hits.Hit100}/{hits.HitMiss}]",
-                2 => $"[{hits.Hit300} / {hits.Hit100} / {hits.Hit50} / {hits.HitMiss}]",
+                2 => $"[{hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}]",
                 3 => $"[{hits.HitGeki}/{hits.Hit300}/{hits.HitKatu}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}]",
-                _ => $"[{hits.Hit300}/{hits.Hit100} / {hits.Hit50} / {hits.HitMiss}]"
+                _ => $"[{hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}]"
             };
         }
 
-        private static string[] ParseMods(int mods)
+        private static string[][] ParseMods(int mods)
         {
-            List<string> activeMods = new();
+            List<string> activeModsCalc = new();
+            List<string> activeModsShow = new();
             for (int i = 0; i < 32; i++)
             {
                 int bit = 1 << i;
-                if ((mods & bit) == bit) activeMods.Add(OsuMods[bit].ToLower());
+                if ((mods & bit) != bit) continue;
+                activeModsCalc.Add(OsuMods[bit].ToLower());
+                activeModsShow.Add(OsuMods[bit]);
             }
-            if (activeMods.Contains("nc") && activeMods.Contains("dt")) activeMods.Remove("nc");
-            return activeMods.ToArray();
+
+            if (activeModsCalc.Contains("nc") && activeModsCalc.Contains("dt")) activeModsCalc.Remove("nc");
+            if (activeModsShow.Contains("NC") && activeModsShow.Contains("DT")) activeModsShow.Remove("DT");
+            if (activeModsShow.Count == 0) activeModsShow.Add("NM");
+            return new[] { activeModsCalc.ToArray(), activeModsShow.ToArray() };
         }
 
         private static double CalculateAcc(HitsResult hits, int mode)

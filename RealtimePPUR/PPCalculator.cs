@@ -636,6 +636,24 @@ namespace RealtimePPUR
         public int HitMiss { get; set; }
         public int Combo { get; set; }
         public int Score { get; set; }
+        public HitsResult Clone()
+        {
+            return new()
+            {
+                HitGeki = HitGeki,
+                Hit300 = Hit300,
+                HitKatu = HitKatu,
+                Hit100 = Hit100,
+                Hit50 = Hit50,
+                HitMiss = HitMiss,
+                Combo = Combo,
+                Score = Score
+            };
+        }
+        public bool Equals(HitsResult other)
+        {
+            return HitGeki == other.HitGeki && Hit300 == other.Hit300 && HitKatu == other.HitKatu && Hit100 == other.Hit100 && Hit50 == other.Hit50 && HitMiss == other.HitMiss && Combo == other.Combo && Score == other.Score;
+        }
     }
 
     public class CalculateArgs
