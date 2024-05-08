@@ -654,6 +654,10 @@ namespace RealtimePPUR
         {
             return HitGeki == other.HitGeki && Hit300 == other.Hit300 && HitKatu == other.HitKatu && Hit100 == other.Hit100 && Hit50 == other.Hit50 && HitMiss == other.HitMiss && Combo == other.Combo && Score == other.Score;
         }
+        public bool IsEmpty()
+        {
+            return HitGeki == 0 && Hit300 == 0 && HitKatu == 0 && Hit100 == 0 && Hit50 == 0 && HitMiss == 0 && Combo == 0 && Score == 0;
+        }
     }
 
     public class CalculateArgs
