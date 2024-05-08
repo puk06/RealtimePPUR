@@ -453,19 +453,6 @@ namespace RealtimePPUR
                 int bad = hits.Hit50;
                 int miss = hits.HitMiss;
 
-                int ifFcGood = _calculatedObject.IfFcHitResult[HitResult.Great];
-                int ifFcOk = currentGamemode == 2
-                    ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit]
-                    : _calculatedObject.IfFcHitResult[HitResult.Ok];
-                int ifFcBad = currentGamemode switch
-                {
-                    0 => _calculatedObject.IfFcHitResult[HitResult.Meh],
-                    1 => 0,
-                    2 => _calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
-                    _ => 0
-                };
-                const int ifFcMiss = 0;
-
                 double healthPercentage = IsNaNWithNum(Math.Round(_baseAddresses.Player.HP / 2, 1));
                 int userScore = hits.Score;
 
@@ -633,6 +620,18 @@ namespace RealtimePPUR
                         case 6:
                             if (ifFCHitsToolStripMenuItem.Checked)
                             {
+                                int ifFcGood = _calculatedObject.IfFcHitResult[HitResult.Great];
+                                int ifFcOk = currentGamemode == 2
+                                    ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit]
+                                    : _calculatedObject.IfFcHitResult[HitResult.Ok];
+                                int ifFcBad = currentGamemode switch
+                                {
+                                    0 => _calculatedObject.IfFcHitResult[HitResult.Meh],
+                                    1 => 0,
+                                    2 => _calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
+                                    _ => 0
+                                };
+                                const int ifFcMiss = 0;
                                 switch (currentGamemode)
                                 {
                                     case 0:
@@ -1140,8 +1139,8 @@ namespace RealtimePPUR
                         hits.Score = _baseAddresses.Player.Score;
                     }
 
-                    if (hits.Equals(_previousHits) && status == OsuMemoryStatus.Playing) continue;
-                    if (status == OsuMemoryStatus.Playing) _previousHits = hits.Clone();
+                    if (hits.Equals(_previousHits) && status is OsuMemoryStatus.Playing or OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen) continue;
+                    if (status is OsuMemoryStatus.Playing or OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen) _previousHits = hits.Clone();
 
                     string[] mods = status switch
                     {
