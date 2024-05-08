@@ -2,6 +2,7 @@
 using Octokit;
 using osu.Game.IO;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Taiko.Objects;
 using OsuMemoryDataProvider;
 using OsuMemoryDataProvider.OsuMemoryModels;
 using System;
@@ -1186,49 +1187,65 @@ namespace RealtimePPUR
                 Thread.Sleep(5000);
                 if (!discordRichPresenceToolStripMenuItem.Checked) continue;
 
-                if (_baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing && !_baseAddresses.Player.IsReplay)
+                HitsResult hits = new()
                 {
-                    HitsResult hits = new()
-                    {
-                        HitGeki = _baseAddresses.Player.HitGeki,
-                        Hit300 = _baseAddresses.Player.Hit300,
-                        HitKatu = _baseAddresses.Player.HitKatu,
-                        Hit100 = _baseAddresses.Player.Hit100,
-                        Hit50 = _baseAddresses.Player.Hit50,
-                        HitMiss = _baseAddresses.Player.HitMiss,
-                        Combo = _baseAddresses.Player.MaxCombo,
-                        Score = _baseAddresses.Player.Score
-                    };
+                    HitGeki = _baseAddresses.Player.HitGeki,
+                    Hit300 = _baseAddresses.Player.Hit300,
+                    HitKatu = _baseAddresses.Player.HitKatu,
+                    Hit100 = _baseAddresses.Player.Hit100,
+                    Hit50 = _baseAddresses.Player.Hit50,
+                    HitMiss = _baseAddresses.Player.HitMiss,
+                    Combo = _baseAddresses.Player.MaxCombo,
+                    Score = _baseAddresses.Player.Score
+                };
 
-                    client.SetPresence(new()
-                    {
-                        Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
-                        State = _baseAddresses.Beatmap.MapString,
-                        Timestamps = new Timestamps()
-                        {
-                            Start = DateTime.UtcNow - stopwatch.Elapsed
-                        },
-                        Assets = new Assets()
-                        {
-                            LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
-                            LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
-                            SmallImageKey = "https://i.imgur.com/vWySyXD.png",
-                            SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  {_baseAddresses.Player.Combo}x  {convertHits(_baseAddresses.Player.Mode, hits)}"
-                        }
-                    });
-                }
-                else
+                switch (_baseAddresses.GeneralData.OsuStatus)
                 {
-                    client.SetPresence(new()
-                    {
-                        Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
-                        State = _baseAddresses.Beatmap.MapString,
-                        Assets = new Assets()
+                    case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
+                        client.SetPresence(new()
                         {
-                            LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
-                            LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
-                        }
-                    });
+                            Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
+                            State = _baseAddresses.Beatmap.MapString,
+                            Timestamps = new Timestamps()
+                            {
+                                Start = DateTime.UtcNow - stopwatch.Elapsed
+                            },
+                            Assets = new Assets()
+                            {
+                                LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
+                                LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                SmallImageKey = "https://i.imgur.com/vWySyXD.png",
+                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  {_baseAddresses.Player.Combo}x  {convertHits(_baseAddresses.Player.Mode, hits)}"
+                            }
+                        });
+                        break;
+                    case OsuMemoryStatus.Playing when
+                        _baseAddresses.Player.IsReplay:
+                        client.SetPresence(new()
+                        {
+                            Details = $"Watching {_baseAddresses.Player.Username} play",
+                            State = _baseAddresses.Beatmap.MapString,
+                            Assets = new Assets()
+                            {
+                                LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
+                                LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                SmallImageKey = "https://i.imgur.com/vWySyXD.png",
+                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  {_baseAddresses.Player.Combo}x  {convertHits(_baseAddresses.Player.Mode, hits)}"
+                            }
+                        });
+                        break;
+                    default:
+                        client.SetPresence(new()
+                        {
+                            Details = convertStatus(_baseAddresses.GeneralData.OsuStatus),
+                            State = _baseAddresses.Beatmap.MapString,
+                            Assets = new Assets()
+                            {
+                                LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
+                                LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
+                            }
+                        });
+                        break;
                 }
             }
         }
