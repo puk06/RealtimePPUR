@@ -1187,7 +1187,11 @@ namespace RealtimePPUR
             while (true)
             {
                 Thread.Sleep(5000);
-                if (!discordRichPresenceToolStripMenuItem.Checked) continue;
+                if (!discordRichPresenceToolStripMenuItem.Checked)
+                {
+                    _client.ClearPresence();
+                    continue;
+                }
 
                 HitsResult hits = new()
                 {
