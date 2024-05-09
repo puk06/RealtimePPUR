@@ -1342,7 +1342,8 @@ namespace RealtimePPUR
         private static double CalculateAverage(IReadOnlyCollection<int> array)
         {
             if (array == null || array.Count == 0) return 0;
-            return (double)array.Sum(item => (long)item) / array.Count;
+            double result = (double)array.Sum(item => (long)item) / array.Count;
+            return Math.Abs(result) > 10000 ? CalculateAverage(array) : result;
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
@@ -1394,7 +1395,7 @@ namespace RealtimePPUR
             double average = totalAll / hitErrors.Count;
             double variance = hitErrors.Sum(hit => Math.Pow(hit - average, 2)) / hitErrors.Count;
             double unstableRate = Math.Sqrt(variance) * 10;
-            return unstableRate;
+            return unstableRate > 1000 ? CalculateUnstableRate(hitErrors) : unstableRate;
         }
 
         private static async void GithubUpdateChecker()
