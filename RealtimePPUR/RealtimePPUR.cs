@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FFmpeg.AutoGen;
 
 namespace RealtimePPUR
 {
@@ -1181,18 +1182,20 @@ namespace RealtimePPUR
 
         private void UpdateDiscordRichPresence()
         {
-            try
+            bool isConnectedToDiscord = false;
+            while (!isConnectedToDiscord)
             {
-                _client = new DiscordRpcClient("1237279508239749211");
-                _client.Initialize();
-
-            }
-            catch (Exception e)
-            {
-                Thread.Sleep(5000);
-                UpdateDiscordRichPresence();
-                ErrorLogger(e);
-                return;
+                try
+                {
+                    _client = new DiscordRpcClient("1237279508239749211");
+                    _client.Initialize();
+                    isConnectedToDiscord = true;
+                }
+                catch (Exception e)
+                {
+                    Thread.Sleep(5000);
+                    ErrorLogger(e);
+                }
             }
 
             while (true)
