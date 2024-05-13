@@ -461,17 +461,22 @@ namespace RealtimePPUR
                 int higherScore = leaderBoardData["higherScore"];
                 int highestScore = leaderBoardData["highestScore"];
 
-                _avgoffset.Text = _avgOffset.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us")) + "ms";
+                _avgoffset.Text = Math.Round(_avgOffset, 2) + "ms";
                 _avgoffset.Width = TextRenderer.MeasureText(_avgoffset.Text, _avgoffset.Font).Width;
-                _ur.Text = _urValue.ToString("F0");
+
+                _ur.Text = _urValue.ToString();
                 _ur.Width = TextRenderer.MeasureText(_ur.Text, _ur.Font).Width;
+
                 _avgoffsethelp.Text = _avgOffsethelp.ToString();
                 _avgoffsethelp.Width = TextRenderer.MeasureText(_avgoffsethelp.Text, _avgoffsethelp.Font).Width;
-                _sr.Text = sr.ToString(CultureInfo.CurrentCulture = new CultureInfo("en-us"));
+
+                _sr.Text = sr.ToString();
                 _sr.Width = TextRenderer.MeasureText(_sr.Text, _sr.Font).Width;
-                _sspp.Text = sspp.ToString("F0");
+
+                _sspp.Text = Math.Round(sspp).ToString();
                 _sspp.Width = TextRenderer.MeasureText(_sspp.Text, _sspp.Font).Width;
-                _currentPp.Text = currentPp.ToString("F0");
+
+                _currentPp.Text = Math.Round(currentPp).ToString();
                 _currentPp.Width = TextRenderer.MeasureText(_currentPp.Text, _currentPp.Font).Width;
                 _currentPp.Left = ClientSize.Width - _currentPp.Width - 35;
 
@@ -547,17 +552,11 @@ namespace RealtimePPUR
                             {
                                 if (_pplossMode && _currentGamemode is 1 or 3)
                                 {
-                                    _displayFormat += "SR: " +
-                                                      sr.ToString(CultureInfo.CurrentCulture =
-                                                          new CultureInfo("en-us")) + "\n";
+                                    _displayFormat += "SR: " + sr + "\n";
                                 }
                                 else
                                 {
-                                    _displayFormat += "SR: " +
-                                                      sr.ToString(CultureInfo.CurrentCulture =
-                                                          new CultureInfo("en-us")) +
-                                                      " / " + fullSr.ToString(CultureInfo.CurrentCulture =
-                                                          new CultureInfo("en-us")) + "\n";
+                                    _displayFormat += "SR: " + sr + " / " + fullSr + "\n";
                                 }
                             }
 
@@ -566,7 +565,7 @@ namespace RealtimePPUR
                         case 2:
                             if (sSPPToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "SSPP: " + sspp.ToString("F0") + "pp\n";
+                                _displayFormat += "SSPP: " + Math.Round(sspp) + "pp\n";
                             }
 
                             break;
@@ -576,10 +575,9 @@ namespace RealtimePPUR
                             {
                                 _displayFormat += ifFCPPToolStripMenuItem.Checked switch
                                 {
-                                    true when currentGamemode != 3 => "PP: " + currentPp.ToString("F0") + " / " +
-                                                                      ifFcpp.ToString("F0") + "pp\n",
-                                    true => "PP: " + currentPp.ToString("F0") + " / " + sspp.ToString("F0") + "pp\n",
-                                    _ => "PP: " + currentPp.ToString("F0") + "pp\n"
+                                    true when currentGamemode != 3 => "PP: " + Math.Round(currentPp) + " / " + Math.Round(ifFcpp) + "pp\n",
+                                    true => "PP: " + Math.Round(currentPp) + " / " + Math.Round(sspp) + "pp\n",
+                                    _ => "PP: " + Math.Round(currentPp) + "pp\n"
                                 };
                             }
 
@@ -633,6 +631,7 @@ namespace RealtimePPUR
                                     _ => 0
                                 };
                                 const int ifFcMiss = 0;
+
                                 switch (currentGamemode)
                                 {
                                     case 0:
@@ -654,7 +653,7 @@ namespace RealtimePPUR
                         case 7:
                             if (uRToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "UR: " + _urValue.ToString("F0") + "\n";
+                                _displayFormat += "UR: " + _urValue + "\n";
                             }
 
                             break;
@@ -662,7 +661,7 @@ namespace RealtimePPUR
                         case 8:
                             if (offsetHelpToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "OffsetHelp: " + _avgOffsethelp.ToString("F0") + "\n";
+                                _displayFormat += "OffsetHelp: " + Math.Round(_avgOffsethelp) + "\n";
                             }
 
                             break;
@@ -678,9 +677,7 @@ namespace RealtimePPUR
                         case 10:
                             if (avgOffsetToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "AvgOffset: " +
-                                                  _avgOffset.ToString(CultureInfo.CurrentCulture =
-                                                      new CultureInfo("en-us")) + "\n";
+                                _displayFormat += "AvgOffset: " + _avgOffset + "\n";
                             }
 
                             break;
@@ -688,7 +685,7 @@ namespace RealtimePPUR
                         case 11:
                             if (progressToolStripMenuItem.Checked)
                             {
-                                _displayFormat += "Progress: " + (int)Math.Round(_baseAddresses.GeneralData.AudioTime /
+                                _displayFormat += "Progress: " + Math.Round(_baseAddresses.GeneralData.AudioTime /
                                     _baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
                             }
 
@@ -1067,6 +1064,7 @@ namespace RealtimePPUR
 
                     if (_currentOsuGamemode != _preOsuGamemode)
                     {
+                        if (_calculator == null) continue;
                         if (_currentBeatmapGamemode == 0 && _currentOsuGamemode is 0 or 1 or 2 or 3)
                         {
                             _calculator.SetMode(_currentOsuGamemode);
@@ -1213,7 +1211,7 @@ namespace RealtimePPUR
                     switch (_baseAddresses.GeneralData.OsuStatus)
                     {
                         case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
-                            _client.SetPresence(new()
+                            _client.SetPresence(new RichPresence
                             {
                                 Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
@@ -1229,10 +1227,12 @@ namespace RealtimePPUR
                                     SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
+
                             break;
+
                         case OsuMemoryStatus.Playing when
                             _baseAddresses.Player.IsReplay:
-                            _client.SetPresence(new()
+                            _client.SetPresence(new RichPresence
                             {
                                 Details = RichPresenceStringChecker($"Watching {_baseAddresses.Player.Username}'s play"),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
@@ -1244,9 +1244,11 @@ namespace RealtimePPUR
                                     SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
+
                             break;
+
                         default:
-                            _client.SetPresence(new()
+                            _client.SetPresence(new RichPresence
                             {
                                 Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
@@ -1256,6 +1258,7 @@ namespace RealtimePPUR
                                     LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
                                 }
                             });
+
                             break;
                     }
                 }
@@ -1266,11 +1269,10 @@ namespace RealtimePPUR
             }
         }
 
-        private string RichPresenceStringChecker(string value)
+        private static string RichPresenceStringChecker(string value)
         {
-            if (string.IsNullOrEmpty(value)) return "Unknown";
-            if (value.Length > 128) value = value.Substring(0, 128);
-            return value;
+            if (value.Length > 128) value = value[..128];
+            return string.IsNullOrEmpty(value) ? "Unknown" : value;
         }
 
         private static string ConvertStatus(OsuMemoryStatus status)
@@ -1310,6 +1312,7 @@ namespace RealtimePPUR
         {
             List<string> activeModsCalc = new();
             List<string> activeModsShow = new();
+
             for (int i = 0; i < 32; i++)
             {
                 int bit = 1 << i;
@@ -1321,7 +1324,12 @@ namespace RealtimePPUR
             if (activeModsCalc.Contains("nc") && activeModsCalc.Contains("dt")) activeModsCalc.Remove("nc");
             if (activeModsShow.Contains("NC") && activeModsShow.Contains("DT")) activeModsShow.Remove("DT");
             if (activeModsShow.Count == 0) activeModsShow.Add("NM");
-            return new[] { activeModsCalc.ToArray(), activeModsShow.ToArray() };
+
+            return new[]
+            {
+                activeModsCalc.ToArray(),
+                activeModsShow.ToArray()
+            };
         }
 
         private static double CalculateAcc(HitsResult hits, int mode)
