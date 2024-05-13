@@ -1184,78 +1184,85 @@ namespace RealtimePPUR
 
         private void UpdateDiscordRichPresence()
         {
-            _client = new DiscordRpcClient("1237279508239749211");
-            _client.Initialize();
-
-            while (true)
+            try
             {
-                Thread.Sleep(5000);
-                if (!discordRichPresenceToolStripMenuItem.Checked)
-                {
-                    _client.ClearPresence();
-                    continue;
-                }
+                _client = new DiscordRpcClient("1237279508239749211");
+                _client.Initialize();
 
-                HitsResult hits = new()
+                while (true)
                 {
-                    HitGeki = _baseAddresses.Player.HitGeki,
-                    Hit300 = _baseAddresses.Player.Hit300,
-                    HitKatu = _baseAddresses.Player.HitKatu,
-                    Hit100 = _baseAddresses.Player.Hit100,
-                    Hit50 = _baseAddresses.Player.Hit50,
-                    HitMiss = _baseAddresses.Player.HitMiss,
-                    Combo = _baseAddresses.Player.MaxCombo,
-                    Score = _baseAddresses.Player.Score
-                };
+                    Thread.Sleep(5000);
+                    if (!discordRichPresenceToolStripMenuItem.Checked)
+                    {
+                        _client.ClearPresence();
+                        continue;
+                    }
 
-                switch (_baseAddresses.GeneralData.OsuStatus)
-                {
-                    case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
-                        _client.SetPresence(new()
-                        {
-                            Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
-                            State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
-                            Timestamps = new Timestamps()
+                    HitsResult hits = new()
+                    {
+                        HitGeki = _baseAddresses.Player.HitGeki,
+                        Hit300 = _baseAddresses.Player.Hit300,
+                        HitKatu = _baseAddresses.Player.HitKatu,
+                        Hit100 = _baseAddresses.Player.Hit100,
+                        Hit50 = _baseAddresses.Player.Hit50,
+                        HitMiss = _baseAddresses.Player.HitMiss,
+                        Combo = _baseAddresses.Player.MaxCombo,
+                        Score = _baseAddresses.Player.Score
+                    };
+
+                    switch (_baseAddresses.GeneralData.OsuStatus)
+                    {
+                        case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
+                            _client.SetPresence(new()
                             {
-                                Start = DateTime.UtcNow - _stopwatch.Elapsed
-                            },
-                            Assets = new Assets()
+                                Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
+                                State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
+                                Timestamps = new Timestamps()
+                                {
+                                    Start = DateTime.UtcNow - _stopwatch.Elapsed
+                                },
+                                Assets = new Assets()
+                                {
+                                    LargeImageKey = "osu_icon",
+                                    LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                    SmallImageKey = "osu_playing",
+                                    SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                }
+                            });
+                            break;
+                        case OsuMemoryStatus.Playing when
+                            _baseAddresses.Player.IsReplay:
+                            _client.SetPresence(new()
                             {
-                                LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
-                                LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
-                                SmallImageKey = "https://i.imgur.com/vWySyXD.png",
-                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
-                            }
-                        });
-                        break;
-                    case OsuMemoryStatus.Playing when
-                        _baseAddresses.Player.IsReplay:
-                        _client.SetPresence(new()
-                        {
-                            Details = RichPresenceStringChecker($"Watching {_baseAddresses.Player.Username}'s play"),
-                            State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
-                            Assets = new Assets()
+                                Details = RichPresenceStringChecker($"Watching {_baseAddresses.Player.Username}'s play"),
+                                State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
+                                Assets = new Assets()
+                                {
+                                    LargeImageKey = "osu_icon",
+                                    LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                    SmallImageKey = "osu_playing",
+                                    SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                }
+                            });
+                            break;
+                        default:
+                            _client.SetPresence(new()
                             {
-                                LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
-                                LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
-                                SmallImageKey = "https://i.imgur.com/vWySyXD.png",
-                                SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
-                            }
-                        });
-                        break;
-                    default:
-                        _client.SetPresence(new()
-                        {
-                            Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
-                            State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
-                            Assets = new Assets()
-                            {
-                                LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
-                                LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
-                            }
-                        });
-                        break;
+                                Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
+                                State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
+                                Assets = new Assets()
+                                {
+                                    LargeImageKey = "osu_icon",
+                                    LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
+                                }
+                            });
+                            break;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                ErrorLogger(e);
             }
         }
 
