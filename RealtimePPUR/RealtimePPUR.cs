@@ -40,7 +40,7 @@ namespace RealtimePPUR
         private bool _isDbLoaded;
         private string _osuDirectory;
         private string _songsPath;
-        private string _preMd5;
+        private string _preTitle;
         private PpCalculator _calculator;
         private bool _isplaying;
         private bool _isResultScreen;
@@ -57,6 +57,7 @@ namespace RealtimePPUR
         private static DiscordRpcClient _client;
         private readonly Stopwatch _stopwatch = new();
         private HitsResult _previousHits = new();
+        private string _prevErrorMessage;
 
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
@@ -1029,6 +1030,8 @@ namespace RealtimePPUR
                     if (Process.GetProcessesByName("osu!").Length == 0) continue;
                     bool isplaying = _isplaying;
                     bool isResultScreen = _isResultScreen;
+                    string currentMapString = _baseAddresses.Beatmap.MapString;
+                    string currentOsuFileName = _baseAddresses.Beatmap.OsuFileName;
                     OsuMemoryStatus status = _currentStatus;
 
                     if (status == OsuMemoryStatus.Playing)
@@ -1038,14 +1041,15 @@ namespace RealtimePPUR
                         _avgOffsethelp = (int)Math.Round(-_avgOffset);
                     }
 
-                    string osuBeatmapPath = Path.Combine(_songsPath ?? "", _baseAddresses.Beatmap.FolderName ?? "",
-                        _baseAddresses.Beatmap.OsuFileName ?? "");
-                    if (!File.Exists(osuBeatmapPath)) continue;
-
-                    if (_preMd5 != _baseAddresses.Beatmap.Md5)
+                    if (_preTitle != currentMapString)
                     {
+                        string osuBeatmapPath = Path.Combine(_songsPath ?? "", _baseAddresses.Beatmap.FolderName ?? "",
+                            currentOsuFileName ?? "");
+                        if (!File.Exists(osuBeatmapPath)) continue;
+
                         int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
                         if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3)) continue;
+
                         _currentBeatmapGamemode = currentBeatmapGamemodeTemp;
                         _currentGamemode = _currentBeatmapGamemode == 0 ? _currentOsuGamemode : _currentBeatmapGamemode;
 
@@ -1055,11 +1059,10 @@ namespace RealtimePPUR
                         }
                         else
                         {
-                            _calculator.SetMode(_currentGamemode);
                             _calculator.SetMap(osuBeatmapPath, _currentGamemode);
                         }
 
-                        _preMd5 = _baseAddresses.Beatmap.Md5;
+                        _preTitle = currentMapString;
                     }
 
                     if (_currentOsuGamemode != _preOsuGamemode)
@@ -1211,7 +1214,7 @@ namespace RealtimePPUR
                         _client.SetPresence(new()
                         {
                             Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
-                            State = _baseAddresses.Beatmap.MapString,
+                            State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                             Timestamps = new Timestamps()
                             {
                                 Start = DateTime.UtcNow - _stopwatch.Elapsed
@@ -1229,8 +1232,8 @@ namespace RealtimePPUR
                         _baseAddresses.Player.IsReplay:
                         _client.SetPresence(new()
                         {
-                            Details = $"Watching {_baseAddresses.Player.Username}'s play",
-                            State = _baseAddresses.Beatmap.MapString,
+                            Details = RichPresenceStringChecker($"Watching {_baseAddresses.Player.Username}'s play"),
+                            State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                             Assets = new Assets()
                             {
                                 LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
@@ -1244,7 +1247,7 @@ namespace RealtimePPUR
                         _client.SetPresence(new()
                         {
                             Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
-                            State = _baseAddresses.Beatmap.MapString,
+                            State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                             Assets = new Assets()
                             {
                                 LargeImageKey = "https://i.imgur.com/PxBBeJw.png",
@@ -1254,6 +1257,13 @@ namespace RealtimePPUR
                         break;
                 }
             }
+        }
+
+        private string RichPresenceStringChecker(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return "Unknown";
+            if (value.Length > 128) value = value.Substring(0, 128);
+            return value;
         }
 
         private static string ConvertStatus(OsuMemoryStatus status)
@@ -1343,7 +1353,7 @@ namespace RealtimePPUR
         {
             if (array == null || array.Count == 0) return 0;
             double result = (double)array.Sum(item => (long)item) / array.Count;
-            return Math.Abs(result) > 10000 ? CalculateAverage(array) : result;
+            return result;
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
@@ -1395,7 +1405,7 @@ namespace RealtimePPUR
             double average = totalAll / hitErrors.Count;
             double variance = hitErrors.Sum(hit => Math.Pow(hit - average, 2)) / hitErrors.Count;
             double unstableRate = Math.Sqrt(variance) * 10;
-            return unstableRate > 1000 ? CalculateUnstableRate(hitErrors) : unstableRate;
+            return unstableRate;
         }
 
         private static async void GithubUpdateChecker()
@@ -1449,10 +1459,12 @@ namespace RealtimePPUR
             }
         }
 
-        private static void ErrorLogger(Exception error)
+        private void ErrorLogger(Exception error)
         {
             try
             {
+                if (error.Message == _prevErrorMessage) return;
+                _prevErrorMessage = error.Message;
                 const string filePath = "Error.log";
                 StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
                 sw.WriteLine("[" + DateTime.Now + "]");

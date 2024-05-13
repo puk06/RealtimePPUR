@@ -92,7 +92,7 @@ namespace RealtimePPUR
             // 
             _sr.BackColor = Color.Transparent;
             _sr.ForeColor = Color.White;
-            _sr.Location = new Point(40, -1);
+            _sr.Location = new Point(38, -1);
             _sr.Name = "_sr";
             _sr.Size = new Size(30, 29);
             _sr.TabIndex = 0;
@@ -104,7 +104,7 @@ namespace RealtimePPUR
             // 
             _sspp.BackColor = Color.Transparent;
             _sspp.ForeColor = Color.White;
-            _sspp.Location = new Point(138, -1);
+            _sspp.Location = new Point(137, -1);
             _sspp.Name = "_sspp";
             _sspp.Size = new Size(30, 29);
             _sspp.TabIndex = 0;
