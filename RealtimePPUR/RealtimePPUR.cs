@@ -1186,7 +1186,18 @@ namespace RealtimePPUR
                 _client = new DiscordRpcClient("1237279508239749211");
                 _client.Initialize();
 
-                while (true)
+            }
+            catch (Exception e)
+            {
+                Thread.Sleep(5000);
+                UpdateDiscordRichPresence();
+                ErrorLogger(e);
+                return;
+            }
+
+            while (true)
+            {
+                try
                 {
                     Thread.Sleep(5000);
                     if (!discordRichPresenceToolStripMenuItem.Checked)
@@ -1221,9 +1232,11 @@ namespace RealtimePPUR
                                 Assets = new Assets()
                                 {
                                     LargeImageKey = "osu_icon",
-                                    LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                    LargeImageText =
+                                        $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                     SmallImageKey = "osu_playing",
-                                    SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                    SmallImageText =
+                                        $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
 
@@ -1233,14 +1246,17 @@ namespace RealtimePPUR
                             _baseAddresses.Player.IsReplay:
                             _client.SetPresence(new RichPresence
                             {
-                                Details = RichPresenceStringChecker($"Watching {_baseAddresses.Player.Username}'s play"),
+                                Details = RichPresenceStringChecker(
+                                    $"Watching {_baseAddresses.Player.Username}'s play"),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                                 Assets = new Assets()
                                 {
                                     LargeImageKey = "osu_icon",
-                                    LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                    LargeImageText =
+                                        $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                     SmallImageKey = "osu_playing",
-                                    SmallImageText = $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                    SmallImageText =
+                                        $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
 
@@ -1254,24 +1270,26 @@ namespace RealtimePPUR
                                 Assets = new Assets()
                                 {
                                     LargeImageKey = "osu_icon",
-                                    LargeImageText = $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
+                                    LargeImageText =
+                                        $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
                                 }
                             });
 
                             break;
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                ErrorLogger(e);
+                catch (Exception e)
+                {
+                    ErrorLogger(e);
+                }
             }
         }
 
         private static string RichPresenceStringChecker(string value)
         {
+            if (value == null) return "Unknown";
             if (value.Length > 128) value = value[..128];
-            return string.IsNullOrEmpty(value) ? "Unknown" : value;
+            return value;
         }
 
         private static string ConvertStatus(OsuMemoryStatus status)
