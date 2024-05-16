@@ -110,21 +110,25 @@ namespace RealtimePPUR
                     Mods = mods
                 };
 
-                var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                if (mode != 3)
                 {
-                    Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
-                    MaxCombo = GetMaxCombo(beatmap, mode),
-                    Statistics = staticsForCalcIfFc,
-                    Mods = mods
-                };
+                    var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                    {
+                        Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
+                        MaxCombo = GetMaxCombo(beatmap, mode),
+                        Statistics = staticsForCalcIfFc,
+                        Mods = mods
+                    };
 
-                var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
-                var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
+                    var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
+                    var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
+
+                    data.CurrentPerformanceAttributes = performanceAttributesResult;
+                    data.PerformanceAttributesIffc = performanceAttributesIffc;
+                }
 
                 data.CurrentDifficultyAttributes = difficultyAttributes;
-                data.CurrentPerformanceAttributes = performanceAttributesResult;
                 data.DifficultyAttributesIffc = difficultyAttributes;
-                data.PerformanceAttributesIffc = performanceAttributesIffc;
 
                 return data;
             }
