@@ -370,6 +370,7 @@ namespace RealtimePPUR
             {
                 if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                 bool isplaying = _isplaying;
+                bool isResultScreen = _isResultScreen;
                 int currentGamemode = _currentGamemode;
                 OsuMemoryStatus status = _currentStatus;
 
@@ -472,7 +473,7 @@ namespace RealtimePPUR
                 _sr.Text = sr.ToString();
                 _sr.Width = TextRenderer.MeasureText(_sr.Text, _sr.Font).Width;
 
-                _iffc.Text = isplaying ? Math.Round(ifFcpp) + " / " + Math.Round(sspp) : Math.Round(sspp).ToString();
+                _iffc.Text = isplaying || isResultScreen ? Math.Round(ifFcpp) + " / " + Math.Round(sspp) : Math.Round(sspp).ToString();
                 _iffc.Width = TextRenderer.MeasureText(_iffc.Text, _iffc.Font).Width;
 
                 _currentPp.Text = Math.Round(currentPp).ToString();
