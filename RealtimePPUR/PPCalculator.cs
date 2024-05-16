@@ -100,6 +100,8 @@ namespace RealtimePPUR
 
             if (resultScreen)
             {
+                var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+
                 var resultScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
                     Accuracy = args.Accuracy / 100,
@@ -108,10 +110,21 @@ namespace RealtimePPUR
                     Mods = mods
                 };
 
+                var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
+                {
+                    Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
+                    MaxCombo = GetMaxCombo(beatmap, mode),
+                    Statistics = staticsForCalcIfFc,
+                    Mods = mods
+                };
+
+                var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
                 var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
 
                 data.CurrentDifficultyAttributes = difficultyAttributes;
                 data.CurrentPerformanceAttributes = performanceAttributesResult;
+                data.DifficultyAttributesIffc = difficultyAttributes;
+                data.PerformanceAttributesIffc = performanceAttributesIffc;
 
                 return data;
             }
