@@ -1,33 +1,41 @@
-﻿using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.Formats;
-using osu.Game.IO;
-using osu.Framework.Audio.Track;
+﻿using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.Formats;
+using osu.Game.Beatmaps.Legacy;
+using osu.Game.IO;
 using osu.Game.Rulesets;
+using osu.Game.Rulesets.Catch;
+using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Mania;
+using osu.Game.Rulesets.Mania.Objects;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Taiko;
+using osu.Game.Rulesets.Taiko.Objects;
 using osu.Game.Scoring;
 using osu.Game.Skinning;
-using osu.Game.Beatmaps.Legacy;
-using osu.Game.Rulesets.Catch;
-using osu.Game.Rulesets.Mania;
-using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Taiko;
-using osu.Game.Rulesets.Catch.Objects;
-using osu.Game.Rulesets.Mania.Objects;
-using osu.Game.Rulesets.Taiko.Objects;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System;
 
 namespace RealtimePPUR
 {
-    public class PpCalculator(string file, int mode)
+    public class PpCalculator
     {
-        private Ruleset _ruleset = SetRuleset(mode);
-        private ProcessorWorkingBeatmap _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
+        private Ruleset _ruleset;
+        private ProcessorWorkingBeatmap _workingBeatmap;
+
+        private int mode;
+
+        public PpCalculator(string file, int mode)
+        {
+            _ruleset = SetRuleset(mode);
+            _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
+        }
 
         public void SetMap(string file, int givenmode)
         {
@@ -549,7 +557,7 @@ namespace RealtimePPUR
         public static ProcessorWorkingBeatmap FromFile(string file) => new(ReadFromFile(file));
 
         protected override IBeatmap GetBeatmap() => _beatmap;
-        public override Texture GetBackground() => null!;
+        protected override Texture GetBackground() => null!;
         protected override Track GetBeatmapTrack() => null!;
         protected override ISkin GetSkin() => null!;
         public override Stream? GetStream(string storagePath) => null;

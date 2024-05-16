@@ -5,6 +5,22 @@ VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealtimePPUR", "RealtimePPUR\RealtimePPUR.csproj", "{59B30752-412A-4493-8B05-8F8B27270E94}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealtimePPUR.Updater", "RealtimePPUR.Updater\RealtimePPUR.Updater.csproj", "{8E8AA5A4-F869-4B2B-AA1F-4B9BFA34D6B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game", "osu\osu.Game\osu.Game.csproj", "{9ECE80B2-B197-4BE6-B08A-5018A5E3F09D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Osu", "osu\osu.Game.Rulesets.Osu\osu.Game.Rulesets.Osu.csproj", "{E02D5178-7F79-4E27-BC0B-C34C28CE2DA2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Taiko", "osu\osu.Game.Rulesets.Taiko\osu.Game.Rulesets.Taiko.csproj", "{C265784F-CB2C-460E-BDEE-0CE1870B211B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Catch", "osu\osu.Game.Rulesets.Catch\osu.Game.Rulesets.Catch.csproj", "{BA9EBFEF-2E96-4A39-A120-AFE61D64F0DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Mania", "osu\osu.Game.Rulesets.Mania\osu.Game.Rulesets.Mania.csproj", "{EF0A32B4-0AE6-4521-A652-A7E24223A719}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodule", "submodule", "{A15097BE-989A-491E-A43B-B0F5678B4F82}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "osu", "osu", "{0FB89C71-F8DF-4831-9D18-7AA368A7D9B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +31,41 @@ Global
 		{59B30752-412A-4493-8B05-8F8B27270E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59B30752-412A-4493-8B05-8F8B27270E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59B30752-412A-4493-8B05-8F8B27270E94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E8AA5A4-F869-4B2B-AA1F-4B9BFA34D6B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E8AA5A4-F869-4B2B-AA1F-4B9BFA34D6B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E8AA5A4-F869-4B2B-AA1F-4B9BFA34D6B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E8AA5A4-F869-4B2B-AA1F-4B9BFA34D6B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ECE80B2-B197-4BE6-B08A-5018A5E3F09D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECE80B2-B197-4BE6-B08A-5018A5E3F09D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECE80B2-B197-4BE6-B08A-5018A5E3F09D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ECE80B2-B197-4BE6-B08A-5018A5E3F09D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E02D5178-7F79-4E27-BC0B-C34C28CE2DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E02D5178-7F79-4E27-BC0B-C34C28CE2DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E02D5178-7F79-4E27-BC0B-C34C28CE2DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E02D5178-7F79-4E27-BC0B-C34C28CE2DA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C265784F-CB2C-460E-BDEE-0CE1870B211B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C265784F-CB2C-460E-BDEE-0CE1870B211B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C265784F-CB2C-460E-BDEE-0CE1870B211B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C265784F-CB2C-460E-BDEE-0CE1870B211B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA9EBFEF-2E96-4A39-A120-AFE61D64F0DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA9EBFEF-2E96-4A39-A120-AFE61D64F0DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA9EBFEF-2E96-4A39-A120-AFE61D64F0DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA9EBFEF-2E96-4A39-A120-AFE61D64F0DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0A32B4-0AE6-4521-A652-A7E24223A719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF0A32B4-0AE6-4521-A652-A7E24223A719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0A32B4-0AE6-4521-A652-A7E24223A719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0A32B4-0AE6-4521-A652-A7E24223A719}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9ECE80B2-B197-4BE6-B08A-5018A5E3F09D} = {0FB89C71-F8DF-4831-9D18-7AA368A7D9B4}
+		{E02D5178-7F79-4E27-BC0B-C34C28CE2DA2} = {0FB89C71-F8DF-4831-9D18-7AA368A7D9B4}
+		{C265784F-CB2C-460E-BDEE-0CE1870B211B} = {0FB89C71-F8DF-4831-9D18-7AA368A7D9B4}
+		{BA9EBFEF-2E96-4A39-A120-AFE61D64F0DF} = {0FB89C71-F8DF-4831-9D18-7AA368A7D9B4}
+		{EF0A32B4-0AE6-4521-A652-A7E24223A719} = {0FB89C71-F8DF-4831-9D18-7AA368A7D9B4}
+		{0FB89C71-F8DF-4831-9D18-7AA368A7D9B4} = {A15097BE-989A-491E-A43B-B0F5678B4F82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFCD44AA-CD54-4323-9356-3A460F7C3DD7}

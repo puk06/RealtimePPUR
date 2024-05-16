@@ -34,7 +34,7 @@ namespace RealtimePPUR
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RealtimePpur));
             _currentPp = new System.Windows.Forms.Label();
             _sr = new System.Windows.Forms.Label();
-            _sspp = new System.Windows.Forms.Label();
+            _iffc = new System.Windows.Forms.Label();
             _good = new System.Windows.Forms.Label();
             _ok = new System.Windows.Forms.Label();
             _miss = new System.Windows.Forms.Label();
@@ -100,17 +100,17 @@ namespace RealtimePPUR
             _sr.MouseDown += RealtimePPUR_MouseDown;
             _sr.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _sspp
+            // _iffc
             // 
-            _sspp.BackColor = Color.Transparent;
-            _sspp.ForeColor = Color.White;
-            _sspp.Location = new Point(137, -1);
-            _sspp.Name = "_sspp";
-            _sspp.Size = new Size(30, 29);
-            _sspp.TabIndex = 0;
-            _sspp.Text = "0";
-            _sspp.MouseDown += RealtimePPUR_MouseDown;
-            _sspp.MouseMove += RealtimePPUR_MouseMove;
+            _iffc.BackColor = Color.Transparent;
+            _iffc.ForeColor = Color.White;
+            _iffc.Location = new Point(133, -1);
+            _iffc.Name = "_iffc";
+            _iffc.Size = new Size(30, 29);
+            _iffc.TabIndex = 0;
+            _iffc.Text = "0";
+            _iffc.MouseDown += RealtimePPUR_MouseDown;
+            _iffc.MouseMove += RealtimePPUR_MouseMove;
             // 
             // _good
             // 
@@ -420,7 +420,7 @@ namespace RealtimePPUR
             this._miss.Font = new System.Drawing.Font(_fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
             this._ok.Font = new System.Drawing.Font(_fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
             this._good.Font = new System.Drawing.Font(_fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
-            this._sspp.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
+            this._iffc.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
             this._sr.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
             this._currentPp.Font = new System.Drawing.Font(_fontCollection.Families[1], 20F, System.Drawing.FontStyle.Bold);
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -431,7 +431,7 @@ namespace RealtimePPUR
             Controls.Add(inGameValue);
             Controls.Add(_currentPp);
             Controls.Add(_sr);
-            Controls.Add(_sspp);
+            Controls.Add(_iffc);
             Controls.Add(_good);
             Controls.Add(_ok);
             Controls.Add(_miss);

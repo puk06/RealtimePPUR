@@ -17,15 +17,14 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using FFmpeg.AutoGen;
 
 namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.2-Release";
+        private const string CurrentVersion = "v1.0.3-Release";
 
-        private System.Windows.Forms.Label _currentPp, _sr, _sspp, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
+        private System.Windows.Forms.Label _currentPp, _sr, _iffc, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
         private readonly PrivateFontCollection _fontCollection;
         private readonly string _ingameoverlayPriority;
@@ -473,8 +472,8 @@ namespace RealtimePPUR
                 _sr.Text = sr.ToString();
                 _sr.Width = TextRenderer.MeasureText(_sr.Text, _sr.Font).Width;
 
-                _sspp.Text = Math.Round(sspp).ToString();
-                _sspp.Width = TextRenderer.MeasureText(_sspp.Text, _sspp.Font).Width;
+                _iffc.Text = isplaying ? Math.Round(ifFcpp) + " / " + Math.Round(sspp) : Math.Round(sspp).ToString();
+                _iffc.Width = TextRenderer.MeasureText(_iffc.Text, _iffc.Font).Width;
 
                 _currentPp.Text = Math.Round(currentPp).ToString();
                 _currentPp.Width = TextRenderer.MeasureText(_currentPp.Text, _currentPp.Font).Width;
@@ -771,7 +770,7 @@ namespace RealtimePPUR
                             inGameValue.Visible = true;
                             _avgoffsethelp.Visible = false;
                             _sr.Visible = false;
-                            _sspp.Visible = false;
+                            _iffc.Visible = false;
                             _currentPp.Visible = false;
                             _good.Visible = false;
                             _ok.Visible = false;
@@ -829,7 +828,7 @@ namespace RealtimePPUR
 
                             inGameValue.Visible = false;
                             _sr.Visible = true;
-                            _sspp.Visible = true;
+                            _iffc.Visible = true;
                             _currentPp.Visible = true;
                             _good.Visible = true;
                             _ok.Visible = true;
@@ -885,7 +884,7 @@ namespace RealtimePPUR
 
                         inGameValue.Visible = false;
                         _sr.Visible = true;
-                        _sspp.Visible = true;
+                        _iffc.Visible = true;
                         _currentPp.Visible = true;
                         _good.Visible = true;
                         _ok.Visible = true;
@@ -941,7 +940,7 @@ namespace RealtimePPUR
 
                     inGameValue.Visible = false;
                     _sr.Visible = true;
-                    _sspp.Visible = true;
+                    _iffc.Visible = true;
                     _currentPp.Visible = true;
                     _good.Visible = true;
                     _ok.Visible = true;
@@ -956,7 +955,7 @@ namespace RealtimePPUR
                 ErrorLogger(e);
                 if (!_nowPlaying) inGameValue.Text = "";
                 _sr.Text = "0";
-                _sspp.Text = "0";
+                _iffc.Text = "0";
                 _currentPp.Text = "0";
                 _good.Text = "0";
                 _ok.Text = "0";
@@ -978,11 +977,12 @@ namespace RealtimePPUR
                     if (!_isDbLoaded)
                     {
                         Process osuProcess = Process.GetProcessesByName("osu!")[0];
-                        _osuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
+                        string tempOsuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
 
-                        if (string.IsNullOrEmpty(_osuDirectory) || !Directory.Exists(_osuDirectory))
+                        if (string.IsNullOrEmpty(tempOsuDirectory) || !Directory.Exists(tempOsuDirectory))
                             continue;
 
+                        _osuDirectory = tempOsuDirectory;
                         _songsPath = GetSongsFolderLocation(_osuDirectory);
                         _isDbLoaded = true;
                     }
@@ -1449,19 +1449,28 @@ namespace RealtimePPUR
             {
                 var latestRelease = await GetVersion(CurrentVersion);
                 if (latestRelease == CurrentVersion) return;
-                DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {CurrentVersion} \n更新後: {latestRelease}\n\nダウンロードページを開きますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show($"最新バージョンがあります！\n\n現在: {CurrentVersion} \n更新後: {latestRelease}\n\nダウンロードしますか？", "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result != DialogResult.Yes) return;
+
+                if (!File.Exists("./Updater/RealtimePPUR.Updater.exe"))
+                {
+                    MessageBox.Show("アップデーターが見つかりませんでした。手動でダウンロードしてください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                string updaterPath = Path.GetFullPath("./Updater/RealtimePPUR.Updater.exe");
                 ProcessStartInfo args = new()
                 {
-                    FileName = "https://github.com/puk06/RealtimePPUR/releases/tag/" + latestRelease,
+                    FileName = $"\"{updaterPath}\"",
+                    Arguments = CurrentVersion,
                     UseShellExecute = true
                 };
 
                 Process.Start(args);
             }
-            catch
+            catch (Exception exception)
             {
-                MessageBox.Show("アップデートチェック中にエラーが発生しました", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("アップデートチェック中にエラーが発生しました" + exception.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
