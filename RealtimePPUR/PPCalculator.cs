@@ -100,7 +100,6 @@ namespace RealtimePPUR
 
             if (resultScreen)
             {
-                var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
 
                 var resultScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
@@ -112,6 +111,8 @@ namespace RealtimePPUR
 
                 if (mode != 3)
                 {
+                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+
                     var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
