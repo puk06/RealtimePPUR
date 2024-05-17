@@ -29,10 +29,11 @@ namespace RealtimePPUR
         private Ruleset _ruleset;
         private ProcessorWorkingBeatmap _workingBeatmap;
 
-        private int mode;
+        private int _mode;
 
         public PpCalculator(string file, int mode)
         {
+            _mode = mode;
             _ruleset = SetRuleset(mode);
             _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
         }
@@ -41,13 +42,13 @@ namespace RealtimePPUR
         {
             _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
             _ruleset = SetRuleset(givenmode);
-            mode = givenmode;
+            _mode = givenmode;
         }
 
         public void SetMode(int givenmode)
         {
             _ruleset = SetRuleset(givenmode);
-            mode = givenmode;
+            _mode = givenmode;
         }
 
         private static Ruleset SetRuleset(int mode)
@@ -74,11 +75,11 @@ namespace RealtimePPUR
             var data = new BeatmapData();
             var mods = args.NoClassicMod ? GetMods(_ruleset, args) : LegacyHelper.FilterDifficultyAdjustmentMods(_workingBeatmap.BeatmapInfo, _ruleset, GetMods(_ruleset, args));
             var beatmap = _workingBeatmap.GetPlayableBeatmap(_ruleset.RulesetInfo, mods);
-            var staticsSs = GenerateHitResultsForSs(beatmap, mode);
+            var staticsSs = GenerateHitResultsForSs(beatmap, _mode);
             var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
             {
                 Accuracy = 1,
-                MaxCombo = GetMaxCombo(beatmap, mode),
+                MaxCombo = GetMaxCombo(beatmap, _mode),
                 Statistics = staticsSs,
                 Mods = mods
             };
@@ -96,7 +97,7 @@ namespace RealtimePPUR
             data.IfFcHitResult = staticsSs;
             data.ExpectedManiaScore = 0;
 
-            var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
+            var statisticsCurrent = GenerateHitResultsForCurrent(hits, _mode);
 
             if (resultScreen)
             {
@@ -109,14 +110,14 @@ namespace RealtimePPUR
                     Mods = mods
                 };
 
-                if (mode != 3)
+                if (_mode != 3)
                 {
-                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, _mode);
 
                     var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
-                        Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
-                        MaxCombo = GetMaxCombo(beatmap, mode),
+                        Accuracy = GetAccuracy(staticsForCalcIfFc, _mode),
+                        MaxCombo = GetMaxCombo(beatmap, _mode),
                         Statistics = staticsForCalcIfFc,
                         Mods = mods
                     };
@@ -136,14 +137,14 @@ namespace RealtimePPUR
 
             if (!playing) return data;
             {
-                if (mode != 3)
+                if (_mode != 3)
                 {
-                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, _mode);
 
                     var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
-                        Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
-                        MaxCombo = GetMaxCombo(beatmap, mode),
+                        Accuracy = GetAccuracy(staticsForCalcIfFc, _mode),
+                        MaxCombo = GetMaxCombo(beatmap, _mode),
                         Statistics = staticsForCalcIfFc,
                         Mods = mods
                     };
@@ -159,13 +160,13 @@ namespace RealtimePPUR
                     data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
                 }
 
-                if (args.PplossMode && mode is 1 or 3)
+                if (args.PplossMode && _mode is 1 or 3)
                 {
-                    var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, mode);
+                    var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, _mode);
 
                     var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
-                        Accuracy = GetAccuracy(staticsLoss, mode),
+                        Accuracy = GetAccuracy(staticsLoss, _mode),
                         MaxCombo = args.Combo,
                         Statistics = staticsLoss,
                         Mods = mods
