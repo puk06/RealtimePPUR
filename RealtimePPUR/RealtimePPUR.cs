@@ -22,13 +22,12 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.3-Release";
+        private const string CurrentVersion = "v1.0.4-Release";
 
         private System.Windows.Forms.Label _currentPp, _sr, _iffc, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
         private readonly PrivateFontCollection _fontCollection;
         private readonly string _ingameoverlayPriority;
-        private readonly bool _pplossMode;
 
         private Point _mousePoint;
         private string _displayFormat;
@@ -145,7 +144,7 @@ namespace RealtimePPUR
                 highestScoreToolStripMenuItem.Checked = false;
                 userScoreToolStripMenuItem.Checked = false;
                 discordRichPresenceToolStripMenuItem.Checked = false;
-                _pplossMode = false;
+                pPLossModeToolStripMenuItem.Checked = false;
                 _ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
                 inGameValue.Font = new Font(_fontCollection.Families[0], 19F);
             }
@@ -220,7 +219,7 @@ namespace RealtimePPUR
                 higherScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHERSCOREDIFF", out string test19) && test19 == "true";
                 highestScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHESTSCOREDIFF", out string test20) && test20 == "true";
                 userScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("USERSCORE", out string test21) && test21 == "true";
-                _pplossMode = _configDictionary.TryGetValue("PPLOSSMODE", out string test22) && test22 == "true";
+                pPLossModeToolStripMenuItem.Checked = _configDictionary.TryGetValue("PPLOSSMODE", out string test22) && test22 == "true";
                 discordRichPresenceToolStripMenuItem.Checked = _configDictionary.TryGetValue("DISCORDRICHPRESENCE", out string test23) && test23 == "true";
                 _ingameoverlayPriority = _configDictionary.TryGetValue("INGAMEOVERLAYPRIORITY", out string test16) ? test16 : "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
 
@@ -544,7 +543,7 @@ namespace RealtimePPUR
                             case 1:
                                 if (sRToolStripMenuItem.Checked)
                                 {
-                                    if (_pplossMode && _currentGamemode is 1 or 3)
+                                    if (pPLossModeToolStripMenuItem.Checked && _currentGamemode is 1 or 3)
                                     {
                                         _displayFormat += "SR: " + sr + "\n";
                                     }
@@ -1159,7 +1158,7 @@ namespace RealtimePPUR
                         NoClassicMod = IsNoClassicMod,
                         Mods = mods,
                         Time = _baseAddresses.GeneralData.AudioTime,
-                        PplossMode = _pplossMode
+                        PplossMode = pPLossModeToolStripMenuItem.Checked
                     };
 
                     var result = _calculator?.Calculate(calcArgs, isplaying,
@@ -1789,5 +1788,7 @@ namespace RealtimePPUR
         private void healthPercentageToolStripMenuItem_Click(object sender, EventArgs e) => healthPercentageToolStripMenuItem.Checked = !healthPercentageToolStripMenuItem.Checked;
 
         private void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e) => discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
+
+        private void pPLossModeToolStripMenuItem_Click(object sender, EventArgs e) => pPLossModeToolStripMenuItem.Checked = !pPLossModeToolStripMenuItem.Checked;
     }
 }
