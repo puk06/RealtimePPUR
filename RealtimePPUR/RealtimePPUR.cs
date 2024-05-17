@@ -359,429 +359,479 @@ namespace RealtimePPUR
         {
             while (true)
             {
-                await Task.Delay(1);
-                await Loop();
-            }
-        }
-
-        private Task Loop()
-        {
-            try
-            {
-                if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
-                bool isplaying = _isplaying;
-                bool isResultScreen = _isResultScreen;
-                int currentGamemode = _currentGamemode;
-                OsuMemoryStatus status = _currentStatus;
-
-                HitsResult hits = new()
+                await Task.Delay(10);
+                try
                 {
-                    HitGeki = status switch
+                    if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
+                    bool isplaying = _isplaying;
+                    bool isResultScreen = _isResultScreen;
+                    int currentGamemode = _currentGamemode;
+                    OsuMemoryStatus status = _currentStatus;
+
+                    HitsResult hits = new()
                     {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.HitGeki,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitGeki,
-                        _ => 0
-                    },
-                    Hit300 = status switch
+                        HitGeki = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.HitGeki,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitGeki,
+                            _ => 0
+                        },
+                        Hit300 = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Hit300,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit300,
+                            _ => 0
+                        },
+                        HitKatu = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.HitKatu,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitKatu,
+                            _ => 0
+                        },
+                        Hit100 = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Hit100,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit100,
+                            _ => 0
+                        },
+                        Hit50 = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Hit50,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit50,
+                            _ => 0
+                        },
+                        HitMiss = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.HitMiss,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitMiss,
+                            _ => 0
+                        },
+                        Combo = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.MaxCombo,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.MaxCombo,
+                            _ => 0
+                        },
+                        Score = status switch
+                        {
+                            OsuMemoryStatus.Playing => _baseAddresses.Player.Score,
+                            OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Score,
+                            _ => 0
+                        }
+                    };
+
+                    if (isplaying)
                     {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.Hit300,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit300,
-                        _ => 0
-                    },
-                    HitKatu = status switch
-                    {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.HitKatu,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitKatu,
-                        _ => 0
-                    },
-                    Hit100 = status switch
-                    {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.Hit100,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit100,
-                        _ => 0
-                    },
-                    Hit50 = status switch
-                    {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.Hit50,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Hit50,
-                        _ => 0
-                    },
-                    HitMiss = status switch
-                    {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.HitMiss,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.HitMiss,
-                        _ => 0
-                    },
-                    Combo = status switch
-                    {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.MaxCombo,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.MaxCombo,
-                        _ => 0
-                    },
-                    Score = status switch
-                    {
-                        OsuMemoryStatus.Playing => _baseAddresses.Player.Score,
-                        OsuMemoryStatus.ResultsScreen => _baseAddresses.ResultsScreen.Score,
-                        _ => 0
+                        hits.HitGeki = _baseAddresses.Player.HitGeki;
+                        hits.Hit300 = _baseAddresses.Player.Hit300;
+                        hits.HitKatu = _baseAddresses.Player.HitKatu;
+                        hits.Hit100 = _baseAddresses.Player.Hit100;
+                        hits.Hit50 = _baseAddresses.Player.Hit50;
+                        hits.HitMiss = _baseAddresses.Player.HitMiss;
+                        hits.Combo = _baseAddresses.Player.MaxCombo;
+                        hits.Score = _baseAddresses.Player.Score;
                     }
-                };
 
-                if (isplaying)
-                {
-                    hits.HitGeki = _baseAddresses.Player.HitGeki;
-                    hits.Hit300 = _baseAddresses.Player.Hit300;
-                    hits.HitKatu = _baseAddresses.Player.HitKatu;
-                    hits.Hit100 = _baseAddresses.Player.Hit100;
-                    hits.Hit50 = _baseAddresses.Player.Hit50;
-                    hits.HitMiss = _baseAddresses.Player.HitMiss;
-                    hits.Combo = _baseAddresses.Player.MaxCombo;
-                    hits.Score = _baseAddresses.Player.Score;
-                }
+                    if (_calculatedObject == null) continue;
 
-                if (_calculatedObject == null) return Task.CompletedTask;
+                    var leaderBoardData = GetLeaderBoard(_baseAddresses.LeaderBoard, _baseAddresses.Player.Score);
+                    double sr = IsNaNWithNum(Math.Round(_calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
+                    double fullSr = IsNaNWithNum(Math.Round(_calculatedObject.DifficultyAttributes.StarRating, 2));
+                    double sspp = IsNaNWithNum(_calculatedObject.PerformanceAttributes.Total);
+                    double currentPp = IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total);
+                    double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIffc.Total);
 
-                var leaderBoardData = GetLeaderBoard(_baseAddresses.LeaderBoard, _baseAddresses.Player.Score);
-                double sr = IsNaNWithNum(Math.Round(_calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
-                double fullSr = IsNaNWithNum(Math.Round(_calculatedObject.DifficultyAttributes.StarRating, 2));
-                double sspp = IsNaNWithNum(_calculatedObject.PerformanceAttributes.Total);
-                double currentPp = IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total);
-                double ifFcpp = IsNaNWithNum(_calculatedObject.PerformanceAttributesIffc.Total);
+                    int geki = hits.HitGeki;
+                    int good = hits.Hit300;
+                    int katu = hits.HitKatu;
+                    int ok = hits.Hit100;
+                    int bad = hits.Hit50;
+                    int miss = hits.HitMiss;
 
-                int geki = hits.HitGeki;
-                int good = hits.Hit300;
-                int katu = hits.HitKatu;
-                int ok = hits.Hit100;
-                int bad = hits.Hit50;
-                int miss = hits.HitMiss;
+                    double healthPercentage = IsNaNWithNum(Math.Round(_baseAddresses.Player.HP / 2, 1));
+                    int userScore = hits.Score;
 
-                double healthPercentage = IsNaNWithNum(Math.Round(_baseAddresses.Player.HP / 2, 1));
-                int userScore = hits.Score;
+                    int currentPosition = leaderBoardData["currentPosition"];
+                    int higherScore = leaderBoardData["higherScore"];
+                    int highestScore = leaderBoardData["highestScore"];
 
-                int currentPosition = leaderBoardData["currentPosition"];
-                int higherScore = leaderBoardData["higherScore"];
-                int highestScore = leaderBoardData["highestScore"];
+                    _avgoffset.Text = Math.Round(_avgOffset, 2) + "ms";
+                    _avgoffset.Width = TextRenderer.MeasureText(_avgoffset.Text, _avgoffset.Font).Width;
 
-                _avgoffset.Text = Math.Round(_avgOffset, 2) + "ms";
-                _avgoffset.Width = TextRenderer.MeasureText(_avgoffset.Text, _avgoffset.Font).Width;
+                    _ur.Text = _urValue.ToString();
+                    _ur.Width = TextRenderer.MeasureText(_ur.Text, _ur.Font).Width;
 
-                _ur.Text = _urValue.ToString();
-                _ur.Width = TextRenderer.MeasureText(_ur.Text, _ur.Font).Width;
+                    _avgoffsethelp.Text = _avgOffsethelp.ToString();
+                    _avgoffsethelp.Width = TextRenderer.MeasureText(_avgoffsethelp.Text, _avgoffsethelp.Font).Width;
 
-                _avgoffsethelp.Text = _avgOffsethelp.ToString();
-                _avgoffsethelp.Width = TextRenderer.MeasureText(_avgoffsethelp.Text, _avgoffsethelp.Font).Width;
+                    _sr.Text = sr.ToString();
+                    _sr.Width = TextRenderer.MeasureText(_sr.Text, _sr.Font).Width;
 
-                _sr.Text = sr.ToString();
-                _sr.Width = TextRenderer.MeasureText(_sr.Text, _sr.Font).Width;
+                    _iffc.Text = (isplaying || isResultScreen) && currentGamemode != 3 ? Math.Round(ifFcpp) + " / " + Math.Round(sspp) : Math.Round(sspp).ToString();
+                    _iffc.Width = TextRenderer.MeasureText(_iffc.Text, _iffc.Font).Width;
 
-                _iffc.Text = (isplaying || isResultScreen) && currentGamemode != 3 ? Math.Round(ifFcpp) + " / " + Math.Round(sspp) : Math.Round(sspp).ToString();
-                _iffc.Width = TextRenderer.MeasureText(_iffc.Text, _iffc.Font).Width;
+                    _currentPp.Text = Math.Round(currentPp).ToString();
+                    _currentPp.Width = TextRenderer.MeasureText(_currentPp.Text, _currentPp.Font).Width;
+                    _currentPp.Left = ClientSize.Width - _currentPp.Width - 35;
 
-                _currentPp.Text = Math.Round(currentPp).ToString();
-                _currentPp.Width = TextRenderer.MeasureText(_currentPp.Text, _currentPp.Font).Width;
-                _currentPp.Left = ClientSize.Width - _currentPp.Width - 35;
-
-                switch (_currentGamemode)
-                {
-                    case 0:
-                        _good.Text = good.ToString();
-                        _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
-                        _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
-
-                        _ok.Text = (ok + bad).ToString();
-                        _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
-                        _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
-
-                        _miss.Text = miss.ToString();
-                        _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
-                        _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
-                        break;
-
-                    case 1:
-                        _good.Text = good.ToString();
-                        _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
-                        _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
-
-                        _ok.Text = ok.ToString();
-                        _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
-                        _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
-
-                        _miss.Text = miss.ToString();
-                        _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
-                        _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
-                        break;
-
-                    case 2:
-                        _good.Text = good.ToString();
-                        _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
-                        _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
-
-                        _ok.Text = (ok + bad).ToString();
-                        _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
-                        _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
-
-                        _miss.Text = miss.ToString();
-                        _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
-                        _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
-                        break;
-
-                    case 3:
-                        _good.Text = (good + geki).ToString();
-                        _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
-                        _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
-
-                        _ok.Text = (katu + ok + bad).ToString();
-                        _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
-                        _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
-
-                        _miss.Text = miss.ToString();
-                        _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
-                        _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
-                        break;
-                }
-
-                _displayFormat = "";
-                var ingameoverlayPriorityArray = _ingameoverlayPriority.Replace(" ", "").Split('/');
-                foreach (var priorityValue in ingameoverlayPriorityArray)
-                {
-                    var priorityValueResult = int.TryParse(priorityValue, out int priorityValueInt);
-                    if (!priorityValueResult) continue;
-                    switch (priorityValueInt)
+                    switch (_currentGamemode)
                     {
-                        case 1:
-                            if (sRToolStripMenuItem.Checked)
-                            {
-                                if (_pplossMode && _currentGamemode is 1 or 3)
-                                {
-                                    _displayFormat += "SR: " + sr + "\n";
-                                }
-                                else
-                                {
-                                    _displayFormat += "SR: " + sr + " / " + fullSr + "\n";
-                                }
-                            }
+                        case 0:
+                            _good.Text = good.ToString();
+                            _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
+                            _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
 
+                            _ok.Text = (ok + bad).ToString();
+                            _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
+                            _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
+
+                            _miss.Text = miss.ToString();
+                            _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
+                            _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
+                            break;
+
+                        case 1:
+                            _good.Text = good.ToString();
+                            _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
+                            _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
+
+                            _ok.Text = ok.ToString();
+                            _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
+                            _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
+
+                            _miss.Text = miss.ToString();
+                            _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
+                            _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
                             break;
 
                         case 2:
-                            if (sSPPToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "SSPP: " + Math.Round(sspp) + "pp\n";
-                            }
+                            _good.Text = good.ToString();
+                            _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
+                            _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
 
+                            _ok.Text = (ok + bad).ToString();
+                            _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
+                            _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
+
+                            _miss.Text = miss.ToString();
+                            _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
+                            _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
                             break;
 
                         case 3:
-                            if (currentPPToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += ifFCPPToolStripMenuItem.Checked switch
-                                {
-                                    true when currentGamemode != 3 => "PP: " + Math.Round(currentPp) + " / " + Math.Round(ifFcpp) + "pp\n",
-                                    true => "PP: " + Math.Round(currentPp) + " / " + Math.Round(sspp) + "pp\n",
-                                    _ => "PP: " + Math.Round(currentPp) + "pp\n"
-                                };
-                            }
+                            _good.Text = (good + geki).ToString();
+                            _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
+                            _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
 
-                            break;
+                            _ok.Text = (katu + ok + bad).ToString();
+                            _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
+                            _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
 
-                        case 4:
-                            if (currentACCToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "ACC: " + Math.Round(_baseAddresses.Player.Accuracy, 2) + "%\n";
-                            }
-
-                            break;
-
-                        case 5:
-                            if (hitsToolStripMenuItem.Checked)
-                            {
-                                switch (currentGamemode)
-                                {
-                                    case 0:
-                                        _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
-                                        break;
-
-                                    case 1:
-                                        _displayFormat += $"Hits: {good}/{ok}/{miss}\n";
-                                        break;
-
-                                    case 2:
-                                        _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
-                                        break;
-
-                                    case 3:
-                                        _displayFormat += $"Hits: {geki}/{good}/{katu}/{ok}/{bad}/{miss}\n";
-                                        break;
-                                }
-                            }
-
-                            break;
-
-                        case 6:
-                            if (ifFCHitsToolStripMenuItem.Checked)
-                            {
-                                int ifFcGood = _calculatedObject.IfFcHitResult[HitResult.Great];
-                                int ifFcOk = currentGamemode == 2
-                                    ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit]
-                                    : _calculatedObject.IfFcHitResult[HitResult.Ok];
-                                int ifFcBad = currentGamemode switch
-                                {
-                                    0 => _calculatedObject.IfFcHitResult[HitResult.Meh],
-                                    1 => 0,
-                                    2 => _calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
-                                    _ => 0
-                                };
-                                const int ifFcMiss = 0;
-
-                                switch (currentGamemode)
-                                {
-                                    case 0:
-                                        _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
-                                        break;
-
-                                    case 1:
-                                        _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcMiss}\n";
-                                        break;
-
-                                    case 2:
-                                        _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
-                                        break;
-                                }
-                            }
-
-                            break;
-
-                        case 7:
-                            if (uRToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "UR: " + _urValue + "\n";
-                            }
-
-                            break;
-
-                        case 8:
-                            if (offsetHelpToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "OffsetHelp: " + Math.Round(_avgOffsethelp) + "\n";
-                            }
-
-                            break;
-
-                        case 9:
-                            if (expectedManiaScoreToolStripMenuItem.Checked && currentGamemode == 3)
-                            {
-                                _displayFormat += "ManiaScore: " + _calculatedObject.ExpectedManiaScore + "\n";
-                            }
-
-                            break;
-
-                        case 10:
-                            if (avgOffsetToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "AvgOffset: " + _avgOffset + "\n";
-                            }
-
-                            break;
-
-                        case 11:
-                            if (progressToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "Progress: " + Math.Round(_baseAddresses.GeneralData.AudioTime /
-                                    _baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
-                            }
-
-                            break;
-
-                        case 12:
-                            if (healthPercentageToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "HP: " + healthPercentage + "%\n";
-                            }
-
-                            break;
-
-                        case 13:
-                            if (currentPositionToolStripMenuItem.Checked && currentPosition != 0)
-                            {
-                                if (currentPosition > 50)
-                                {
-                                    _displayFormat += "Position: >#50" + "\n";
-                                }
-                                else
-                                {
-                                    _displayFormat += "Position: #" + currentPosition + "\n";
-                                }
-                            }
-
-                            break;
-
-                        case 14:
-                            if (higherScoreToolStripMenuItem.Checked && higherScore != 0)
-                            {
-                                _displayFormat += "HigherDiff: " + (higherScore - userScore) + "\n";
-                            }
-
-                            break;
-
-                        case 15:
-                            switch (highestScoreToolStripMenuItem.Checked)
-                            {
-                                case true when highestScore != 0 && currentPosition == 1:
-                                    _displayFormat += "HighestDiff: You're Top!!" + "\n";
-                                    break;
-
-                                case true when highestScore != 0:
-                                    _displayFormat += "HighestDiff: " + (highestScore - userScore) + "\n";
-                                    break;
-                            }
-
-                            break;
-
-                        case 16:
-                            if (userScoreToolStripMenuItem.Checked)
-                            {
-                                _displayFormat += "Score: " + userScore + "\n";
-                            }
-
+                            _miss.Text = miss.ToString();
+                            _miss.Width = TextRenderer.MeasureText(_miss.Text, _miss.Font).Width;
+                            _miss.Left = (ClientSize.Width - _miss.Width) / 2 - 3;
                             break;
                     }
-                }
 
-                inGameValue.Text = _displayFormat;
-
-                if (_isosumode)
-                {
-                    var processes = Process.GetProcessesByName("osu!");
-                    if (processes.Length > 0)
+                    _displayFormat = "";
+                    var ingameoverlayPriorityArray = _ingameoverlayPriority.Replace(" ", "").Split('/');
+                    foreach (var priorityValue in ingameoverlayPriorityArray)
                     {
-                        Process osuProcess = processes[0];
-                        IntPtr osuMainWindowHandle = osuProcess.MainWindowHandle;
-                        if (GetWindowRect(osuMainWindowHandle, out Rect rect) &&
-                            _baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing &&
-                            GetForegroundWindow() == osuMainWindowHandle && osuMainWindowHandle != IntPtr.Zero)
+                        var priorityValueResult = int.TryParse(priorityValue, out int priorityValueInt);
+                        if (!priorityValueResult) continue;
+                        switch (priorityValueInt)
                         {
-                            if (!_nowPlaying)
-                            {
-                                _x = Location.X;
-                                _y = Location.Y;
-                                _nowPlaying = true;
-                            }
+                            case 1:
+                                if (sRToolStripMenuItem.Checked)
+                                {
+                                    if (_pplossMode && _currentGamemode is 1 or 3)
+                                    {
+                                        _displayFormat += "SR: " + sr + "\n";
+                                    }
+                                    else
+                                    {
+                                        _displayFormat += "SR: " + sr + " / " + fullSr + "\n";
+                                    }
+                                }
 
-                            BackgroundImage = null;
-                            _currentBackgroundImage = 0;
-                            inGameValue.Visible = true;
-                            _avgoffsethelp.Visible = false;
-                            _sr.Visible = false;
-                            _iffc.Visible = false;
-                            _currentPp.Visible = false;
-                            _good.Visible = false;
-                            _ok.Visible = false;
-                            _miss.Visible = false;
-                            _avgoffset.Visible = false;
-                            _ur.Visible = false;
-                            Region = null;
-                            Size = new Size(inGameValue.Width, inGameValue.Height);
-                            Location = new Point(rect.Left + _osuModeValue["left"] + 2,
-                                rect.Top + _osuModeValue["top"]);
+                                break;
+
+                            case 2:
+                                if (sSPPToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "SSPP: " + Math.Round(sspp) + "pp\n";
+                                }
+
+                                break;
+
+                            case 3:
+                                if (currentPPToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += ifFCPPToolStripMenuItem.Checked switch
+                                    {
+                                        true when currentGamemode != 3 => "PP: " + Math.Round(currentPp) + " / " + Math.Round(ifFcpp) + "pp\n",
+                                        true => "PP: " + Math.Round(currentPp) + " / " + Math.Round(sspp) + "pp\n",
+                                        _ => "PP: " + Math.Round(currentPp) + "pp\n"
+                                    };
+                                }
+
+                                break;
+
+                            case 4:
+                                if (currentACCToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "ACC: " + Math.Round(_baseAddresses.Player.Accuracy, 2) + "%\n";
+                                }
+
+                                break;
+
+                            case 5:
+                                if (hitsToolStripMenuItem.Checked)
+                                {
+                                    switch (currentGamemode)
+                                    {
+                                        case 0:
+                                            _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
+                                            break;
+
+                                        case 1:
+                                            _displayFormat += $"Hits: {good}/{ok}/{miss}\n";
+                                            break;
+
+                                        case 2:
+                                            _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
+                                            break;
+
+                                        case 3:
+                                            _displayFormat += $"Hits: {geki}/{good}/{katu}/{ok}/{bad}/{miss}\n";
+                                            break;
+                                    }
+                                }
+
+                                break;
+
+                            case 6:
+                                if (ifFCHitsToolStripMenuItem.Checked)
+                                {
+                                    int ifFcGood = _calculatedObject.IfFcHitResult[HitResult.Great];
+                                    int ifFcOk = currentGamemode == 2
+                                        ? _calculatedObject.IfFcHitResult[HitResult.LargeTickHit]
+                                        : _calculatedObject.IfFcHitResult[HitResult.Ok];
+                                    int ifFcBad = currentGamemode switch
+                                    {
+                                        0 => _calculatedObject.IfFcHitResult[HitResult.Meh],
+                                        1 => 0,
+                                        2 => _calculatedObject.IfFcHitResult[HitResult.SmallTickHit],
+                                        _ => 0
+                                    };
+                                    const int ifFcMiss = 0;
+
+                                    switch (currentGamemode)
+                                    {
+                                        case 0:
+                                            _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
+                                            break;
+
+                                        case 1:
+                                            _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcMiss}\n";
+                                            break;
+
+                                        case 2:
+                                            _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
+                                            break;
+                                    }
+                                }
+
+                                break;
+
+                            case 7:
+                                if (uRToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "UR: " + _urValue + "\n";
+                                }
+
+                                break;
+
+                            case 8:
+                                if (offsetHelpToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "OffsetHelp: " + Math.Round(_avgOffsethelp) + "\n";
+                                }
+
+                                break;
+
+                            case 9:
+                                if (expectedManiaScoreToolStripMenuItem.Checked && currentGamemode == 3)
+                                {
+                                    _displayFormat += "ManiaScore: " + _calculatedObject.ExpectedManiaScore + "\n";
+                                }
+
+                                break;
+
+                            case 10:
+                                if (avgOffsetToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "AvgOffset: " + _avgOffset + "\n";
+                                }
+
+                                break;
+
+                            case 11:
+                                if (progressToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "Progress: " + Math.Round(_baseAddresses.GeneralData.AudioTime /
+                                        _baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
+                                }
+
+                                break;
+
+                            case 12:
+                                if (healthPercentageToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "HP: " + healthPercentage + "%\n";
+                                }
+
+                                break;
+
+                            case 13:
+                                if (currentPositionToolStripMenuItem.Checked && currentPosition != 0)
+                                {
+                                    if (currentPosition > 50)
+                                    {
+                                        _displayFormat += "Position: >#50" + "\n";
+                                    }
+                                    else
+                                    {
+                                        _displayFormat += "Position: #" + currentPosition + "\n";
+                                    }
+                                }
+
+                                break;
+
+                            case 14:
+                                if (higherScoreToolStripMenuItem.Checked && higherScore != 0)
+                                {
+                                    _displayFormat += "HigherDiff: " + (higherScore - userScore) + "\n";
+                                }
+
+                                break;
+
+                            case 15:
+                                switch (highestScoreToolStripMenuItem.Checked)
+                                {
+                                    case true when highestScore != 0 && currentPosition == 1:
+                                        _displayFormat += "HighestDiff: You're Top!!" + "\n";
+                                        break;
+
+                                    case true when highestScore != 0:
+                                        _displayFormat += "HighestDiff: " + (highestScore - userScore) + "\n";
+                                        break;
+                                }
+
+                                break;
+
+                            case 16:
+                                if (userScoreToolStripMenuItem.Checked)
+                                {
+                                    _displayFormat += "Score: " + userScore + "\n";
+                                }
+
+                                break;
+                        }
+                    }
+
+                    inGameValue.Text = _displayFormat;
+
+                    if (_isosumode)
+                    {
+                        var processes = Process.GetProcessesByName("osu!");
+                        if (processes.Length > 0)
+                        {
+                            Process osuProcess = processes[0];
+                            IntPtr osuMainWindowHandle = osuProcess.MainWindowHandle;
+                            if (GetWindowRect(osuMainWindowHandle, out Rect rect) &&
+                                _baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing &&
+                                GetForegroundWindow() == osuMainWindowHandle && osuMainWindowHandle != IntPtr.Zero)
+                            {
+                                if (!_nowPlaying)
+                                {
+                                    _x = Location.X;
+                                    _y = Location.Y;
+                                    _nowPlaying = true;
+                                }
+
+                                BackgroundImage = null;
+                                _currentBackgroundImage = 0;
+                                inGameValue.Visible = true;
+                                _avgoffsethelp.Visible = false;
+                                _sr.Visible = false;
+                                _iffc.Visible = false;
+                                _currentPp.Visible = false;
+                                _good.Visible = false;
+                                _ok.Visible = false;
+                                _miss.Visible = false;
+                                _avgoffset.Visible = false;
+                                _ur.Visible = false;
+                                Region = null;
+                                Size = new Size(inGameValue.Width, inGameValue.Height);
+                                Location = new Point(rect.Left + _osuModeValue["left"] + 2,
+                                    rect.Top + _osuModeValue["top"]);
+                            }
+                            else if (_nowPlaying)
+                            {
+                                switch (_mode)
+                                {
+                                    case 0:
+                                        if (_currentBackgroundImage != 1)
+                                        {
+                                            ClientSize = new Size(316, 130);
+                                            RoundCorners();
+                                            BackgroundImage = Properties.Resources.PPUR;
+                                            _currentBackgroundImage = 1;
+                                        }
+
+                                        break;
+
+                                    case 1:
+                                        if (_currentBackgroundImage != 2)
+                                        {
+                                            ClientSize = new Size(316, 65);
+                                            RoundCorners();
+                                            BackgroundImage = Properties.Resources.PP;
+                                            _currentBackgroundImage = 2;
+                                        }
+
+                                        break;
+
+                                    case 2:
+                                        if (_currentBackgroundImage != 3)
+                                        {
+                                            ClientSize = new Size(316, 65);
+                                            RoundCorners();
+                                            BackgroundImage = Properties.Resources.UR;
+                                            _currentBackgroundImage = 3;
+                                        }
+
+                                        break;
+                                }
+
+                                if (_nowPlaying)
+                                {
+                                    Location = new Point(_x, _y);
+                                    _nowPlaying = false;
+                                }
+
+                                inGameValue.Visible = false;
+                                _sr.Visible = true;
+                                _iffc.Visible = true;
+                                _currentPp.Visible = true;
+                                _good.Visible = true;
+                                _ok.Visible = true;
+                                _miss.Visible = true;
+                                _avgoffset.Visible = true;
+                                _ur.Visible = true;
+                                _avgoffsethelp.Visible = true;
+                            }
                         }
                         else if (_nowPlaying)
                         {
@@ -895,77 +945,21 @@ namespace RealtimePPUR
                         _avgoffsethelp.Visible = true;
                     }
                 }
-                else if (_nowPlaying)
+                catch (Exception e)
                 {
-                    switch (_mode)
-                    {
-                        case 0:
-                            if (_currentBackgroundImage != 1)
-                            {
-                                ClientSize = new Size(316, 130);
-                                RoundCorners();
-                                BackgroundImage = Properties.Resources.PPUR;
-                                _currentBackgroundImage = 1;
-                            }
-
-                            break;
-
-                        case 1:
-                            if (_currentBackgroundImage != 2)
-                            {
-                                ClientSize = new Size(316, 65);
-                                RoundCorners();
-                                BackgroundImage = Properties.Resources.PP;
-                                _currentBackgroundImage = 2;
-                            }
-
-                            break;
-
-                        case 2:
-                            if (_currentBackgroundImage != 3)
-                            {
-                                ClientSize = new Size(316, 65);
-                                RoundCorners();
-                                BackgroundImage = Properties.Resources.UR;
-                                _currentBackgroundImage = 3;
-                            }
-
-                            break;
-                    }
-
-                    if (_nowPlaying)
-                    {
-                        Location = new Point(_x, _y);
-                        _nowPlaying = false;
-                    }
-
-                    inGameValue.Visible = false;
-                    _sr.Visible = true;
-                    _iffc.Visible = true;
-                    _currentPp.Visible = true;
-                    _good.Visible = true;
-                    _ok.Visible = true;
-                    _miss.Visible = true;
-                    _avgoffset.Visible = true;
-                    _ur.Visible = true;
-                    _avgoffsethelp.Visible = true;
+                    ErrorLogger(e);
+                    if (!_nowPlaying) inGameValue.Text = "";
+                    _sr.Text = "0";
+                    _iffc.Text = "0";
+                    _currentPp.Text = "0";
+                    _good.Text = "0";
+                    _ok.Text = "0";
+                    _miss.Text = "0";
+                    _avgoffset.Text = "0ms";
+                    _ur.Text = "0";
+                    _avgoffsethelp.Text = "0";
                 }
             }
-            catch (Exception e)
-            {
-                ErrorLogger(e);
-                if (!_nowPlaying) inGameValue.Text = "";
-                _sr.Text = "0";
-                _iffc.Text = "0";
-                _currentPp.Text = "0";
-                _good.Text = "0";
-                _ok.Text = "0";
-                _miss.Text = "0";
-                _avgoffset.Text = "0ms";
-                _ur.Text = "0";
-                _avgoffsethelp.Text = "0";
-            }
-            return Task.CompletedTask;
         }
 
         private void UpdateMemoryData()
@@ -974,6 +968,7 @@ namespace RealtimePPUR
             {
                 try
                 {
+                    Thread.Sleep(10);
                     if (Process.GetProcessesByName("osu!").Length == 0) continue;
                     if (!_isDbLoaded)
                     {
@@ -1025,6 +1020,7 @@ namespace RealtimePPUR
             {
                 try
                 {
+                    Thread.Sleep(10);
                     if (Process.GetProcessesByName("osu!").Length == 0) continue;
                     bool isplaying = _isplaying;
                     bool isResultScreen = _isResultScreen;
@@ -1240,7 +1236,7 @@ namespace RealtimePPUR
                                         $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                     SmallImageKey = "osu_playing",
                                     SmallImageText =
-                                        $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                        $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
 
@@ -1260,7 +1256,7 @@ namespace RealtimePPUR
                                         $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                     SmallImageKey = "osu_playing",
                                     SmallImageText =
-                                        $"{Math.Round(_calculatedObject.CurrentPerformanceAttributes.Total, 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                        $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
 
