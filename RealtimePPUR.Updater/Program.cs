@@ -15,31 +15,32 @@ namespace RealtimePPUR.Updater
             {
                 if (args.Length != 1)
                 {
-                    Console.WriteLine("バージョン情報が取得できませんでした。");
+                    Console.WriteLine("バージョン情報が取得できませんでした。ソフト内から実行するようにしてください！");
                     Thread.Sleep(3000);
                     return;
                 }
 
-                var CurrentVersion = args[0];
+                var currentVersion = args[0];
 
-                if (string.IsNullOrEmpty(CurrentVersion))
+                if (string.IsNullOrEmpty(currentVersion))
                 {
-                    Console.WriteLine("バージョン情報が取得できませんでした。");
+                    Console.WriteLine("バージョン情報が取得できませんでした。ソフト内から実行するようにしてください！");
                     Thread.Sleep(3000);
+                    return;
                 }
 
                 Console.WriteLine("アップデートを確認します。");
 
-                var latestVersion = GithubUpdateChecker(CurrentVersion).Result;
+                var latestVersion = await GithubUpdateChecker(currentVersion);
 
-                if (latestVersion == CurrentVersion)
+                if (latestVersion == currentVersion)
                 {
-                    Console.WriteLine("最新バージョンです。");
+                    Console.WriteLine("最新バージョンです！ソフトを使ってくれてありがとうございます！");
                     Thread.Sleep(3000);
                     return;
                 }
 
-                Console.WriteLine($"最新バージョンが見つかりました({CurrentVersion} → {latestVersion})");
+                Console.WriteLine($"最新バージョンが見つかりました({currentVersion} → {latestVersion})");
                 Console.WriteLine("Configファイルはバックアップを取らない限りリセットされてしまいます。もし大丈夫な場合はEnterを押してください。");
                 Console.ReadLine();
                 Console.WriteLine("RealtimePPUR関係のソフトをすべて終了します。");
@@ -102,33 +103,46 @@ namespace RealtimePPUR.Updater
 
         public Updater(string version, string arch)
         {
-            this._version = version;
-            this._arch = arch;
+            _version = version;
+            _arch = arch;
         }
 
-        private const string baseurl = "https://github.com/puk06/RealtimePPUR/releases/download/";
+        private const string Baseurl = "https://github.com/puk06/RealtimePPUR/releases/download/";
 
         public async Task Update()
         {
-            var downloadUrl = $"{baseurl}{_version}/RealtimePPUR-{_arch}.zip";
+            var downloadUrl = $"{Baseurl}{_version}/RealtimePPUR-{_arch}.zip";
             var tempPath = Path.GetTempPath();
             var tempFile = Path.Combine(tempPath, "RealtimePPUR.zip");
             var extractPath = Path.Combine(tempPath, "RealtimePPUR.Temp");
 
             Console.WriteLine("ファイルのダウンロードを開始しています...");
-            Console.WriteLine("ファイルのダウンロード中です...ネットの環境などにより時間がかかる可能性があります。");
+            Console.WriteLine("ファイルのダウンロード中です...ソフトを終了しないでください！");
 
             using var client = new WebClient();
             await client.DownloadFileTaskAsync(new Uri(downloadUrl), tempFile);
 
-            Console.WriteLine("ダウンロードが完了しました。");
+            Console.WriteLine("ダウンロードが完了しました！");
             Console.WriteLine("ファイルの展開中です...");
 
             ZipFile.ExtractToDirectory(tempFile, extractPath, Encoding.UTF8, true);
             File.Delete(tempFile);
 
             var files = Directory.GetFiles(extractPath);
-            var softwarePath = Directory.GetParent(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName;
+            var currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (currentPath == null)
+            {
+                Console.WriteLine("カレントフォルダの取得に失敗しました。");
+                Thread.Sleep(3000);
+                return;
+            }
+            var softwarePath = Directory.GetParent(currentPath)?.FullName;
+            if (softwarePath == null)
+            {
+                Console.WriteLine("ソフトウェアのフォルダの取得に失敗しました。");
+                Thread.Sleep(3000);
+                return;
+            }
 
             for (int i = 0; i < files.Length; i++)
             {
