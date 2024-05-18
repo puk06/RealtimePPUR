@@ -343,6 +343,11 @@ namespace RealtimePPUR
                     }
                 }
             }
+        }
+
+        private void RealtimePpur_Shown(object sender, EventArgs e)
+        {
+            TopMost = true;
             Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
             Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
             Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
@@ -351,8 +356,6 @@ namespace RealtimePPUR
             updateDiscordRichPresenceThread.Start();
             UpdateLoop();
         }
-
-        private void RealtimePpur_Shown(object sender, EventArgs e) => TopMost = true;
 
         private async void UpdateLoop()
         {
