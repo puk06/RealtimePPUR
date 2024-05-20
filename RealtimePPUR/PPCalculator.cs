@@ -28,7 +28,6 @@ namespace RealtimePPUR
     {
         private Ruleset _ruleset;
         private ProcessorWorkingBeatmap _workingBeatmap;
-
         private int _mode;
 
         public PpCalculator(string file, int mode)
@@ -101,7 +100,6 @@ namespace RealtimePPUR
 
             if (resultScreen)
             {
-
                 var resultScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
                     Accuracy = args.Accuracy / 100,

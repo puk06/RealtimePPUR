@@ -1022,7 +1022,7 @@ namespace RealtimePPUR
             {
                 try
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(30);
                     if (Process.GetProcessesByName("osu!").Length == 0) continue;
                     bool isplaying = _isplaying;
                     bool isResultScreen = _isResultScreen;
