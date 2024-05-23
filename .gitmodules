@@ -1,3 +1,6 @@
 [submodule "osu"]
 	path = osu
 	url = https://github.com/Piotrekol/osu
+[submodule "RealtimePPUR-src"]
+	path = RealtimePPUR-src
+	url = https://github.com/puk06/RealtimePPUR-src.git
