@@ -13,7 +13,6 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,7 +21,7 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.4-Release";
+        private const string CurrentVersion = "v1.0.5-Release";
 
         private System.Windows.Forms.Label _currentPp, _sr, _iffc, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
@@ -434,7 +433,7 @@ namespace RealtimePPUR
                         hits.Score = _baseAddresses.Player.Score;
                     }
 
-                    if (_calculatedObject == null) continue;
+                    if (_calculatedObject == null) throw new Exception("CalculatedObject is null.");
 
                     var leaderBoardData = GetLeaderBoard(_baseAddresses.LeaderBoard, _baseAddresses.Player.Score);
                     double sr = IsNaNWithNum(Math.Round(_calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
@@ -971,21 +970,20 @@ namespace RealtimePPUR
                 try
                 {
                     Thread.Sleep(10);
-                    if (Process.GetProcessesByName("osu!").Length == 0) continue;
+                    if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     if (!_isDbLoaded)
                     {
                         Process osuProcess = Process.GetProcessesByName("osu!")[0];
                         string tempOsuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
 
-                        if (string.IsNullOrEmpty(tempOsuDirectory) || !Directory.Exists(tempOsuDirectory))
-                            continue;
+                        if (string.IsNullOrEmpty(tempOsuDirectory) || !Directory.Exists(tempOsuDirectory)) throw new Exception("osu! directory not found.");
 
                         _osuDirectory = tempOsuDirectory;
                         _songsPath = GetSongsFolderLocation(_osuDirectory);
                         _isDbLoaded = true;
                     }
 
-                    if (!_sreader.CanRead) continue;
+                    if (!_sreader.CanRead) throw new Exception("Memory reader is not initialized.");
 
                     _sreader.TryRead(_baseAddresses.Beatmap);
                     _sreader.TryRead(_baseAddresses.Player);
@@ -1023,7 +1021,7 @@ namespace RealtimePPUR
                 try
                 {
                     Thread.Sleep(30);
-                    if (Process.GetProcessesByName("osu!").Length == 0) continue;
+                    if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     bool isplaying = _isplaying;
                     bool isResultScreen = _isResultScreen;
                     string currentMapString = _baseAddresses.Beatmap.MapString;
@@ -1041,10 +1039,10 @@ namespace RealtimePPUR
                     {
                         string osuBeatmapPath = Path.Combine(_songsPath ?? "", _baseAddresses.Beatmap.FolderName ?? "",
                             currentOsuFileName ?? "");
-                        if (!File.Exists(osuBeatmapPath)) continue;
+                        if (!File.Exists(osuBeatmapPath)) throw new Exception("Beatmap file not found.");
 
                         int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
-                        if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3)) continue;
+                        if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3)) throw new Exception("Invalid gamemode.");
 
                         _currentBeatmapGamemode = currentBeatmapGamemodeTemp;
                         _currentGamemode = _currentBeatmapGamemode == 0 ? _currentOsuGamemode : _currentBeatmapGamemode;
@@ -1063,7 +1061,7 @@ namespace RealtimePPUR
 
                     if (_currentOsuGamemode != _preOsuGamemode)
                     {
-                        if (_calculator == null) continue;
+                        if (_calculator == null) throw new Exception("Calculator is not initialized.");
                         if (_currentBeatmapGamemode == 0 && _currentOsuGamemode is 0 or 1 or 2 or 3)
                         {
                             _calculator.SetMode(_currentOsuGamemode);
@@ -1168,7 +1166,7 @@ namespace RealtimePPUR
                         isResultScreen && !isplaying, hits);
                     if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
                         result.CurrentDifficultyAttributes == null ||
-                        result.CurrentPerformanceAttributes == null) continue;
+                        result.CurrentPerformanceAttributes == null) throw new Exception("Result is null.");
 
                     _calculatedObject = result;
                 }
@@ -1419,15 +1417,13 @@ namespace RealtimePPUR
 
         private static string GetSongsFolderLocation(string osuDirectory)
         {
-            foreach (string file in Directory.GetFiles(osuDirectory))
+            string userName = Environment.UserName;
+            string file = Path.Combine(osuDirectory, $"osu!.{userName}.cfg");
+            foreach (string readLine in File.ReadLines(file))
             {
-                if (!Regex.IsMatch(file, @"^osu!\.+\.cfg$")) continue;
-                foreach (string readLine in File.ReadLines(file))
-                {
-                    if (!readLine.StartsWith("BeatmapDirectory")) continue;
-                    string path = readLine.Split('=')[1].Trim(' ');
-                    return path == "Songs" ? Path.Combine(osuDirectory, "Songs") : path;
-                }
+                if (!readLine.StartsWith("BeatmapDirectory")) continue;
+                string path = readLine.Split('=')[1].Trim(' ');
+                return path == "Songs" ? Path.Combine(osuDirectory, "Songs") : path;
             }
             return Path.Combine(osuDirectory, "Songs");
         }
