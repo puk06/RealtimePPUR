@@ -16,7 +16,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using osu.Framework.Utils;
 
 namespace RealtimePPUR
 {
@@ -361,7 +360,7 @@ namespace RealtimePPUR
         {
             while (true)
             {
-                await Task.Delay(10);
+                await Task.Delay(15);
                 try
                 {
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
@@ -970,7 +969,7 @@ namespace RealtimePPUR
             {
                 try
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(15);
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     if (!_isDirectoryLoaded)
                     {
@@ -1023,7 +1022,7 @@ namespace RealtimePPUR
             {
                 try
                 {
-                    Thread.Sleep(30);
+                    Thread.Sleep(15);
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     bool isplaying = _isplaying;
                     bool isResultScreen = _isResultScreen;
@@ -1145,12 +1144,13 @@ namespace RealtimePPUR
 
                     string[] mods = status switch
                     {
-                        OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value)[0],
-                        OsuMemoryStatus.ResultsScreen => ParseMods(_baseAddresses.ResultsScreen.Mods.Value)[0],
-                        OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods)[0],
-                        _ => ParseMods(_baseAddresses.GeneralData.Mods)[0]
+                        OsuMemoryStatus.Playing => ParseMods(_baseAddresses.Player.Mods.Value).Calculate,
+                        OsuMemoryStatus.ResultsScreen => ParseMods(_baseAddresses.ResultsScreen.Mods.Value).Calculate,
+                        OsuMemoryStatus.MainMenu => ParseMods(_baseAddresses.GeneralData.Mods).Calculate,
+                        _ => ParseMods(_baseAddresses.GeneralData.Mods).Calculate
                     };
-                    if (isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value)[0];
+
+                    if (isplaying) mods = ParseMods(_baseAddresses.Player.Mods.Value).Calculate;
 
                     double acc = CalculateAcc(hits, _currentGamemode);
 
@@ -1268,7 +1268,7 @@ namespace RealtimePPUR
                                         $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                     SmallImageKey = "osu_playing",
                                     SmallImageText =
-                                        $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                        $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value).Show)}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
 
@@ -1288,7 +1288,7 @@ namespace RealtimePPUR
                                         $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
                                     SmallImageKey = "osu_playing",
                                     SmallImageText =
-                                        $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value)[1])}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
+                                        $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value).Show)}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
                                 }
                             });
 
@@ -1357,7 +1357,7 @@ namespace RealtimePPUR
             };
         }
 
-        private static string[][] ParseMods(int mods)
+        private static Mods ParseMods(int mods)
         {
             List<string> activeModsCalc = new();
             List<string> activeModsShow = new();
@@ -1374,10 +1374,10 @@ namespace RealtimePPUR
             if (activeModsShow.Contains("NC") && activeModsShow.Contains("DT")) activeModsShow.Remove("DT");
             if (activeModsShow.Count == 0) activeModsShow.Add("NM");
 
-            return new[]
+            return new Mods()
             {
-                activeModsCalc.ToArray(),
-                activeModsShow.ToArray()
+                Calculate = activeModsCalc.ToArray(),
+                Show = activeModsShow.ToArray()
             };
         }
 
@@ -1417,7 +1417,7 @@ namespace RealtimePPUR
         {
             if (array == null || array.Count == 0) return 0;
             double result = (double)array.Sum(item => (long)item) / array.Count;
-            return result;
+            return result > 10000 ? double.NaN : result;
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
@@ -1488,7 +1488,7 @@ namespace RealtimePPUR
             double average = totalAll / hitErrors.Count;
             double variance = hitErrors.Sum(hit => Math.Pow(hit - average, 2)) / hitErrors.Count;
             double unstableRate = Math.Sqrt(variance) * 10;
-            return unstableRate;
+            return unstableRate > 10000 ? double.NaN : unstableRate;
         }
 
         private static async void GithubUpdateChecker()
@@ -1943,5 +1943,11 @@ namespace RealtimePPUR
                 MessageBox.Show("Config.cfgの保存に失敗しました。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+    }
+
+    public class Mods
+    {
+        public string[] Calculate { get; set; }
+        public string[] Show { get; set; }
     }
 }
