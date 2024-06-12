@@ -65,6 +65,7 @@ namespace RealtimePPUR
             higherScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             highestScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             userScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pPLossModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changePriorityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             changeFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             loadFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,7 +73,7 @@ namespace RealtimePPUR
             discordRichPresenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             inGameValue = new System.Windows.Forms.Label();
-            pPLossModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -195,9 +196,9 @@ namespace RealtimePPUR
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(191, 246);
+            contextMenuStrip1.Size = new Size(191, 268);
             // 
             // modeToolStripMenuItem
             // 
@@ -360,6 +361,13 @@ namespace RealtimePPUR
             userScoreToolStripMenuItem.Text = "UserScore";
             userScoreToolStripMenuItem.Click += userScoreToolStripMenuItem_Click;
             // 
+            // pPLossModeToolStripMenuItem
+            // 
+            pPLossModeToolStripMenuItem.Name = "pPLossModeToolStripMenuItem";
+            pPLossModeToolStripMenuItem.Size = new Size(190, 22);
+            pPLossModeToolStripMenuItem.Text = "PPLossMode";
+            pPLossModeToolStripMenuItem.Click += pPLossModeToolStripMenuItem_Click;
+            // 
             // changePriorityToolStripMenuItem
             // 
             changePriorityToolStripMenuItem.Name = "changePriorityToolStripMenuItem";
@@ -412,12 +420,12 @@ namespace RealtimePPUR
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
-            // pPLossModeToolStripMenuItem
+            // saveConfigToolStripMenuItem
             // 
-            pPLossModeToolStripMenuItem.Name = "pPLossModeToolStripMenuItem";
-            pPLossModeToolStripMenuItem.Size = new Size(190, 22);
-            pPLossModeToolStripMenuItem.Text = "PPLossMode";
-            pPLossModeToolStripMenuItem.Click += pPLossModeToolStripMenuItem_Click;
+            saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
+            saveConfigToolStripMenuItem.Size = new Size(190, 22);
+            saveConfigToolStripMenuItem.Text = "Save Config";
+            saveConfigToolStripMenuItem.Click += saveConfigToolStripMenuItem_Click;
             // 
             // RealtimePpur
             // 
@@ -498,6 +506,7 @@ namespace RealtimePPUR
         private System.Windows.Forms.ToolStripMenuItem userScoreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem discordRichPresenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pPLossModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveConfigToolStripMenuItem;
     }
 }
 

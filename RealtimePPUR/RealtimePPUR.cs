@@ -16,12 +16,13 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using osu.Framework.Utils;
 
 namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.5-Release";
+        private const string CurrentVersion = "v1.0.6-Release";
 
         private System.Windows.Forms.Label _currentPp, _sr, _iffc, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 
@@ -34,7 +35,7 @@ namespace RealtimePPUR
         private bool _isosumode;
         private bool _nowPlaying;
         private int _currentBackgroundImage = 1;
-        private bool _isDbLoaded;
+        private bool _isDirectoryLoaded;
         private string _osuDirectory;
         private string _songsPath;
         private string _preTitle;
@@ -630,15 +631,15 @@ namespace RealtimePPUR
                                     switch (currentGamemode)
                                     {
                                         case 0:
-                                            _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
+                                            _displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
                                             break;
 
                                         case 1:
-                                            _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcMiss}\n";
+                                            _displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcMiss}\n";
                                             break;
 
                                         case 2:
-                                            _displayFormat += $"ifFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
+                                            _displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
                                             break;
                                     }
                                 }
@@ -971,7 +972,7 @@ namespace RealtimePPUR
                 {
                     Thread.Sleep(10);
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
-                    if (!_isDbLoaded)
+                    if (!_isDirectoryLoaded)
                     {
                         Process osuProcess = Process.GetProcessesByName("osu!")[0];
                         string tempOsuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
@@ -980,8 +981,10 @@ namespace RealtimePPUR
 
                         _osuDirectory = tempOsuDirectory;
                         _songsPath = GetSongsFolderLocation(_osuDirectory);
-                        _isDbLoaded = true;
+                        _isDirectoryLoaded = true;
                     }
+
+                    if (!_isDirectoryLoaded) throw new Exception("osu! directory not found.");
 
                     if (!_sreader.CanRead) throw new Exception("Memory reader is not initialized.");
 
@@ -1180,6 +1183,8 @@ namespace RealtimePPUR
         private void UpdateDiscordRichPresence()
         {
             bool isConnectedToDiscord = false;
+            bool configDialog = false;
+
             while (!isConnectedToDiscord)
             {
                 try
@@ -1199,7 +1204,34 @@ namespace RealtimePPUR
             {
                 try
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2000);
+
+                    if (Process.GetProcessesByName("osu!").Length == 0)
+                    {
+                        _client.ClearPresence();
+                        continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(_osuDirectory) && !configDialog)
+                    {
+                        try
+                        {
+                            bool configChecked = CheckConfigValue(_osuDirectory, "DiscordRichPresence", "1");
+                            if (configChecked)
+                            {
+                                MessageBox.Show(
+                                    "osu!の設定で、DiscordRichPresenceがオンになっています。\nこれにより、RealtimePPURのRichPresenceが上書きされる可能性があります。osu!の設定で無効化することができます。",
+                                    "RealtimePPUR", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+
+                            configDialog = true;
+                        }
+                        catch (Exception e)
+                        {
+                            ErrorLogger(e);
+                        }
+                    }
+
                     if (!discordRichPresenceToolStripMenuItem.Checked)
                     {
                         _client.ClearPresence();
@@ -1419,13 +1451,34 @@ namespace RealtimePPUR
         {
             string userName = Environment.UserName;
             string file = Path.Combine(osuDirectory, $"osu!.{userName}.cfg");
+            if (!File.Exists(file))
+            {
+                MessageBox.Show("osu!.Username.cfgが見つからなかったため、Songsフォルダを自動検出できませんでした。\nosu!.exeのフォルダのSongsフォルダを参照します。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return Path.Combine(osuDirectory, "Songs");
+            }
+
             foreach (string readLine in File.ReadLines(file))
             {
                 if (!readLine.StartsWith("BeatmapDirectory")) continue;
                 string path = readLine.Split('=')[1].Trim(' ');
                 return path == "Songs" ? Path.Combine(osuDirectory, "Songs") : path;
             }
+            MessageBox.Show("BeatmapDirectoryが見つからなかったため、Songsフォルダを自動検出できませんでした。\nosu!.exeのフォルダのSongsフォルダを参照します。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return Path.Combine(osuDirectory, "Songs");
+        }
+
+        private static bool CheckConfigValue(string osuDirectory, string parameter, string value)
+        {
+            string userName = Environment.UserName;
+            string file = Path.Combine(osuDirectory, $"osu!.{userName}.cfg");
+            if (!File.Exists(file)) throw new Exception("Configuration file not found.");
+            foreach (string readLine in File.ReadLines(file))
+            {
+                if (!readLine.StartsWith(parameter)) continue;
+                string configValue = readLine.Split('=')[1].Trim(' ');
+                return configValue == value;
+            }
+            throw new Exception("Parameter not found.");
         }
 
         private static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors)
@@ -1789,5 +1842,106 @@ namespace RealtimePPUR
         private void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e) => discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
 
         private void pPLossModeToolStripMenuItem_Click(object sender, EventArgs e) => pPLossModeToolStripMenuItem.Checked = !pPLossModeToolStripMenuItem.Checked;
+
+        private void saveConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                const string filePath = "Config.cfg";
+                if (!File.Exists(filePath))
+                {
+                    MessageBox.Show("Config.cfgが見つかりませんでした。RealtimePPURをダウンロードし直してください。", "エラー", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                StreamReader sr = new(filePath);
+                string[] lines = File.ReadAllLines(filePath);
+                sr.Close();
+
+                for (var i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].StartsWith("SR="))
+                    {
+                        lines[i] = $"SR={(sRToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("SSPP="))
+                    {
+                        lines[i] = $"SSPP={(sSPPToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("CURRENTPP="))
+                    {
+                        lines[i] = $"CURRENTPP={(currentPPToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("CURRENTACC="))
+                    {
+                        lines[i] = $"CURRENTACC={(currentACCToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("HITS="))
+                    {
+                        lines[i] = $"HITS={(hitsToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("IFFCHITS="))
+                    {
+                        lines[i] = $"IFFCHITS={(ifFCHitsToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("UR="))
+                    {
+                        lines[i] = $"UR={(uRToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("OFFSETHELP="))
+                    {
+                        lines[i] = $"OFFSETHELP={(offsetHelpToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("EXPECTEDMANIASCORE="))
+                    {
+                        lines[i] =
+                            $"EXPECTEDMANIASCORE={(expectedManiaScoreToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("AVGOFFSET="))
+                    {
+                        lines[i] = $"AVGOFFSET={(avgOffsetToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("PROGRESS="))
+                    {
+                        lines[i] = $"PROGRESS={(progressToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("IFFCPP="))
+                    {
+                        lines[i] = $"IFFCPP={(ifFCPPToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("HEALTHPERCENTAGE="))
+                    {
+                        lines[i] = $"HEALTHPERCENTAGE={(healthPercentageToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("CURRENTPOSITION="))
+                    {
+                        lines[i] = $"CURRENTPOSITION={(currentPositionToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("HIGHERSCOREDIFF="))
+                    {
+                        lines[i] = $"HIGHERSCOREDIFF={(higherScoreToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                    else if (lines[i].StartsWith("USERSCORE="))
+                    {
+                        lines[i] = $"USERSCORE={(userScoreToolStripMenuItem.Checked ? "true" : "false")}";
+                    }
+                }
+
+                StreamWriter sw = new(filePath, false);
+                foreach (var line in lines)
+                {
+                    sw.WriteLine(line);
+                }
+
+                sw.Close();
+                MessageBox.Show("Config.cfgの保存が完了しました！", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception error)
+            {
+                ErrorLogger(error);
+                MessageBox.Show("Config.cfgの保存に失敗しました。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
