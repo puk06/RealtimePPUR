@@ -1032,8 +1032,8 @@ namespace RealtimePPUR
 
                     if (status == OsuMemoryStatus.Playing)
                     {
-                        double currentUR = _baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : CalculateUnstableRate(_baseAddresses.Player.HitErrors);
-                        if (currentUR != double.NaN) _urValue = (int)Math.Round(currentUR);
+                        double currentUr = _baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : CalculateUnstableRate(_baseAddresses.Player.HitErrors);
+                        if (currentUr != double.NaN) _urValue = (int)Math.Round(currentUr);
 
                         _avgOffset = IsNaNWithNum(_baseAddresses.Player.HitErrors == null || _baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(CalculateAverage(_baseAddresses.Player.HitErrors), 2));
                         _avgOffsethelp = (int)Math.Round(-_avgOffset);
