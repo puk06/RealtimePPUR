@@ -59,6 +59,7 @@ namespace RealtimePPUR
         private readonly Dictionary<string, string> _configDictionary = new();
         private readonly StructuredOsuMemoryReader _sreader = new();
         private readonly OsuBaseAddresses _baseAddresses = new();
+        private readonly string _customSongsFolder;
         public static readonly Dictionary<int, string> OsuMods = new()
         {
             { 0, "NM" },
@@ -146,6 +147,7 @@ namespace RealtimePPUR
                 pPLossModeToolStripMenuItem.Checked = false;
                 _ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
                 inGameValue.Font = new Font(_fontCollection.Families[0], 19F);
+                _customSongsFolder = "";
             }
             else
             {
@@ -201,26 +203,35 @@ namespace RealtimePPUR
                     }
                 }
 
-                sRToolStripMenuItem.Checked = _configDictionary.TryGetValue("SR", out string test) && test == "true";
-                sSPPToolStripMenuItem.Checked = _configDictionary.TryGetValue("SSPP", out string test2) && test2 == "true";
-                currentPPToolStripMenuItem.Checked = _configDictionary.TryGetValue("CURRENTPP", out string test3) && test3 == "true";
-                currentACCToolStripMenuItem.Checked = _configDictionary.TryGetValue("CURRENTACC", out string test4) && test4 == "true";
-                hitsToolStripMenuItem.Checked = _configDictionary.TryGetValue("HITS", out string test5) && test5 == "true";
-                uRToolStripMenuItem.Checked = _configDictionary.TryGetValue("UR", out string test6) && test6 == "true";
-                offsetHelpToolStripMenuItem.Checked = _configDictionary.TryGetValue("OFFSETHELP", out string test7) && test7 == "true";
-                avgOffsetToolStripMenuItem.Checked = _configDictionary.TryGetValue("AVGOFFSET", out string test8) && test8 == "true";
-                progressToolStripMenuItem.Checked = _configDictionary.TryGetValue("PROGRESS", out string test9) && test9 == "true";
-                ifFCPPToolStripMenuItem.Checked = _configDictionary.TryGetValue("IFFCPP", out string test13) && test13 == "true";
-                ifFCHitsToolStripMenuItem.Checked = _configDictionary.TryGetValue("IFFCHITS", out string test14) && test14 == "true";
-                expectedManiaScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("EXPECTEDMANIASCORE", out string test15) && test15 == "true";
-                healthPercentageToolStripMenuItem.Checked = _configDictionary.TryGetValue("HEALTHPERCENTAGE", out string test17) && test17 == "true";
-                currentPositionToolStripMenuItem.Checked = _configDictionary.TryGetValue("CURRENTPOSITION", out string test18) && test18 == "true";
-                higherScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHERSCOREDIFF", out string test19) && test19 == "true";
-                highestScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHESTSCOREDIFF", out string test20) && test20 == "true";
-                userScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("USERSCORE", out string test21) && test21 == "true";
-                pPLossModeToolStripMenuItem.Checked = _configDictionary.TryGetValue("PPLOSSMODE", out string test22) && test22 == "true";
-                discordRichPresenceToolStripMenuItem.Checked = _configDictionary.TryGetValue("DISCORDRICHPRESENCE", out string test23) && test23 == "true";
+                sRToolStripMenuItem.Checked = _configDictionary.TryGetValue("SR", out string test) && test.ToLower() == "true";
+                sSPPToolStripMenuItem.Checked = _configDictionary.TryGetValue("SSPP", out string test2) && test2.ToLower() == "true";
+                currentPPToolStripMenuItem.Checked = _configDictionary.TryGetValue("CURRENTPP", out string test3) && test3.ToLower() == "true";
+                currentACCToolStripMenuItem.Checked = _configDictionary.TryGetValue("CURRENTACC", out string test4) && test4.ToLower() == "true";
+                hitsToolStripMenuItem.Checked = _configDictionary.TryGetValue("HITS", out string test5) && test5.ToLower() == "true";
+                uRToolStripMenuItem.Checked = _configDictionary.TryGetValue("UR", out string test6) && test6.ToLower() == "true";
+                offsetHelpToolStripMenuItem.Checked = _configDictionary.TryGetValue("OFFSETHELP", out string test7) && test7.ToLower() == "true";
+                avgOffsetToolStripMenuItem.Checked = _configDictionary.TryGetValue("AVGOFFSET", out string test8) && test8.ToLower() == "true";
+                progressToolStripMenuItem.Checked = _configDictionary.TryGetValue("PROGRESS", out string test9) && test9.ToLower() == "true";
+                ifFCPPToolStripMenuItem.Checked = _configDictionary.TryGetValue("IFFCPP", out string test13) && test13.ToLower() == "true";
+                ifFCHitsToolStripMenuItem.Checked = _configDictionary.TryGetValue("IFFCHITS", out string test14) && test14.ToLower() == "true";
+                expectedManiaScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("EXPECTEDMANIASCORE", out string test15) && test15.ToLower() == "true";
+                healthPercentageToolStripMenuItem.Checked = _configDictionary.TryGetValue("HEALTHPERCENTAGE", out string test17) && test17.ToLower() == "true";
+                currentPositionToolStripMenuItem.Checked = _configDictionary.TryGetValue("CURRENTPOSITION", out string test18) && test18.ToLower() == "true";
+                higherScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHERSCOREDIFF", out string test19) && test19.ToLower() == "true";
+                highestScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("HIGHESTSCOREDIFF", out string test20) && test20.ToLower() == "true";
+                userScoreToolStripMenuItem.Checked = _configDictionary.TryGetValue("USERSCORE", out string test21) && test21.ToLower() == "true";
+                pPLossModeToolStripMenuItem.Checked = _configDictionary.TryGetValue("PPLOSSMODE", out string test22) && test22.ToLower() == "true";
+                discordRichPresenceToolStripMenuItem.Checked = _configDictionary.TryGetValue("DISCORDRICHPRESENCE", out string test23) && test23.ToLower() == "true";
                 _ingameoverlayPriority = _configDictionary.TryGetValue("INGAMEOVERLAYPRIORITY", out string test16) ? test16 : "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
+                if (_configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string test24) && test24.ToLower() != "songs")
+                {
+                    _customSongsFolder = test24;
+                }
+                else
+                {
+                    _customSongsFolder = "";
+                }
+
 
                 if (_configDictionary.TryGetValue("USECUSTOMFONT", out string test12) && test12 == "true")
                 {
@@ -433,7 +444,7 @@ namespace RealtimePPUR
                         hits.Score = _baseAddresses.Player.Score;
                     }
 
-                    if (_calculatedObject == null) throw new Exception("CalculatedObject is null.");
+                    if (_calculatedObject == null) continue;
 
                     var leaderBoardData = GetLeaderBoard(_baseAddresses.LeaderBoard, _baseAddresses.Player.Score);
                     double sr = IsNaNWithNum(Math.Round(_calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
@@ -1065,7 +1076,7 @@ namespace RealtimePPUR
 
                     if (_currentOsuGamemode != _preOsuGamemode)
                     {
-                        if (_calculator == null) throw new Exception("Calculator is not initialized.");
+                        if (_calculator == null) continue;
                         if (_currentBeatmapGamemode == 0 && _currentOsuGamemode is 0 or 1 or 2 or 3)
                         {
                             _calculator.SetMode(_currentOsuGamemode);
@@ -1171,7 +1182,7 @@ namespace RealtimePPUR
                         isResultScreen && !isplaying, hits);
                     if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
                         result.CurrentDifficultyAttributes == null ||
-                        result.CurrentPerformanceAttributes == null) throw new Exception("Result is null.");
+                        result.CurrentPerformanceAttributes == null) continue;
 
                     _calculatedObject = result;
                 }
@@ -1449,14 +1460,14 @@ namespace RealtimePPUR
             };
         }
 
-        private static string GetSongsFolderLocation(string osuDirectory)
+        private string GetSongsFolderLocation(string osuDirectory)
         {
             string userName = Environment.UserName;
             string file = Path.Combine(osuDirectory, $"osu!.{userName}.cfg");
             if (!File.Exists(file))
             {
-                MessageBox.Show("osu!.Username.cfgが見つからなかったため、Songsフォルダを自動検出できませんでした。\nosu!.exeのフォルダのSongsフォルダを参照します。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return Path.Combine(osuDirectory, "Songs");
+                MessageBox.Show("osu!.Username.cfgが見つからなかったため、Songsフォルダを自動検出できませんでした。\nConfigファイルのSongsFolderを参照します(もし設定されてなかったらデフォルトのSongsフォルダが参照されます。)。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return string.IsNullOrEmpty(_customSongsFolder) ? Path.Combine(osuDirectory, "Songs") : _customSongsFolder;
             }
 
             foreach (string readLine in File.ReadLines(file))
@@ -1465,8 +1476,9 @@ namespace RealtimePPUR
                 string path = readLine.Split('=')[1].Trim(' ');
                 return path == "Songs" ? Path.Combine(osuDirectory, "Songs") : path;
             }
-            MessageBox.Show("BeatmapDirectoryが見つからなかったため、Songsフォルダを自動検出できませんでした。\nosu!.exeのフォルダのSongsフォルダを参照します。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return Path.Combine(osuDirectory, "Songs");
+
+            MessageBox.Show("BeatmapDirectoryが見つからなかったため、Songsフォルダを自動検出できませんでした。\nConfigファイルのSongsFolderを参照します(もし設定されてなかったらデフォルトのSongsフォルダが参照されます。)。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return string.IsNullOrEmpty(_customSongsFolder) ? Path.Combine(osuDirectory, "Songs") : _customSongsFolder;
         }
 
         private static bool CheckConfigValue(string osuDirectory, string parameter, string value)
