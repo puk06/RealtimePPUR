@@ -1225,7 +1225,7 @@ namespace RealtimePPUR
                         continue;
                     }
 
-                    if (!string.IsNullOrEmpty(_osuDirectory) && !configDialog)
+                    if (!string.IsNullOrEmpty(_osuDirectory) && !configDialog && discordRichPresenceToolStripMenuItem.Checked)
                     {
                         try
                         {
