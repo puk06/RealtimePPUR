@@ -37,7 +37,7 @@ namespace RealtimePPUR
         {
             if (!Directory.Exists("Updater") || !File.Exists("config.cfg") || !Directory.Exists("src"))
             {
-                MessageBox.Show("起動に必要なファイルが見つかりませんでした。ダウンロードを開始します。\nこの作業はすぐ終わるのでソフトは開いたままにしておいてください！終わったらソフトが自動で起動します！", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("起動に必要なファイルをダウンロードします。", "ダウンロード", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 await new Updater().DownloadFiles();
                 MessageBox.Show("ダウンロードが完了しました！ソフトを起動します！", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -65,14 +65,10 @@ namespace RealtimePPUR
             var folders = Directory.GetDirectories(extractPath);
             var files = Directory.GetFiles(extractPath);
 
-
-            var softwarePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (softwarePath == null) throw new DirectoryNotFoundException("ソフトのフォルダの取得に失敗しました。");
-
             foreach (var file in files)
             {
                 var fileName = Path.GetFileName(file);
-                var currentFile = Path.Combine(softwarePath, fileName);
+                var currentFile = fileName;
                 if (File.Exists(currentFile)) continue;
                 File.Copy(file, currentFile, true);
             }
@@ -80,7 +76,7 @@ namespace RealtimePPUR
             foreach (var folder in folders)
             {
                 var folderName = Path.GetFileName(folder);
-                var currentFolder = Path.Combine(softwarePath, folderName);
+                var currentFolder = folderName;
                 if (!Directory.Exists(currentFolder)) Directory.CreateDirectory(currentFolder);
                 DirectoryCopy(folder, currentFolder, true);
             }
