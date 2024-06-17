@@ -129,6 +129,7 @@ namespace RealtimePPUR.Updater
             File.Delete(tempFile);
 
             var folders = Directory.GetDirectories(extractPath);
+            folders = folders.Where(x => !x.Contains("Updater")).ToArray();
             var files = Directory.GetFiles(extractPath);
 
             var currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

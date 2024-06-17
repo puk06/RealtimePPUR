@@ -39,6 +39,7 @@ namespace RealtimePPUR
             {
                 MessageBox.Show("起動に必要なファイルが見つかりませんでした。ダウンロードを開始します。\nこの作業はすぐ終わるのでソフトは開いたままにしておいてください！終わったらソフトが自動で起動します！", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 await new Updater().DownloadFiles();
+                MessageBox.Show("ダウンロードが完了しました！ソフトを起動します！", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }
