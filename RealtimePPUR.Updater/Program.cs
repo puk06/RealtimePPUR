@@ -128,7 +128,9 @@ namespace RealtimePPUR.Updater
             ZipFile.ExtractToDirectory(tempFile, extractPath, Encoding.UTF8, true);
             File.Delete(tempFile);
 
+            var folders = Directory.GetDirectories(extractPath);
             var files = Directory.GetFiles(extractPath);
+
             var currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (currentPath == null)
             {
@@ -152,7 +154,42 @@ namespace RealtimePPUR.Updater
                 Console.WriteLine($"ファイルのコピー中です... {i + 1}/{files.Length}: {fileName}");
                 File.Copy(file, currentFile, true);
             }
+
+            for (int i = 0; i < folders.Length; i++)
+            {
+                var folder = folders[i];
+                var folderName = Path.GetFileName(folder);
+                var currentFolder = Path.Combine(softwarePath, folderName);
+                if (!Directory.Exists(currentFolder)) Directory.CreateDirectory(currentFolder);
+                Console.WriteLine($"フォルダのコピー中です... {i + 1}/{folders.Length}: {folderName}");
+                DirectoryCopy(folder, currentFolder, true);
+            }
+
             Directory.Delete(extractPath, true);
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            var dir = new DirectoryInfo(sourceDirName);
+            var dirs = dir.GetDirectories();
+
+            if (!dir.Exists) throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+            if (!Directory.Exists(destDirName)) Directory.CreateDirectory(destDirName);
+
+
+            var files = dir.GetFiles();
+            foreach (var file in files)
+            {
+                var tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, true);
+            }
+
+            if (!copySubDirs) return;
+            foreach (var subdir in dirs)
+            {
+                var tempPath = Path.Combine(destDirName, subdir.Name);
+                DirectoryCopy(subdir.FullName, tempPath, true);
+            }
         }
     }
 }

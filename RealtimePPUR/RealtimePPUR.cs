@@ -1278,7 +1278,7 @@ namespace RealtimePPUR
                                 {
                                     LargeImageKey = "osu_icon",
                                     LargeImageText =
-                                        $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                        $"RealtimePPUR ({CurrentVersion})",
                                     SmallImageKey = "osu_playing",
                                     SmallImageText =
                                         $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value).Show)}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
@@ -1298,7 +1298,7 @@ namespace RealtimePPUR
                                 {
                                     LargeImageKey = "osu_icon",
                                     LargeImageText =
-                                        $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})",
+                                        $"RealtimePPUR ({CurrentVersion})",
                                     SmallImageKey = "osu_playing",
                                     SmallImageText =
                                         $"{Math.Round(IsNaNWithNum(_calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(_baseAddresses.Player.Mods.Value).Show)}  {_baseAddresses.Player.Combo}x  {ConvertHits(_baseAddresses.Player.Mode, hits)}"
@@ -1316,7 +1316,7 @@ namespace RealtimePPUR
                                 {
                                     LargeImageKey = "osu_icon",
                                     LargeImageText =
-                                        $"{_baseAddresses.BanchoUser.Username} ({_baseAddresses.BanchoUser.UserCountry})"
+                                        $"RealtimePPUR ({CurrentVersion})"
                                 }
                             });
 
