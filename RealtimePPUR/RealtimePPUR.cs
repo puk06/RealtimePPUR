@@ -1429,28 +1429,23 @@ namespace RealtimePPUR
         private static double CalculateAverage(IReadOnlyCollection<int> array)
         {
             if (array == null || array.Count == 0) return 0;
-
             var sortedArray = array.OrderBy(x => x).ToArray();
             int count = sortedArray.Length;
             double q1 = sortedArray[(int)(count * 0.25)];
             double q3 = sortedArray[(int)(count * 0.75)];
             double iqr = q3 - q1;
-
             var filteredArray = sortedArray.Where(x => x >= q1 - 1.5 * iqr && x <= q3 + 1.5 * iqr);
             return filteredArray.Average();
         }
 
-        static double GetPercentile(int[] sortedData, double percentile)
+        private static double GetPercentile(IReadOnlyList<int> sortedData, double percentile)
         {
-            int N = sortedData.Length;
+            int N = sortedData.Count;
             double n = (N - 1) * percentile + 1;
-
             if (n == 1d) return sortedData[0];
             if (n == N) return sortedData[N - 1];
-
             int k = (int)n;
             double d = n - k;
-
             return sortedData[k - 1] + d * (sortedData[k] - sortedData[k - 1]);
         }
 
