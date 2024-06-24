@@ -1268,7 +1268,7 @@ namespace RealtimePPUR
                         case OsuMemoryStatus.Playing when !_baseAddresses.Player.IsReplay:
                             _client.SetPresence(new RichPresence
                             {
-                                Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
+                                Details = RichPresenceStringChecker(_baseAddresses.BanchoUser.Username + ConvertStatus(_baseAddresses.GeneralData.OsuStatus)),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                                 Timestamps = new Timestamps()
                                 {
@@ -1291,8 +1291,7 @@ namespace RealtimePPUR
                             _baseAddresses.Player.IsReplay:
                             _client.SetPresence(new RichPresence
                             {
-                                Details = RichPresenceStringChecker(
-                                    $"Watching {_baseAddresses.Player.Username}'s play"),
+                                Details = RichPresenceStringChecker($"{_baseAddresses.BanchoUser.Username} is Watching {_baseAddresses.Player.Username}'s play"),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                                 Assets = new Assets()
                                 {
@@ -1310,7 +1309,7 @@ namespace RealtimePPUR
                         default:
                             _client.SetPresence(new RichPresence
                             {
-                                Details = ConvertStatus(_baseAddresses.GeneralData.OsuStatus),
+                                Details = RichPresenceStringChecker(_baseAddresses.BanchoUser.Username + ConvertStatus(_baseAddresses.GeneralData.OsuStatus)),
                                 State = RichPresenceStringChecker(_baseAddresses.Beatmap.MapString),
                                 Assets = new Assets()
                                 {
@@ -1341,20 +1340,20 @@ namespace RealtimePPUR
         {
             return status switch
             {
-                OsuMemoryStatus.EditingMap => "Editing Map",
-                OsuMemoryStatus.GameShutdownAnimation => "Shutdown osu!",
-                OsuMemoryStatus.GameStartupAnimation => "Startup osu!",
-                OsuMemoryStatus.MainMenu => "Main Menu",
-                OsuMemoryStatus.MultiplayerRoom => "Multiplayer Room",
-                OsuMemoryStatus.MultiplayerResultsscreen => "Multiplayer Results",
-                OsuMemoryStatus.MultiplayerSongSelect => "Multiplayer Song Select",
-                OsuMemoryStatus.NotRunning => "Not Running osu!",
-                OsuMemoryStatus.OsuDirect => "Searching Maps",
-                OsuMemoryStatus.Playing => "Playing Map",
-                OsuMemoryStatus.ResultsScreen => "Results",
-                OsuMemoryStatus.SongSelect => "Selecting Songs",
-                OsuMemoryStatus.Unknown => "Unknown",
-                _ => "Unknown"
+                OsuMemoryStatus.EditingMap => " is Editing Map",
+                OsuMemoryStatus.GameShutdownAnimation => " is Shutting Down osu!",
+                OsuMemoryStatus.GameStartupAnimation => " is Starting Up osu!",
+                OsuMemoryStatus.MainMenu => " is in Main Menu",
+                OsuMemoryStatus.MultiplayerRoom => " is in Multiplayer Room",
+                OsuMemoryStatus.MultiplayerResultsscreen => " is in Multiplayer Results",
+                OsuMemoryStatus.MultiplayerSongSelect => " is in Multiplayer Song Select",
+                OsuMemoryStatus.NotRunning => " is Not Running osu!",
+                OsuMemoryStatus.OsuDirect => " is Searching Maps",
+                OsuMemoryStatus.Playing => " is Playing Map",
+                OsuMemoryStatus.ResultsScreen => " in Results",
+                OsuMemoryStatus.SongSelect => " is Selecting Songs",
+                OsuMemoryStatus.Unknown => " is Unknown",
+                _ => " is Unknown"
             };
         }
 
