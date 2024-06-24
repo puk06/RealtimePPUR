@@ -1152,8 +1152,8 @@ namespace RealtimePPUR
                         hits.Score = _baseAddresses.Player.Score;
                     }
 
-                    if ((hits.Equals(_previousHits) && status is OsuMemoryStatus.Playing && !hits.IsEmpty()) || (hits.Equals(_previousHits) && status is OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen)) continue;
-                    if (status is OsuMemoryStatus.Playing or OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen) _previousHits = hits.Clone();
+                    if (hits.Equals(_previousHits) && status is OsuMemoryStatus.Playing && !hits.IsEmpty()) continue;
+                    if (status is OsuMemoryStatus.Playing) _previousHits = hits.Clone();
 
                     string[] mods = status switch
                     {
