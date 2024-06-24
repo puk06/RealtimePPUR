@@ -118,7 +118,7 @@ namespace RealtimePPUR
             // 
             _good.BackColor = Color.Transparent;
             _good.ForeColor = Color.White;
-            _good.Location = new Point(22, 25);
+            _good.Location = new Point(23, 25);
             _good.Name = "_good";
             _good.Size = new Size(30, 29);
             _good.TabIndex = 0;

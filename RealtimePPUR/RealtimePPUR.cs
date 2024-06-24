@@ -171,7 +171,7 @@ namespace RealtimePPUR
                 if (defaultmodeTest)
                 {
                     var defaultModeResult = int.TryParse(defaultmodestring, out int defaultmode);
-                    if (!defaultModeResult || !(defaultmode == 0 || defaultmode == 1 || defaultmode == 2))
+                    if (!defaultModeResult || defaultmode is not (0 or 1 or 2))
                     {
                         MessageBox.Show("Config.cfgのDEFAULTMODEの値が不正であったため、初期値の0が適用されます。0、1、2のどれかを入力してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -1152,8 +1152,8 @@ namespace RealtimePPUR
                         hits.Score = _baseAddresses.Player.Score;
                     }
 
-                    if ((hits.Equals(_previousHits) && status is not (OsuMemoryStatus.MultiplayerSongSelect or OsuMemoryStatus.SongSelect)) || (status is OsuMemoryStatus.Playing && !hits.IsEmpty())) continue;
-                    if (status is OsuMemoryStatus.Playing or OsuMemoryStatus.MultiplayerResultsscreen or OsuMemoryStatus.ResultsScreen) _previousHits = hits.Clone();
+                    if ((hits.Equals(_previousHits) && status is OsuMemoryStatus.Playing && !hits.IsEmpty()) || (hits.Equals(_previousHits) && status is OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen)) continue;
+                    if (status is OsuMemoryStatus.Playing or OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen) _previousHits = hits.Clone();
 
                     string[] mods = status switch
                     {
@@ -1429,8 +1429,29 @@ namespace RealtimePPUR
         private static double CalculateAverage(IReadOnlyCollection<int> array)
         {
             if (array == null || array.Count == 0) return 0;
-            double result = (double)array.Sum(item => (long)item) / array.Count;
-            return result > 10000 ? double.NaN : result;
+
+            var sortedArray = array.OrderBy(x => x).ToArray();
+            int count = sortedArray.Length;
+            double q1 = sortedArray[(int)(count * 0.25)];
+            double q3 = sortedArray[(int)(count * 0.75)];
+            double iqr = q3 - q1;
+
+            var filteredArray = sortedArray.Where(x => x >= q1 - 1.5 * iqr && x <= q3 + 1.5 * iqr);
+            return filteredArray.Average();
+        }
+
+        static double GetPercentile(int[] sortedData, double percentile)
+        {
+            int N = sortedData.Length;
+            double n = (N - 1) * percentile + 1;
+
+            if (n == 1d) return sortedData[0];
+            if (n == N) return sortedData[N - 1];
+
+            int k = (int)n;
+            double d = n - k;
+
+            return sortedData[k - 1] + d * (sortedData[k] - sortedData[k - 1]);
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
