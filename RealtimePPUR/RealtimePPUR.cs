@@ -489,11 +489,11 @@ namespace RealtimePPUR
                     switch (_currentGamemode)
                     {
                         case 0:
-                            _good.Text = good.ToString();
+                            _good.Text = (good + geki).ToString();
                             _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
                             _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
 
-                            _ok.Text = (ok + bad).ToString();
+                            _ok.Text = (ok + katu + bad).ToString();
                             _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
                             _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
 
@@ -603,7 +603,7 @@ namespace RealtimePPUR
                                     switch (currentGamemode)
                                     {
                                         case 0:
-                                            _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
+                                            _displayFormat += $"Hits: {good + geki}/{ok + katu}/{bad}/{miss}\n";
                                             break;
 
                                         case 1:
@@ -1152,8 +1152,8 @@ namespace RealtimePPUR
                         hits.Score = _baseAddresses.Player.Score;
                     }
 
-                    if (hits.Equals(_previousHits) && status is OsuMemoryStatus.Playing or OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen && !hits.IsEmpty()) continue;
-                    if (status is OsuMemoryStatus.Playing or OsuMemoryStatus.ResultsScreen or OsuMemoryStatus.MultiplayerResultsscreen) _previousHits = hits.Clone();
+                    if ((hits.Equals(_previousHits) && status is not (OsuMemoryStatus.MultiplayerSongSelect or OsuMemoryStatus.SongSelect)) || (status is OsuMemoryStatus.Playing && !hits.IsEmpty())) continue;
+                    if (status is OsuMemoryStatus.Playing or OsuMemoryStatus.MultiplayerResultsscreen or OsuMemoryStatus.ResultsScreen) _previousHits = hits.Clone();
 
                     string[] mods = status switch
                     {

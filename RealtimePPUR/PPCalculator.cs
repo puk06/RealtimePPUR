@@ -281,8 +281,8 @@ namespace RealtimePPUR
             {
                 0 => new Dictionary<HitResult, int>
                 {
-                    { HitResult.Great, hits.Hit300 },
-                    { HitResult.Ok, hits.Hit100 },
+                    { HitResult.Great, hits.Hit300 + hits.HitGeki },
+                    { HitResult.Ok, hits.Hit100 + hits.HitKatu },
                     { HitResult.Meh, hits.Hit50 },
                     { HitResult.Miss, hits.HitMiss }
                 },
