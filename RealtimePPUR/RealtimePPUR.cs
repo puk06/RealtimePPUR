@@ -489,11 +489,11 @@ namespace RealtimePPUR
                     switch (_currentGamemode)
                     {
                         case 0:
-                            _good.Text = (good + geki).ToString();
+                            _good.Text = good.ToString();
                             _good.Width = TextRenderer.MeasureText(_good.Text, _good.Font).Width;
                             _good.Left = (ClientSize.Width - _good.Width) / 2 - 120;
 
-                            _ok.Text = (ok + katu + bad).ToString();
+                            _ok.Text = (ok + bad).ToString();
                             _ok.Width = TextRenderer.MeasureText(_ok.Text, _ok.Font).Width;
                             _ok.Left = (ClientSize.Width - _ok.Width) / 2 - 61;
 
@@ -603,7 +603,7 @@ namespace RealtimePPUR
                                     switch (currentGamemode)
                                     {
                                         case 0:
-                                            _displayFormat += $"Hits: {good + geki}/{ok + katu}/{bad}/{miss}\n";
+                                            _displayFormat += $"Hits: {good}/{ok}/{bad}/{miss}\n";
                                             break;
 
                                         case 1:
@@ -1177,13 +1177,11 @@ namespace RealtimePPUR
                         Time = _baseAddresses.GeneralData.AudioTime,
                         PplossMode = pPLossModeToolStripMenuItem.Checked
                     };
-
                     var result = _calculator?.Calculate(calcArgs, isplaying,
                         isResultScreen && !isplaying, hits);
                     if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
                         result.CurrentDifficultyAttributes == null ||
                         result.CurrentPerformanceAttributes == null) continue;
-
                     _calculatedObject = result;
                 }
                 catch (Exception e)

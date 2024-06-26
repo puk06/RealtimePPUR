@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mania.Objects;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
+using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Taiko;
 using osu.Game.Rulesets.Taiko.Objects;
@@ -39,9 +40,9 @@ namespace RealtimePPUR
 
         public void SetMap(string file, int givenmode)
         {
-            _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
-            _ruleset = SetRuleset(givenmode);
             _mode = givenmode;
+            _ruleset = SetRuleset(givenmode);
+            _workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
         }
 
         public void SetMode(int givenmode)
@@ -84,6 +85,7 @@ namespace RealtimePPUR
             };
             var difficultyCalculator = _ruleset.CreateDifficultyCalculator(_workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
+            difficultyAttributes.MaxCombo = GetMaxCombo(beatmap, _mode);
             var performanceCalculator = _ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
 
@@ -107,28 +109,21 @@ namespace RealtimePPUR
                     Statistics = statisticsCurrent,
                     Mods = mods
                 };
+                var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
+                data.CurrentPerformanceAttributes = performanceAttributesResult;
 
-                if (_mode != 3)
+                if (_mode == 3) return data;
+                var staticsForCalcIfFc = CalcIfFc(beatmap, hits, _mode);
+                var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                 {
-                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, _mode);
-
-                    var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
-                    {
-                        Accuracy = GetAccuracy(staticsForCalcIfFc, _mode),
-                        MaxCombo = GetMaxCombo(beatmap, _mode),
-                        Statistics = staticsForCalcIfFc,
-                        Mods = mods
-                    };
-
-                    var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
-                    var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
-
-                    data.CurrentPerformanceAttributes = performanceAttributesResult;
-                    data.PerformanceAttributesIffc = performanceAttributesIffc;
-                }
-
-                data.CurrentDifficultyAttributes = difficultyAttributes;
-                data.DifficultyAttributesIffc = difficultyAttributes;
+                    Accuracy = GetAccuracy(staticsForCalcIfFc, _mode),
+                    MaxCombo = GetMaxCombo(beatmap, _mode),
+                    Statistics = staticsForCalcIfFc,
+                    Mods = mods,
+                    TotalScore = args.Score
+                };
+                var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
+                data.PerformanceAttributesIffc = performanceAttributesIffc;
 
                 return data;
             }
@@ -144,12 +139,11 @@ namespace RealtimePPUR
                         Accuracy = GetAccuracy(staticsForCalcIfFc, _mode),
                         MaxCombo = GetMaxCombo(beatmap, _mode),
                         Statistics = staticsForCalcIfFc,
-                        Mods = mods
+                        Mods = mods,
+                        TotalScore = args.Score
                     };
 
                     var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
-
-                    data.DifficultyAttributesIffc = difficultyAttributes;
                     data.PerformanceAttributesIffc = performanceAttributesIffc;
                     data.IfFcHitResult = staticsForCalcIfFc;
                 }
@@ -167,7 +161,8 @@ namespace RealtimePPUR
                         Accuracy = GetAccuracy(staticsLoss, _mode),
                         MaxCombo = args.Combo,
                         Statistics = staticsLoss,
-                        Mods = mods
+                        Mods = mods,
+                        TotalScore = args.Score
                     };
 
                     var performanceAttributesCurrent = performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
@@ -185,7 +180,7 @@ namespace RealtimePPUR
 
                     var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, _ruleset.RulesetInfo)
                     {
-                        Accuracy = args.Accuracy / 100,
+                        Accuracy = GetAccuracy(statisticsCurrent, _mode),
                         MaxCombo = args.Combo,
                         Statistics = statisticsCurrent,
                         Mods = mods,
@@ -281,8 +276,8 @@ namespace RealtimePPUR
             {
                 0 => new Dictionary<HitResult, int>
                 {
-                    { HitResult.Great, hits.Hit300 + hits.HitGeki },
-                    { HitResult.Ok, hits.Hit100 + hits.HitKatu },
+                    { HitResult.Great, hits.Hit300 },
+                    { HitResult.Ok, hits.Hit100 },
                     { HitResult.Meh, hits.Hit50 },
                     { HitResult.Miss, hits.HitMiss }
                 },
@@ -503,7 +498,7 @@ namespace RealtimePPUR
                         var countMiss = statistics[HitResult.Miss];
                         var total = countGreat + countGood + countMeh + countMiss;
 
-                        return (double)(6 * countGreat + (2 * countGood) + countMeh) / (6 * total);
+                        return (double)(6 * countGreat + 2 * countGood + countMeh) / (6 * total);
                     }
 
                 case 1:
@@ -545,7 +540,7 @@ namespace RealtimePPUR
         {
             return mode switch
             {
-                0 => beatmap.GetMaxCombo(),
+                0 => beatmap.HitObjects.Count + beatmap.HitObjects.OfType<Slider>().Sum(s => s.NestedHitObjects.Count - 1),
                 1 => beatmap.HitObjects.OfType<Hit>().Count(),
                 2 => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>().SelectMany(j => j.NestedHitObjects).Count(h => h is not TinyDroplet),
                 3 => 0,
