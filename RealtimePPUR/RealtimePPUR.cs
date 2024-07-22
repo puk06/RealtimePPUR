@@ -21,7 +21,7 @@ namespace RealtimePPUR
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CurrentVersion = "v1.0.7-Release";
+        private const string CurrentVersion = "v1.0.8-Release";
 
         private System.Windows.Forms.Label _currentPp, _sr, _iffc, _good, _ok, _miss, _avgoffset, _ur, _avgoffsethelp;
 

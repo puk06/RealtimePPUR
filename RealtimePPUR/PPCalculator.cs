@@ -570,7 +570,7 @@ namespace RealtimePPUR
         public static ProcessorWorkingBeatmap FromFile(string file) => new(ReadFromFile(file));
 
         protected override IBeatmap GetBeatmap() => _beatmap;
-        protected override Texture GetBackground() => null!;
+        public override Texture GetBackground() => null!;
         protected override Track GetBeatmapTrack() => null!;
         protected override ISkin GetSkin() => null!;
         public override Stream? GetStream(string storagePath) => null;
