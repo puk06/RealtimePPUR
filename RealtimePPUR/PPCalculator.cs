@@ -542,12 +542,12 @@ namespace RealtimePPUR
 
     public class ProcessorWorkingBeatmap : WorkingBeatmap
     {
-        private readonly Beatmap _beatmap;
+        private readonly Beatmap beatmap;
 
         public ProcessorWorkingBeatmap(Beatmap beatmap)
             : base(beatmap.BeatmapInfo, null)
         {
-            _beatmap = beatmap;
+            this.beatmap = beatmap;
             beatmap.BeatmapInfo.Ruleset = LegacyHelper.GetRulesetFromLegacyId(beatmap.BeatmapInfo.Ruleset.OnlineID).RulesetInfo;
         }
 
@@ -560,7 +560,7 @@ namespace RealtimePPUR
 
         public static ProcessorWorkingBeatmap FromFile(string file) => new(ReadFromFile(file));
 
-        protected override IBeatmap GetBeatmap() => _beatmap;
+        protected override IBeatmap GetBeatmap() => beatmap;
         public override Texture GetBackground() => null!;
         protected override Track GetBeatmapTrack() => null!;
         protected override ISkin GetSkin() => null!;
