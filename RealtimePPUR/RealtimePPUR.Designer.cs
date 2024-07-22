@@ -32,15 +32,15 @@ namespace RealtimePPUR
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RealtimePpur));
-            _currentPp = new System.Windows.Forms.Label();
-            _sr = new System.Windows.Forms.Label();
-            _iffc = new System.Windows.Forms.Label();
-            _good = new System.Windows.Forms.Label();
-            _ok = new System.Windows.Forms.Label();
-            _miss = new System.Windows.Forms.Label();
-            _avgoffset = new System.Windows.Forms.Label();
-            _ur = new System.Windows.Forms.Label();
-            _avgoffsethelp = new System.Windows.Forms.Label();
+            currentPp = new System.Windows.Forms.Label();
+            sr = new System.Windows.Forms.Label();
+            iffc = new System.Windows.Forms.Label();
+            good = new System.Windows.Forms.Label();
+            ok = new System.Windows.Forms.Label();
+            miss = new System.Windows.Forms.Label();
+            avgoffset = new System.Windows.Forms.Label();
+            ur = new System.Windows.Forms.Label();
+            avgoffsethelp = new System.Windows.Forms.Label();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             realtimePPURToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,122 +77,122 @@ namespace RealtimePPUR
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
-            // _currentPp
+            // currentPp
             // 
-            _currentPp.BackColor = Color.Transparent;
-            _currentPp.ForeColor = Color.White;
-            _currentPp.Location = new Point(249, 18);
-            _currentPp.Name = "_currentPp";
-            _currentPp.Size = new Size(30, 39);
-            _currentPp.TabIndex = 0;
-            _currentPp.Text = "0";
-            _currentPp.TextAlign = ContentAlignment.MiddleRight;
-            _currentPp.MouseDown += RealtimePPUR_MouseDown;
-            _currentPp.MouseMove += RealtimePPUR_MouseMove;
+            currentPp.BackColor = Color.Transparent;
+            currentPp.ForeColor = Color.White;
+            currentPp.Location = new Point(249, 18);
+            currentPp.Name = "currentPp";
+            currentPp.Size = new Size(30, 39);
+            currentPp.TabIndex = 0;
+            currentPp.Text = "0";
+            currentPp.TextAlign = ContentAlignment.MiddleRight;
+            currentPp.MouseDown += RealtimePPUR_MouseDown;
+            currentPp.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _sr
+            // sr
             // 
-            _sr.BackColor = Color.Transparent;
-            _sr.ForeColor = Color.White;
-            _sr.Location = new Point(38, -1);
-            _sr.Name = "_sr";
-            _sr.Size = new Size(30, 29);
-            _sr.TabIndex = 0;
-            _sr.Text = "0";
-            _sr.MouseDown += RealtimePPUR_MouseDown;
-            _sr.MouseMove += RealtimePPUR_MouseMove;
+            sr.BackColor = Color.Transparent;
+            sr.ForeColor = Color.White;
+            sr.Location = new Point(38, -1);
+            sr.Name = "sr";
+            sr.Size = new Size(30, 29);
+            sr.TabIndex = 0;
+            sr.Text = "0";
+            sr.MouseDown += RealtimePPUR_MouseDown;
+            sr.MouseMove += RealtimePPUR_MouseMove;
             // 
             // _iffc
             // 
-            _iffc.BackColor = Color.Transparent;
-            _iffc.ForeColor = Color.White;
-            _iffc.Location = new Point(133, -1);
-            _iffc.Name = "_iffc";
-            _iffc.Size = new Size(30, 29);
-            _iffc.TabIndex = 0;
-            _iffc.Text = "0";
-            _iffc.MouseDown += RealtimePPUR_MouseDown;
-            _iffc.MouseMove += RealtimePPUR_MouseMove;
+            iffc.BackColor = Color.Transparent;
+            iffc.ForeColor = Color.White;
+            iffc.Location = new Point(133, -1);
+            iffc.Name = "iffc";
+            iffc.Size = new Size(30, 29);
+            iffc.TabIndex = 0;
+            iffc.Text = "0";
+            iffc.MouseDown += RealtimePPUR_MouseDown;
+            iffc.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _good
+            // good
             // 
-            _good.BackColor = Color.Transparent;
-            _good.ForeColor = Color.White;
-            _good.Location = new Point(23, 25);
-            _good.Name = "_good";
-            _good.Size = new Size(30, 29);
-            _good.TabIndex = 0;
-            _good.Text = "0";
-            _good.TextAlign = ContentAlignment.MiddleCenter;
-            _good.MouseDown += RealtimePPUR_MouseDown;
-            _good.MouseMove += RealtimePPUR_MouseMove;
+            good.BackColor = Color.Transparent;
+            good.ForeColor = Color.White;
+            good.Location = new Point(23, 25);
+            good.Name = "good";
+            good.Size = new Size(30, 29);
+            good.TabIndex = 0;
+            good.Text = "0";
+            good.TextAlign = ContentAlignment.MiddleCenter;
+            good.MouseDown += RealtimePPUR_MouseDown;
+            good.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _ok
+            // ok
             // 
-            _ok.BackColor = Color.Transparent;
-            _ok.ForeColor = Color.White;
-            _ok.Location = new Point(82, 25);
-            _ok.Name = "_ok";
-            _ok.Size = new Size(30, 29);
-            _ok.TabIndex = 0;
-            _ok.Text = "0";
-            _ok.TextAlign = ContentAlignment.MiddleCenter;
-            _ok.MouseDown += RealtimePPUR_MouseDown;
-            _ok.MouseMove += RealtimePPUR_MouseMove;
+            ok.BackColor = Color.Transparent;
+            ok.ForeColor = Color.White;
+            ok.Location = new Point(82, 25);
+            ok.Name = "ok";
+            ok.Size = new Size(30, 29);
+            ok.TabIndex = 0;
+            ok.Text = "0";
+            ok.TextAlign = ContentAlignment.MiddleCenter;
+            ok.MouseDown += RealtimePPUR_MouseDown;
+            ok.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _miss
+            // miss
             // 
-            _miss.BackColor = Color.Transparent;
-            _miss.ForeColor = Color.White;
-            _miss.Location = new Point(140, 25);
-            _miss.Name = "_miss";
-            _miss.Size = new Size(30, 29);
-            _miss.TabIndex = 0;
-            _miss.Text = "0";
-            _miss.TextAlign = ContentAlignment.MiddleCenter;
-            _miss.MouseDown += RealtimePPUR_MouseDown;
-            _miss.MouseMove += RealtimePPUR_MouseMove;
+            miss.BackColor = Color.Transparent;
+            miss.ForeColor = Color.White;
+            miss.Location = new Point(140, 25);
+            miss.Name = "miss";
+            miss.Size = new Size(30, 29);
+            miss.TabIndex = 0;
+            miss.Text = "0";
+            miss.TextAlign = ContentAlignment.MiddleCenter;
+            miss.MouseDown += RealtimePPUR_MouseDown;
+            miss.MouseMove += RealtimePPUR_MouseMove;
             // 
             // _avgoffset
             // 
-            _avgoffset.AutoSize = true;
-            _avgoffset.BackColor = Color.Transparent;
-            _avgoffset.ForeColor = Color.White;
-            _avgoffset.Location = new Point(37, 105);
-            _avgoffset.Name = "_avgoffset";
-            _avgoffset.Size = new Size(28, 15);
-            _avgoffset.TabIndex = 0;
-            _avgoffset.Text = "0ms";
-            _avgoffset.MouseDown += RealtimePPUR_MouseDown;
-            _avgoffset.MouseMove += RealtimePPUR_MouseMove;
+            avgoffset.AutoSize = true;
+            avgoffset.BackColor = Color.Transparent;
+            avgoffset.ForeColor = Color.White;
+            avgoffset.Location = new Point(37, 105);
+            avgoffset.Name = "avgoffset";
+            avgoffset.Size = new Size(28, 15);
+            avgoffset.TabIndex = 0;
+            avgoffset.Text = "0ms";
+            avgoffset.MouseDown += RealtimePPUR_MouseDown;
+            avgoffset.MouseMove += RealtimePPUR_MouseMove;
             // 
             // _ur
             // 
-            _ur.AutoSize = true;
-            _ur.BackColor = Color.Transparent;
-            _ur.ForeColor = Color.White;
-            _ur.Location = new Point(217, 70);
-            _ur.Name = "_ur";
-            _ur.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            _ur.Size = new Size(13, 15);
-            _ur.TabIndex = 0;
-            _ur.Text = "0";
-            _ur.MouseDown += RealtimePPUR_MouseDown;
-            _ur.MouseMove += RealtimePPUR_MouseMove;
+            ur.AutoSize = true;
+            ur.BackColor = Color.Transparent;
+            ur.ForeColor = Color.White;
+            ur.Location = new Point(217, 70);
+            ur.Name = "ur";
+            ur.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            ur.Size = new Size(13, 15);
+            ur.TabIndex = 0;
+            ur.Text = "0";
+            ur.MouseDown += RealtimePPUR_MouseDown;
+            ur.MouseMove += RealtimePPUR_MouseMove;
             // 
             // _avgoffsethelp
             // 
-            _avgoffsethelp.AutoSize = true;
-            _avgoffsethelp.BackColor = Color.Transparent;
-            _avgoffsethelp.ForeColor = Color.White;
-            _avgoffsethelp.Location = new Point(82, 70);
-            _avgoffsethelp.Name = "_avgoffsethelp";
-            _avgoffsethelp.Size = new Size(13, 15);
-            _avgoffsethelp.TabIndex = 0;
-            _avgoffsethelp.Text = "0";
-            _avgoffsethelp.TextAlign = ContentAlignment.MiddleCenter;
-            _avgoffsethelp.MouseDown += RealtimePPUR_MouseDown;
-            _avgoffsethelp.MouseMove += RealtimePPUR_MouseMove;
+            avgoffsethelp.AutoSize = true;
+            avgoffsethelp.BackColor = Color.Transparent;
+            avgoffsethelp.ForeColor = Color.White;
+            avgoffsethelp.Location = new Point(82, 70);
+            avgoffsethelp.Name = "avgoffsethelp";
+            avgoffsethelp.Size = new Size(13, 15);
+            avgoffsethelp.TabIndex = 0;
+            avgoffsethelp.Text = "0";
+            avgoffsethelp.TextAlign = ContentAlignment.MiddleCenter;
+            avgoffsethelp.MouseDown += RealtimePPUR_MouseDown;
+            avgoffsethelp.MouseMove += RealtimePPUR_MouseMove;
             // 
             // contextMenuStrip1
             // 
@@ -430,30 +430,30 @@ namespace RealtimePPUR
             // RealtimePpur
             // 
 
-            this._avgoffsethelp.Font = new System.Drawing.Font(_fontCollection.Families[1], 20F, System.Drawing.FontStyle.Bold);
-            this._ur.Font = new System.Drawing.Font(_fontCollection.Families[1], 25F, System.Drawing.FontStyle.Bold);
-            this._avgoffset.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
-            this._miss.Font = new System.Drawing.Font(_fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
-            this._ok.Font = new System.Drawing.Font(_fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
-            this._good.Font = new System.Drawing.Font(_fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
-            this._iffc.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
-            this._sr.Font = new System.Drawing.Font(_fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
-            this._currentPp.Font = new System.Drawing.Font(_fontCollection.Families[1], 20F, System.Drawing.FontStyle.Bold);
+            this.avgoffsethelp.Font = new System.Drawing.Font(fontCollection.Families[1], 20F, System.Drawing.FontStyle.Bold);
+            this.ur.Font = new System.Drawing.Font(fontCollection.Families[1], 25F, System.Drawing.FontStyle.Bold);
+            this.avgoffset.Font = new System.Drawing.Font(fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
+            this.miss.Font = new System.Drawing.Font(fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
+            this.ok.Font = new System.Drawing.Font(fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
+            this.good.Font = new System.Drawing.Font(fontCollection.Families[1], 15F, System.Drawing.FontStyle.Bold);
+            this.iffc.Font = new System.Drawing.Font(fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
+            this.sr.Font = new System.Drawing.Font(fontCollection.Families[1], 13F, System.Drawing.FontStyle.Bold);
+            this.currentPp.Font = new System.Drawing.Font(fontCollection.Families[1], 20F, System.Drawing.FontStyle.Bold);
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.PPUR;
             ClientSize = new Size(316, 130);
             ContextMenuStrip = contextMenuStrip1;
             Controls.Add(inGameValue);
-            Controls.Add(_currentPp);
-            Controls.Add(_sr);
-            Controls.Add(_iffc);
-            Controls.Add(_good);
-            Controls.Add(_ok);
-            Controls.Add(_miss);
-            Controls.Add(_avgoffset);
-            Controls.Add(_ur);
-            Controls.Add(_avgoffsethelp);
+            Controls.Add(currentPp);
+            Controls.Add(sr);
+            Controls.Add(iffc);
+            Controls.Add(good);
+            Controls.Add(ok);
+            Controls.Add(miss);
+            Controls.Add(avgoffset);
+            Controls.Add(ur);
+            Controls.Add(avgoffsethelp);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4);
