@@ -1,4 +1,4 @@
-﻿using DiscordRPC;
+using DiscordRPC;
 using Octokit;
 using osu.Game.IO;
 using osu.Game.Rulesets.Scoring;
@@ -491,57 +491,57 @@ namespace RealtimePPUR
                         case 0:
                             this.good.Text = good.ToString();
                             this.good.Width = TextRenderer.MeasureText(this.good.Text, this.good.Font).Width;
-                            this.good.Left = (ClientSize.Width - this.good.Width) / 2 - 120;
+                            this.good.Left = ((ClientSize.Width - this.good.Width) / 2) - 120;
 
                             this.ok.Text = (ok + bad).ToString();
                             this.ok.Width = TextRenderer.MeasureText(this.ok.Text, this.ok.Font).Width;
-                            this.ok.Left = (ClientSize.Width - this.ok.Width) / 2 - 61;
+                            this.ok.Left = ((ClientSize.Width - this.ok.Width) / 2) - 61;
 
                             this.miss.Text = miss.ToString();
                             this.miss.Width = TextRenderer.MeasureText(this.miss.Text, this.miss.Font).Width;
-                            this.miss.Left = (ClientSize.Width - this.miss.Width) / 2 - 3;
+                            this.miss.Left = ((ClientSize.Width - this.miss.Width) / 2) - 3;
                             break;
 
                         case 1:
                             this.good.Text = good.ToString();
                             this.good.Width = TextRenderer.MeasureText(this.good.Text, this.good.Font).Width;
-                            this.good.Left = (ClientSize.Width - this.good.Width) / 2 - 120;
+                            this.good.Left = ((ClientSize.Width - this.good.Width) / 2) - 120;
 
                             this.ok.Text = ok.ToString();
                             this.ok.Width = TextRenderer.MeasureText(this.ok.Text, this.ok.Font).Width;
-                            this.ok.Left = (ClientSize.Width - this.ok.Width) / 2 - 61;
+                            this.ok.Left = ((ClientSize.Width - this.ok.Width) / 2) - 61;
 
                             this.miss.Text = miss.ToString();
                             this.miss.Width = TextRenderer.MeasureText(this.miss.Text, this.miss.Font).Width;
-                            this.miss.Left = (ClientSize.Width - this.miss.Width) / 2 - 3;
+                            this.miss.Left = ((ClientSize.Width - this.miss.Width) / 2) - 3;
                             break;
 
                         case 2:
                             this.good.Text = good.ToString();
                             this.good.Width = TextRenderer.MeasureText(this.good.Text, this.good.Font).Width;
-                            this.good.Left = (ClientSize.Width - this.good.Width) / 2 - 120;
+                            this.good.Left = ((ClientSize.Width - this.good.Width) / 2) - 120;
 
                             this.ok.Text = (ok + bad).ToString();
                             this.ok.Width = TextRenderer.MeasureText(this.ok.Text, this.ok.Font).Width;
-                            this.ok.Left = (ClientSize.Width - this.ok.Width) / 2 - 61;
+                            this.ok.Left = ((ClientSize.Width - this.ok.Width) / 2) - 61;
 
                             this.miss.Text = miss.ToString();
                             this.miss.Width = TextRenderer.MeasureText(this.miss.Text, this.miss.Font).Width;
-                            this.miss.Left = (ClientSize.Width - this.miss.Width) / 2 - 3;
+                            this.miss.Left = ((ClientSize.Width - this.miss.Width) / 2) - 3;
                             break;
 
                         case 3:
                             this.good.Text = (good + geki).ToString();
                             this.good.Width = TextRenderer.MeasureText(this.good.Text, this.good.Font).Width;
-                            this.good.Left = (ClientSize.Width - this.good.Width) / 2 - 120;
+                            this.good.Left = ((ClientSize.Width - this.good.Width) / 2) - 120;
 
                             this.ok.Text = (katu + ok + bad).ToString();
                             this.ok.Width = TextRenderer.MeasureText(this.ok.Text, this.ok.Font).Width;
-                            this.ok.Left = (ClientSize.Width - this.ok.Width) / 2 - 61;
+                            this.ok.Left = ((ClientSize.Width - this.ok.Width) / 2) - 61;
 
                             this.miss.Text = miss.ToString();
                             this.miss.Width = TextRenderer.MeasureText(this.miss.Text, this.miss.Font).Width;
-                            this.miss.Left = (ClientSize.Width - this.miss.Width) / 2 - 3;
+                            this.miss.Left = ((ClientSize.Width - this.miss.Width) / 2) - 3;
                             break;
                     }
 
@@ -1395,12 +1395,12 @@ namespace RealtimePPUR
         {
             return mode switch
             {
-                0 => (double)(100 * (6 * hits.Hit300 + 2 * hits.Hit100 + hits.Hit50)) /
+                0 => (double)(100 * ((6 * hits.Hit300) + (2 * hits.Hit100) + hits.Hit50)) /
                      (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss)),
-                1 => (double)(100 * (2 * hits.Hit300 + hits.Hit100)) / (2 * (hits.Hit300 + hits.Hit100 + hits.HitMiss)),
+                1 => (double)(100 * ((2 * hits.Hit300) + hits.Hit100)) / (2 * (hits.Hit300 + hits.Hit100 + hits.HitMiss)),
                 2 => (double)(100 * (hits.Hit300 + hits.Hit100 + hits.Hit50)) /
                      (hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitKatu + hits.HitMiss),
-                3 => (double)(100 * (6 * hits.HitGeki + 6 * hits.Hit300 + 4 * hits.HitKatu + 2 * hits.Hit100 + hits.Hit50)) /
+                3 => (double)(100 * ((6 * hits.HitGeki) + (6 * hits.Hit300) + (4 * hits.HitKatu) + (2 * hits.Hit100) + hits.Hit50)) /
                      (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss + hits.HitGeki + hits.HitKatu)),
                 _ => throw new ArgumentException("Invalid mode provided.")
             };
@@ -1431,19 +1431,19 @@ namespace RealtimePPUR
             double q1 = sortedArray[(int)(count * 0.25)];
             double q3 = sortedArray[(int)(count * 0.75)];
             double iqr = q3 - q1;
-            var filteredArray = sortedArray.Where(x => x >= q1 - 1.5 * iqr && x <= q3 + 1.5 * iqr);
+            var filteredArray = sortedArray.Where(x => x >= q1 - (1.5 * iqr) && x <= q3 + (1.5 * iqr));
             return filteredArray.Average();
         }
 
         private static double GetPercentile(IReadOnlyList<int> sortedData, double percentile)
         {
             int N = sortedData.Count;
-            double n = (N - 1) * percentile + 1;
+            double n = ((N - 1) * percentile) + 1;
             if (n == 1d) return sortedData[0];
             if (n == N) return sortedData[N - 1];
             int k = (int)n;
             double d = n - k;
-            return sortedData[k - 1] + d * (sortedData[k] - sortedData[k - 1]);
+            return sortedData[k - 1] + (d * (sortedData[k] - sortedData[k - 1]));
         }
 
         private static Dictionary<string, int> GetLeaderBoard(OsuMemoryDataProvider.OsuMemoryModels.Direct.LeaderBoard leaderBoard, int score)
