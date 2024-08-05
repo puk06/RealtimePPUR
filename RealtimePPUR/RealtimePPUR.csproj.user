@@ -4,10 +4,10 @@
     <_LastSelectedProfileId>C:\Users\yuuki\source\repos\RealtimePPUR-Github\RealtimePPUR\Properties\PublishProfiles\RealtimePPUR x86.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Update="changePriorityForm.cs">
+    <Compile Update="Forms\changePriorityForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="RealtimePPUR.cs">
+    <Compile Update="Forms\RealtimePPUR.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

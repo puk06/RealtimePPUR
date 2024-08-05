@@ -4,9 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using RealtimePPUR.Forms;
 using File = System.IO.File;
 
 namespace RealtimePPUR
@@ -46,12 +46,12 @@ namespace RealtimePPUR
 
     internal class Updater
     {
-        private const string SrcVersion = "v1.0.0";
-        private const string Baseurl = "https://github.com/puk06/RealtimePPUR-src/releases/download/";
+        private const string SRC_VERSION = "v1.0.0";
+        private const string BASEURL = "https://github.com/puk06/RealtimePPUR-src/releases/download/";
 
         public async Task DownloadFiles()
         {
-            const string downloadUrl = $"{Baseurl}{SrcVersion}/RealtimePPUR-src.zip";
+            const string downloadUrl = $"{BASEURL}{SRC_VERSION}/RealtimePPUR-src.zip";
             var tempPath = Path.GetTempPath();
             var tempFile = Path.Combine(tempPath, "RealtimePPUR-src.zip");
             var extractPath = Path.Combine(tempPath, "RealtimePPUR-src.Temp");
@@ -68,17 +68,15 @@ namespace RealtimePPUR
             foreach (var file in files)
             {
                 var fileName = Path.GetFileName(file);
-                var currentFile = fileName;
-                if (File.Exists(currentFile)) continue;
-                File.Copy(file, currentFile, true);
+                if (File.Exists(fileName)) continue;
+                File.Copy(file, fileName, true);
             }
 
             foreach (var folder in folders)
             {
                 var folderName = Path.GetFileName(folder);
-                var currentFolder = folderName;
-                if (!Directory.Exists(currentFolder)) Directory.CreateDirectory(currentFolder);
-                DirectoryCopy(folder, currentFolder, true);
+                if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
+                DirectoryCopy(folder, folderName, true);
             }
 
             Directory.Delete(extractPath, true);
