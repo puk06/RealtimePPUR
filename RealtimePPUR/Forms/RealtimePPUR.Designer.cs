@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using static RealtimePPUR.Classes.Helper;
 
 namespace RealtimePPUR.Forms
 {
@@ -212,28 +213,28 @@ namespace RealtimePPUR.Forms
             realtimePPURToolStripMenuItem.Name = "realtimePPURToolStripMenuItem";
             realtimePPURToolStripMenuItem.Size = new Size(148, 22);
             realtimePPURToolStripMenuItem.Text = "RealtimePPUR";
-            realtimePPURToolStripMenuItem.Click += realtimePPURToolStripMenuItem_Click;
+            realtimePPURToolStripMenuItem.Click += RealtimePPURToolStripMenuItem_Click;
             // 
             // offsetHelperToolStripMenuItem
             // 
             offsetHelperToolStripMenuItem.Name = "offsetHelperToolStripMenuItem";
             offsetHelperToolStripMenuItem.Size = new Size(148, 22);
             offsetHelperToolStripMenuItem.Text = "Offset Helper";
-            offsetHelperToolStripMenuItem.Click += offsetHelperToolStripMenuItem_Click;
+            offsetHelperToolStripMenuItem.Click += OffsetHelperToolStripMenuItem_Click;
             // 
             // realtimePPToolStripMenuItem
             // 
             realtimePPToolStripMenuItem.Name = "realtimePPToolStripMenuItem";
             realtimePPToolStripMenuItem.Size = new Size(148, 22);
             realtimePPToolStripMenuItem.Text = "RealtimePP";
-            realtimePPToolStripMenuItem.Click += realtimePPToolStripMenuItem_Click;
+            realtimePPToolStripMenuItem.Click += RealtimePPToolStripMenuItem_Click;
             // 
             // osuModeToolStripMenuItem
             // 
             osuModeToolStripMenuItem.Name = "osuModeToolStripMenuItem";
             osuModeToolStripMenuItem.Size = new Size(190, 22);
             osuModeToolStripMenuItem.Text = "osu! mode";
-            osuModeToolStripMenuItem.Click += osuModeToolStripMenuItem_Click;
+            osuModeToolStripMenuItem.Click += OsuModeToolStripMenuItem_Click;
             // 
             // inGameOverlayToolStripMenuItem
             // 
@@ -247,168 +248,168 @@ namespace RealtimePPUR.Forms
             sRToolStripMenuItem.Name = "sRToolStripMenuItem";
             sRToolStripMenuItem.Size = new Size(184, 22);
             sRToolStripMenuItem.Text = "SR";
-            sRToolStripMenuItem.Click += sRToolStripMenuItem_Click;
+            sRToolStripMenuItem.Click += ToggleChecked;
             // 
             // sSPPToolStripMenuItem
             // 
             sSPPToolStripMenuItem.Name = "sSPPToolStripMenuItem";
             sSPPToolStripMenuItem.Size = new Size(184, 22);
             sSPPToolStripMenuItem.Text = "SSPP";
-            sSPPToolStripMenuItem.Click += sSPPToolStripMenuItem_Click;
+            sSPPToolStripMenuItem.Click += ToggleChecked;
             // 
             // currentPPToolStripMenuItem
             // 
             currentPPToolStripMenuItem.Name = "currentPPToolStripMenuItem";
             currentPPToolStripMenuItem.Size = new Size(184, 22);
             currentPPToolStripMenuItem.Text = "CurrentPP";
-            currentPPToolStripMenuItem.Click += currentPPToolStripMenuItem_Click;
+            currentPPToolStripMenuItem.Click += ToggleChecked;
             // 
             // currentACCToolStripMenuItem
             // 
             currentACCToolStripMenuItem.Name = "currentACCToolStripMenuItem";
             currentACCToolStripMenuItem.Size = new Size(184, 22);
             currentACCToolStripMenuItem.Text = "CurrentACC";
-            currentACCToolStripMenuItem.Click += currentACCToolStripMenuItem_Click;
+            currentACCToolStripMenuItem.Click += ToggleChecked;
             // 
             // hitsToolStripMenuItem
             // 
             hitsToolStripMenuItem.Name = "hitsToolStripMenuItem";
             hitsToolStripMenuItem.Size = new Size(184, 22);
             hitsToolStripMenuItem.Text = "Hits";
-            hitsToolStripMenuItem.Click += hitsToolStripMenuItem_Click;
+            hitsToolStripMenuItem.Click += ToggleChecked;
             // 
             // ifFCHitsToolStripMenuItem
             // 
             ifFCHitsToolStripMenuItem.Name = "ifFCHitsToolStripMenuItem";
             ifFCHitsToolStripMenuItem.Size = new Size(184, 22);
             ifFCHitsToolStripMenuItem.Text = "ifFCHits";
-            ifFCHitsToolStripMenuItem.Click += ifFCHitsToolStripMenuItem_Click;
+            ifFCHitsToolStripMenuItem.Click += ToggleChecked;
             // 
             // uRToolStripMenuItem
             // 
             uRToolStripMenuItem.Name = "uRToolStripMenuItem";
             uRToolStripMenuItem.Size = new Size(184, 22);
             uRToolStripMenuItem.Text = "UR";
-            uRToolStripMenuItem.Click += uRToolStripMenuItem_Click;
+            uRToolStripMenuItem.Click += ToggleChecked;
             // 
             // offsetHelpToolStripMenuItem
             // 
             offsetHelpToolStripMenuItem.Name = "offsetHelpToolStripMenuItem";
             offsetHelpToolStripMenuItem.Size = new Size(184, 22);
             offsetHelpToolStripMenuItem.Text = "OffsetHelp";
-            offsetHelpToolStripMenuItem.Click += offsetHelpToolStripMenuItem_Click;
+            offsetHelpToolStripMenuItem.Click += ToggleChecked;
             // 
             // expectedManiaScoreToolStripMenuItem
             // 
             expectedManiaScoreToolStripMenuItem.Name = "expectedManiaScoreToolStripMenuItem";
             expectedManiaScoreToolStripMenuItem.Size = new Size(184, 22);
             expectedManiaScoreToolStripMenuItem.Text = "ExpectedManiaScore";
-            expectedManiaScoreToolStripMenuItem.Click += expectedManiaScoreToolStripMenuItem_Click;
+            expectedManiaScoreToolStripMenuItem.Click += ToggleChecked;
             // 
             // avgOffsetToolStripMenuItem
             // 
             avgOffsetToolStripMenuItem.Name = "avgOffsetToolStripMenuItem";
             avgOffsetToolStripMenuItem.Size = new Size(184, 22);
             avgOffsetToolStripMenuItem.Text = "AvgOffset";
-            avgOffsetToolStripMenuItem.Click += avgOffsetToolStripMenuItem_Click;
+            avgOffsetToolStripMenuItem.Click += ToggleChecked;
             // 
             // progressToolStripMenuItem
             // 
             progressToolStripMenuItem.Name = "progressToolStripMenuItem";
             progressToolStripMenuItem.Size = new Size(184, 22);
             progressToolStripMenuItem.Text = "Progress";
-            progressToolStripMenuItem.Click += progressToolStripMenuItem_Click;
+            progressToolStripMenuItem.Click += ToggleChecked;
             // 
             // ifFCPPToolStripMenuItem
             // 
             ifFCPPToolStripMenuItem.Name = "ifFCPPToolStripMenuItem";
             ifFCPPToolStripMenuItem.Size = new Size(184, 22);
             ifFCPPToolStripMenuItem.Text = "ifFCPP";
-            ifFCPPToolStripMenuItem.Click += ifFCPPToolStripMenuItem_Click;
+            ifFCPPToolStripMenuItem.Click += ToggleChecked;
             // 
             // healthPercentageToolStripMenuItem
             // 
             healthPercentageToolStripMenuItem.Name = "healthPercentageToolStripMenuItem";
             healthPercentageToolStripMenuItem.Size = new Size(184, 22);
             healthPercentageToolStripMenuItem.Text = "Health Percentage";
-            healthPercentageToolStripMenuItem.Click += healthPercentageToolStripMenuItem_Click;
+            healthPercentageToolStripMenuItem.Click += ToggleChecked;
             // 
             // currentPositionToolStripMenuItem
             // 
             currentPositionToolStripMenuItem.Name = "currentPositionToolStripMenuItem";
             currentPositionToolStripMenuItem.Size = new Size(184, 22);
             currentPositionToolStripMenuItem.Text = "CurrentPosition";
-            currentPositionToolStripMenuItem.Click += currentPositionToolStripMenuItem_Click;
+            currentPositionToolStripMenuItem.Click += ToggleChecked;
             // 
             // higherScoreToolStripMenuItem
             // 
             higherScoreToolStripMenuItem.Name = "higherScoreToolStripMenuItem";
             higherScoreToolStripMenuItem.Size = new Size(184, 22);
             higherScoreToolStripMenuItem.Text = "HigherScoreDiff";
-            higherScoreToolStripMenuItem.Click += higherScoreToolStripMenuItem_Click;
+            higherScoreToolStripMenuItem.Click += ToggleChecked;
             // 
             // highestScoreToolStripMenuItem
             // 
             highestScoreToolStripMenuItem.Name = "highestScoreToolStripMenuItem";
             highestScoreToolStripMenuItem.Size = new Size(184, 22);
             highestScoreToolStripMenuItem.Text = "HighestScoreDiff";
-            highestScoreToolStripMenuItem.Click += highestScoreToolStripMenuItem_Click;
+            highestScoreToolStripMenuItem.Click += ToggleChecked;
             // 
             // userScoreToolStripMenuItem
             // 
             userScoreToolStripMenuItem.Name = "userScoreToolStripMenuItem";
             userScoreToolStripMenuItem.Size = new Size(184, 22);
             userScoreToolStripMenuItem.Text = "UserScore";
-            userScoreToolStripMenuItem.Click += userScoreToolStripMenuItem_Click;
+            userScoreToolStripMenuItem.Click += ToggleChecked;
             // 
             // pPLossModeToolStripMenuItem
             // 
             pPLossModeToolStripMenuItem.Name = "pPLossModeToolStripMenuItem";
             pPLossModeToolStripMenuItem.Size = new Size(190, 22);
             pPLossModeToolStripMenuItem.Text = "PPLossMode";
-            pPLossModeToolStripMenuItem.Click += pPLossModeToolStripMenuItem_Click;
+            pPLossModeToolStripMenuItem.Click += ToggleChecked;
             // 
             // changePriorityToolStripMenuItem
             // 
             changePriorityToolStripMenuItem.Name = "changePriorityToolStripMenuItem";
             changePriorityToolStripMenuItem.Size = new Size(190, 22);
             changePriorityToolStripMenuItem.Text = "Change Priority";
-            changePriorityToolStripMenuItem.Click += changePriorityToolStripMenuItem_Click;
+            changePriorityToolStripMenuItem.Click += ChangePriorityToolStripMenuItem_Click;
             // 
             // changeFontToolStripMenuItem
             // 
             changeFontToolStripMenuItem.Name = "changeFontToolStripMenuItem";
             changeFontToolStripMenuItem.Size = new Size(190, 22);
             changeFontToolStripMenuItem.Text = "Change Font";
-            changeFontToolStripMenuItem.Click += changeFontToolStripMenuItem_Click;
+            changeFontToolStripMenuItem.Click += ChangeFontToolStripMenuItem_Click;
             // 
             // loadFontToolStripMenuItem
             // 
             loadFontToolStripMenuItem.Name = "loadFontToolStripMenuItem";
             loadFontToolStripMenuItem.Size = new Size(190, 22);
             loadFontToolStripMenuItem.Text = "Load Font";
-            loadFontToolStripMenuItem.Click += loadFontToolStripMenuItem_Click;
+            loadFontToolStripMenuItem.Click += LoadFontToolStripMenuItem_Click;
             // 
             // resetFontToolStripMenuItem
             // 
             resetFontToolStripMenuItem.Name = "resetFontToolStripMenuItem";
             resetFontToolStripMenuItem.Size = new Size(190, 22);
             resetFontToolStripMenuItem.Text = "Reset Font";
-            resetFontToolStripMenuItem.Click += resetFontToolStripMenuItem_Click_1;
+            resetFontToolStripMenuItem.Click += ResetFontToolStripMenuItem_Click_1;
             // 
             // discordRichPresenceToolStripMenuItem
             // 
             discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
             discordRichPresenceToolStripMenuItem.Size = new Size(190, 22);
             discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
-            discordRichPresenceToolStripMenuItem.Click += discordRichPresenceToolStripMenuItem_Click;
+            discordRichPresenceToolStripMenuItem.Click += ToggleChecked;
             // 
             // closeToolStripMenuItem
             // 
             closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             closeToolStripMenuItem.Size = new Size(190, 22);
             closeToolStripMenuItem.Text = "Close";
-            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
+            closeToolStripMenuItem.Click += CloseToolStripMenuItem_Click;
             // 
             // inGameValue
             // 
@@ -425,7 +426,7 @@ namespace RealtimePPUR.Forms
             saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
             saveConfigToolStripMenuItem.Size = new Size(190, 22);
             saveConfigToolStripMenuItem.Text = "Save Config";
-            saveConfigToolStripMenuItem.Click += saveConfigToolStripMenuItem_Click;
+            saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
             // 
             // RealtimePpur
             // 

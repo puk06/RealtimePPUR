@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Beatmaps;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using RealtimePPUR.Classes;
 using static RealtimePPUR.Classes.CalculatorHelpers;
+using osu.Game.Beatmaps.ControlPoints;
 
 namespace RealtimePPUR
 {
@@ -36,7 +38,9 @@ namespace RealtimePPUR
             var data = new BeatmapData();
             var mods = GetMods(ruleset, args);
             var beatmap = workingBeatmap.GetPlayableBeatmap(ruleset.RulesetInfo, mods);
+
             var staticsSs = GenerateHitResultsForSs(beatmap, mode);
+
             var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
             {
                 Accuracy = 1,
@@ -44,9 +48,13 @@ namespace RealtimePPUR
                 Statistics = staticsSs,
                 Mods = mods
             };
+
             var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
+
+            // Fix the combo for osu! standard
             difficultyAttributes.MaxCombo = GetMaxCombo(beatmap, mode);
+
             var performanceCalculator = ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
 
@@ -138,7 +146,6 @@ namespace RealtimePPUR
                     beatmapCurrent.HitObjects.AddRange(hitObjects);
                     beatmapCurrent.ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo;
                     beatmapCurrent.BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo;
-
                     var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(statisticsCurrent, mode),
@@ -156,6 +163,20 @@ namespace RealtimePPUR
 
                     data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                     data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+
+
+                    // おふざけ機能
+
+                    // 現在のBPM (IfFCのところに表示)
+                    //var currentBpm = beatmapCurrent.ControlPointInfo.TimingPoints.OfType<TimingControlPoint>().Last(tp => tp.Time <= args.Time).BPM;
+                    //data.PerformanceAttributesIffc.Total = currentBpm;
+
+                    // 現在のSV (CurrentPPのところに表示)
+                    //var currentSv = beatmapCurrent.ControlPointInfo.AllControlPoints.OfType<DifficultyControlPoint>().Last(tp => tp.Time <= args.Time).SliderVelocity;
+                    //data.CurrentPerformanceAttributes.Total = currentSv;
+
+
+                    // おふざけ機能
                 }
 
                 return data;

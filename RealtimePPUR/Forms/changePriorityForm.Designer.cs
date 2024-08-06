@@ -1,7 +1,6 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace RealtimePPUR
+namespace RealtimePPUR.Forms
 {
     partial class ChangePriorityForm
     {
@@ -62,9 +61,9 @@ namespace RealtimePPUR
             sortPriorityList.Name = "sortPriorityList";
             sortPriorityList.Size = new System.Drawing.Size(420, 604);
             sortPriorityList.TabIndex = 1;
-            sortPriorityList.DragDrop += sortPriorityList_DragDrop;
-            sortPriorityList.DragEnter += sortPriorityList_DragEnter;
-            sortPriorityList.MouseDown += sortPriorityList_MouseDown;
+            sortPriorityList.DragDrop += SortPriorityList_DragDrop;
+            sortPriorityList.DragEnter += SortPriorityList_DragEnter;
+            sortPriorityList.MouseDown += SortPriorityList_MouseDown;
             // 
             // okButton
             // 
@@ -76,7 +75,7 @@ namespace RealtimePPUR
             okButton.TabIndex = 2;
             okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = true;
-            okButton.Click += okButton_Click;
+            okButton.Click += OkButton_Click;
             // 
             // cancelButton
             // 
@@ -88,7 +87,7 @@ namespace RealtimePPUR
             cancelButton.TabIndex = 3;
             cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = true;
-            cancelButton.Click += cancelButton_Click;
+            cancelButton.Click += CancelButton_Click;
             // 
             // ChangePriorityForm
             // 

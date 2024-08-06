@@ -13,7 +13,7 @@ namespace RealtimePPUR.Classes
 {
     internal class Helper
     {
-        private static readonly Dictionary<int, string> OSU_MODS = new()
+        private static readonly Dictionary<int, string> osu_mods = new()
         {
             { 0, "NM" },
             { 1, "NF" },
@@ -98,8 +98,8 @@ namespace RealtimePPUR.Classes
             {
                 int bit = 1 << i;
                 if ((mods & bit) != bit) continue;
-                activeModsCalc.Add(OSU_MODS[bit].ToLower());
-                activeModsShow.Add(OSU_MODS[bit]);
+                activeModsCalc.Add(osu_mods[bit].ToLower());
+                activeModsShow.Add(osu_mods[bit]);
             }
 
             if (activeModsCalc.Contains("nc") && activeModsCalc.Contains("dt")) activeModsCalc.Remove("nc");
@@ -238,14 +238,14 @@ namespace RealtimePPUR.Classes
             return unstableRate > 10000 ? double.NaN : unstableRate;
         }
 
-        public static async void GithubUpdateChecker(string CURRENT_VERSION)
+        public static async void GithubUpdateChecker(string currentVersion)
         {
             try
             {
-                var latestRelease = await GetVersion(CURRENT_VERSION);
-                if (latestRelease == CURRENT_VERSION) return;
+                var latestRelease = await GetVersion(currentVersion);
+                if (latestRelease == currentVersion) return;
                 DialogResult result =
-                    MessageBox.Show($"最新バージョンがあります！\n\n現在: {CURRENT_VERSION} \n更新後: {latestRelease}\n\nダウンロードしますか？",
+                    MessageBox.Show($"最新バージョンがあります！\n\n現在: {currentVersion} \n更新後: {latestRelease}\n\nダウンロードしますか？",
                         "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result != DialogResult.Yes) return;
 
@@ -260,7 +260,7 @@ namespace RealtimePPUR.Classes
                 ProcessStartInfo args = new()
                 {
                     FileName = $"\"{updaterPath}\"",
-                    Arguments = CURRENT_VERSION,
+                    Arguments = currentVersion,
                     UseShellExecute = true
                 };
 
@@ -299,6 +299,14 @@ namespace RealtimePPUR.Classes
             catch
             {
                 throw new Exception("アップデートの取得に失敗しました");
+            }
+        }
+
+        public static void ToggleChecked(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem menuItem)
+            {
+                menuItem.Checked = !menuItem.Checked;
             }
         }
     }

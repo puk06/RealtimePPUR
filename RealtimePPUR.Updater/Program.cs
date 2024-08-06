@@ -98,20 +98,20 @@ namespace RealtimePPUR.Updater
 
     internal class Updater
     {
-        private readonly string _version;
-        private readonly string _arch;
+        private readonly string version;
+        private readonly string arch;
 
         public Updater(string version, string arch)
         {
-            _version = version;
-            _arch = arch;
+            this.version = version;
+            this.arch = arch;
         }
 
-        private const string Baseurl = "https://github.com/puk06/RealtimePPUR/releases/download/";
+        private const string BASEURL = "https://github.com/puk06/RealtimePPUR/releases/download/";
 
         public async Task Update()
         {
-            var downloadUrl = $"{Baseurl}{_version}/RealtimePPUR-{_arch}.zip";
+            var downloadUrl = $"{BASEURL}{version}/RealtimePPUR-{arch}.zip";
             var tempPath = Path.GetTempPath();
             var tempFile = Path.Combine(tempPath, "RealtimePPUR.zip");
             var extractPath = Path.Combine(tempPath, "RealtimePPUR.Temp");

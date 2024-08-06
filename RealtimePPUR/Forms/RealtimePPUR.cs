@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -484,21 +485,21 @@ namespace RealtimePPUR.Forms
                     avgoffset.Text = Math.Round(avgOffset, 2) + "ms";
                     avgoffset.Width = TextRenderer.MeasureText(avgoffset.Text, avgoffset.Font).Width;
 
-                    ur.Text = urValue.ToString();
+                    ur.Text = urValue.ToString(CultureInfo.CurrentCulture);
                     ur.Width = TextRenderer.MeasureText(ur.Text, ur.Font).Width;
 
-                    avgoffsethelp.Text = avgOffsethelp.ToString();
+                    avgoffsethelp.Text = avgOffsethelp.ToString(CultureInfo.CurrentCulture);
                     avgoffsethelp.Width = TextRenderer.MeasureText(avgoffsethelp.Text, avgoffsethelp.Font).Width;
 
-                    sr.Text = starRatingValue.ToString();
+                    sr.Text = starRatingValue.ToString(CultureInfo.CurrentCulture);
                     sr.Width = TextRenderer.MeasureText(sr.Text, sr.Font).Width;
 
                     iffc.Text = (isPlayingBool || isResultScreenValue) && currentGamemodeValue != 3
                         ? Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue)
-                        : Math.Round(ssppValue).ToString();
+                        : Math.Round(ssppValue).ToString(CultureInfo.CurrentCulture);
                     iffc.Width = TextRenderer.MeasureText(iffc.Text, iffc.Font).Width;
 
-                    currentPp.Text = Math.Round(currentPpValue, 1).ToString();
+                    currentPp.Text = Math.Round(currentPpValue).ToString(CultureInfo.CurrentCulture);
                     currentPp.Width = TextRenderer.MeasureText(currentPp.Text, currentPp.Font).Width;
                     currentPp.Left = ClientSize.Width - currentPp.Width - 35;
 
@@ -1053,8 +1054,8 @@ namespace RealtimePPUR.Forms
                 {
                     Thread.Sleep(15);
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
-                    bool isplaying = this.isplaying;
-                    bool isResultScreen = this.isResultScreen;
+                    bool playing = isplaying;
+                    bool resultScreen = isResultScreen;
                     string currentMapString = baseAddresses.Beatmap.MapString;
                     string currentOsuFileName = baseAddresses.Beatmap.OsuFileName;
                     OsuMemoryStatus status = currentStatus;
@@ -1166,7 +1167,7 @@ namespace RealtimePPUR.Forms
                         }
                     };
 
-                    if (isplaying)
+                    if (playing)
                     {
                         hits.HitGeki = baseAddresses.Player.HitGeki;
                         hits.Hit300 = baseAddresses.Player.Hit300;
@@ -1189,7 +1190,7 @@ namespace RealtimePPUR.Forms
                         _ => ParseMods(baseAddresses.GeneralData.Mods).Calculate
                     };
 
-                    if (isplaying) mods = ParseMods(baseAddresses.Player.Mods.Value).Calculate;
+                    if (playing) mods = ParseMods(baseAddresses.Player.Mods.Value).Calculate;
 
                     double acc = CalculateAcc(hits, currentGamemode);
 
@@ -1203,8 +1204,8 @@ namespace RealtimePPUR.Forms
                         Time = baseAddresses.GeneralData.AudioTime,
                         PplossMode = pPLossModeToolStripMenuItem.Checked
                     };
-                    var result = calculator?.Calculate(calcArgs, isplaying,
-                        isResultScreen && !isplaying, hits);
+                    var result = calculator?.Calculate(calcArgs, playing,
+                        resultScreen && !playing, hits);
                     if (result?.DifficultyAttributes == null || result.PerformanceAttributes == null ||
                         result.CurrentDifficultyAttributes == null ||
                         result.CurrentPerformanceAttributes == null) continue;
@@ -1333,6 +1334,44 @@ namespace RealtimePPUR.Forms
 
                             break;
 
+                        case OsuMemoryStatus.NotRunning:
+                            break;
+                        case OsuMemoryStatus.MainMenu:
+                            break;
+                        case OsuMemoryStatus.EditingMap:
+                            break;
+                        case OsuMemoryStatus.GameShutdownAnimation:
+                            break;
+                        case OsuMemoryStatus.SongSelectEdit:
+                            break;
+                        case OsuMemoryStatus.SongSelect:
+                            break;
+                        case OsuMemoryStatus.WIP_NoIdeaWhatThisIs:
+                            break;
+                        case OsuMemoryStatus.ResultsScreen:
+                            break;
+                        case OsuMemoryStatus.GameStartupAnimation:
+                            break;
+                        case OsuMemoryStatus.MultiplayerRooms:
+                            break;
+                        case OsuMemoryStatus.MultiplayerRoom:
+                            break;
+                        case OsuMemoryStatus.MultiplayerSongSelect:
+                            break;
+                        case OsuMemoryStatus.MultiplayerResultsscreen:
+                            break;
+                        case OsuMemoryStatus.OsuDirect:
+                            break;
+                        case OsuMemoryStatus.RankingTagCoop:
+                            break;
+                        case OsuMemoryStatus.RankingTeam:
+                            break;
+                        case OsuMemoryStatus.ProcessingBeatmaps:
+                            break;
+                        case OsuMemoryStatus.Tourney:
+                            break;
+                        case OsuMemoryStatus.Unknown:
+                            break;
                         default:
                             _client.SetPresence(new RichPresence
                             {
@@ -1380,7 +1419,7 @@ namespace RealtimePPUR.Forms
         {
             const int radius = 11;
             const int diameter = radius * 2;
-            GraphicsPath gp = new GraphicsPath();
+            GraphicsPath gp = new ();
             gp.AddPie(0, 0, diameter, diameter, 180, 90);
             gp.AddPie(Width - diameter, 0, diameter, diameter, 270, 90);
             gp.AddPie(0, Height - diameter, diameter, diameter, 90, 90);
@@ -1391,7 +1430,7 @@ namespace RealtimePPUR.Forms
             Region = new Region(gp);
         }
 
-        private void realtimePPURToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RealtimePPURToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (mode == 0) return;
             ClientSize = new Size(316, 130);
@@ -1410,7 +1449,7 @@ namespace RealtimePPUR.Forms
             mode = 0;
         }
 
-        private void realtimePPToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RealtimePPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (mode == 1) return;
             ClientSize = new Size(316, 65);
@@ -1429,7 +1468,7 @@ namespace RealtimePPUR.Forms
             mode = 1;
         }
 
-        private void offsetHelperToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OffsetHelperToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (mode == 2) return;
             ClientSize = new Size(316, 65);
@@ -1448,7 +1487,7 @@ namespace RealtimePPUR.Forms
             mode = 2;
         }
 
-        private void changeFontToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ChangeFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FontDialog font = new FontDialog();
             try
@@ -1501,7 +1540,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        private void loadFontToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (File.Exists("Font"))
             {
@@ -1550,7 +1589,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        private void resetFontToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void ResetFontToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
             if (!fontsizeResult)
@@ -1590,9 +1629,9 @@ namespace RealtimePPUR.Forms
             Top += e.Y - mousePoint.Y;
         }
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+        private void CloseToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
-        private void osuModeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OsuModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var lefttest = configDictionary.TryGetValue("LEFT", out string leftvalue);
             var toptest = configDictionary.TryGetValue("TOP", out string topvalue);
@@ -1618,72 +1657,15 @@ namespace RealtimePPUR.Forms
             osuModeToolStripMenuItem.Checked = isosumode;
         }
 
-        private void RealtimePPUR_Closed(object sender, EventArgs e) => System.Windows.Forms.Application.Exit();
+        private void RealtimePPUR_Closed(object sender, EventArgs e) => Application.Exit();
 
-        private void changePriorityToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ChangePriorityToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form priorityForm = new ChangePriorityForm();
             priorityForm.Show();
         }
 
-        private void sRToolStripMenuItem_Click(object sender, EventArgs e) =>
-            sRToolStripMenuItem.Checked = !sRToolStripMenuItem.Checked;
-
-        private void ifFCPPToolStripMenuItem_Click(object sender, EventArgs e) =>
-            ifFCPPToolStripMenuItem.Checked = !ifFCPPToolStripMenuItem.Checked;
-
-        private void ifFCHitsToolStripMenuItem_Click(object sender, EventArgs e) =>
-            ifFCHitsToolStripMenuItem.Checked = !ifFCHitsToolStripMenuItem.Checked;
-
-        private void expectedManiaScoreToolStripMenuItem_Click(object sender, EventArgs e) =>
-            expectedManiaScoreToolStripMenuItem.Checked = !expectedManiaScoreToolStripMenuItem.Checked;
-
-        private void currentPPToolStripMenuItem_Click(object sender, EventArgs e) =>
-            currentPPToolStripMenuItem.Checked = !currentPPToolStripMenuItem.Checked;
-
-        private void currentPositionToolStripMenuItem_Click(object sender, EventArgs e) =>
-            currentPositionToolStripMenuItem.Checked = !currentPositionToolStripMenuItem.Checked;
-
-        private void higherScoreToolStripMenuItem_Click(object sender, EventArgs e) =>
-            higherScoreToolStripMenuItem.Checked = !higherScoreToolStripMenuItem.Checked;
-
-        private void highestScoreToolStripMenuItem_Click(object sender, EventArgs e) =>
-            highestScoreToolStripMenuItem.Checked = !highestScoreToolStripMenuItem.Checked;
-
-        private void userScoreToolStripMenuItem_Click(object sender, EventArgs e) =>
-            userScoreToolStripMenuItem.Checked = !userScoreToolStripMenuItem.Checked;
-
-        private void sSPPToolStripMenuItem_Click(object sender, EventArgs e) =>
-            sSPPToolStripMenuItem.Checked = !sSPPToolStripMenuItem.Checked;
-
-        private void hitsToolStripMenuItem_Click(object sender, EventArgs e) =>
-            hitsToolStripMenuItem.Checked = !hitsToolStripMenuItem.Checked;
-
-        private void uRToolStripMenuItem_Click(object sender, EventArgs e) =>
-            uRToolStripMenuItem.Checked = !uRToolStripMenuItem.Checked;
-
-        private void offsetHelpToolStripMenuItem_Click(object sender, EventArgs e) =>
-            offsetHelpToolStripMenuItem.Checked = !offsetHelpToolStripMenuItem.Checked;
-
-        private void currentACCToolStripMenuItem_Click(object sender, EventArgs e) =>
-            currentACCToolStripMenuItem.Checked = !currentACCToolStripMenuItem.Checked;
-
-        private void progressToolStripMenuItem_Click(object sender, EventArgs e) =>
-            progressToolStripMenuItem.Checked = !progressToolStripMenuItem.Checked;
-
-        private void avgOffsetToolStripMenuItem_Click(object sender, EventArgs e) =>
-            avgOffsetToolStripMenuItem.Checked = !avgOffsetToolStripMenuItem.Checked;
-
-        private void healthPercentageToolStripMenuItem_Click(object sender, EventArgs e) =>
-            healthPercentageToolStripMenuItem.Checked = !healthPercentageToolStripMenuItem.Checked;
-
-        private void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e) =>
-            discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
-
-        private void pPLossModeToolStripMenuItem_Click(object sender, EventArgs e) =>
-            pPLossModeToolStripMenuItem.Checked = !pPLossModeToolStripMenuItem.Checked;
-
-        private void saveConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {

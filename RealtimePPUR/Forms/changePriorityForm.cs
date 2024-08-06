@@ -3,41 +3,41 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace RealtimePPUR
+namespace RealtimePPUR.Forms
 {
     public partial class ChangePriorityForm : Form
     {
-        private int _index;
-        private readonly int _max;
+        private int index;
+        private readonly int max;
 
         public ChangePriorityForm()
         {
             InitializeComponent();
-            _max = sortPriorityList.Items.Count;
+            max = sortPriorityList.Items.Count;
         }
 
-        private void sortPriorityList_MouseDown(object o, MouseEventArgs e)
+        private void SortPriorityList_MouseDown(object o, MouseEventArgs e)
         {
             Point p = MousePosition;
             p = sortPriorityList.PointToClient(p);
-            _index = sortPriorityList.IndexFromPoint(p);
-            if (_index > -1) sortPriorityList.DoDragDrop(sortPriorityList.Items[_index].ToString(), DragDropEffects.Copy);
+            index = sortPriorityList.IndexFromPoint(p);
+            if (index > -1) sortPriorityList.DoDragDrop(sortPriorityList.Items[index].ToString(), DragDropEffects.Copy);
         }
 
-        private void sortPriorityList_DragEnter(object o, DragEventArgs e) => e.Effect = DragDropEffects.Copy;
+        private void SortPriorityList_DragEnter(object o, DragEventArgs e) => e.Effect = DragDropEffects.Copy;
 
-        private void sortPriorityList_DragDrop(object o, DragEventArgs e)
+        private void SortPriorityList_DragDrop(object o, DragEventArgs e)
         {
             string str = e.Data.GetData(DataFormats.Text).ToString();
             Point p = MousePosition;
             p = sortPriorityList.PointToClient(p);
             int ind = sortPriorityList.IndexFromPoint(p);
-            if (!(ind > -1 && ind < _max)) return;
-            sortPriorityList.Items[_index] = sortPriorityList.Items[ind];
+            if (!(ind > -1 && ind < max)) return;
+            sortPriorityList.Items[index] = sortPriorityList.Items[ind];
             sortPriorityList.Items[ind] = str;
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void OkButton_Click(object sender, EventArgs e)
         {
             var sortPriority = (from string item in sortPriorityList.Items select int.Parse(item.Split(':')[0])).ToList();
             string message = string.Join("/", sortPriority);
@@ -45,7 +45,6 @@ namespace RealtimePPUR
             {
                 Clipboard.SetText(message);
                 MessageBox.Show($"Config.cfgのINGAMEOVERLAYPRIORITYの所をクリップボードに自動保存された文章に書き換えてください！再起動したら反映します！\n\nRewrite the INGAMEOVERLAYPRIORITY section of Config.cfg with the text automatically saved to the clipboard! It will be reflected after rebooting!\n\nコピーされた文章(Copied text): {message}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
             catch
             {
@@ -54,6 +53,6 @@ namespace RealtimePPUR
             Close();
         }
 
-        private void cancelButton_Click(object sender, EventArgs e) => Close();
+        private void CancelButton_Click(object sender, EventArgs e) => Close();
     }
 }
