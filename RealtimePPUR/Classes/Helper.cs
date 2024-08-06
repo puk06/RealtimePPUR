@@ -1,4 +1,4 @@
-﻿using Octokit;
+using Octokit;
 using osu.Game.IO;
 using OsuMemoryDataProvider;
 using System;
@@ -117,12 +117,12 @@ namespace RealtimePPUR.Classes
         {
             return mode switch
             {
-                0 => (double)(100 * (6 * hits.Hit300 + 2 * hits.Hit100 + hits.Hit50)) /
+                0 => (double)(100 * ((6 * hits.Hit300) + (2 * hits.Hit100) + hits.Hit50)) /
                      (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss)),
-                1 => (double)(100 * (2 * hits.Hit300 + hits.Hit100)) / (2 * (hits.Hit300 + hits.Hit100 + hits.HitMiss)),
+                1 => (double)(100 * ((2 * hits.Hit300) + hits.Hit100)) / (2 * (hits.Hit300 + hits.Hit100 + hits.HitMiss)),
                 2 => (double)(100 * (hits.Hit300 + hits.Hit100 + hits.Hit50)) /
                      (hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitKatu + hits.HitMiss),
-                3 => (double)(100 * (6 * hits.HitGeki + 6 * hits.Hit300 + 4 * hits.HitKatu + 2 * hits.Hit100 +
+                3 => (double)(100 * ((6 * hits.HitGeki) + (6 * hits.Hit300) + (4 * hits.HitKatu) + (2 * hits.Hit100) +
                                      hits.Hit50)) /
                      (6 * (hits.Hit50 + hits.Hit100 + hits.Hit300 + hits.HitMiss + hits.HitGeki + hits.HitKatu)),
                 _ => throw new ArgumentException("Invalid mode provided.")
@@ -154,7 +154,7 @@ namespace RealtimePPUR.Classes
             double q1 = sortedArray[(int)(count * 0.25)];
             double q3 = sortedArray[(int)(count * 0.75)];
             double iqr = q3 - q1;
-            var filteredArray = sortedArray.Where(x => x >= q1 - 1.5 * iqr && x <= q3 + 1.5 * iqr);
+            var filteredArray = sortedArray.Where(x => x >= q1 - (1.5 * iqr) && x <= q3 + (1.5 * iqr));
             return filteredArray.Average();
         }
 
