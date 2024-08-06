@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -509,57 +509,57 @@ namespace RealtimePPUR.Forms
                         case 0:
                             good.Text = hit300.ToString();
                             good.Width = TextRenderer.MeasureText(good.Text, good.Font).Width;
-                            good.Left = (ClientSize.Width - good.Width) / 2 - 120;
+                            good.Left = ((ClientSize.Width - good.Width) / 2) - 120;
 
                             ok.Text = (hit100 + hit50).ToString();
                             ok.Width = TextRenderer.MeasureText(ok.Text, ok.Font).Width;
-                            ok.Left = (ClientSize.Width - ok.Width) / 2 - 61;
+                            ok.Left = ((ClientSize.Width - ok.Width) / 2) - 61;
 
                             miss.Text = hitMiss.ToString();
                             miss.Width = TextRenderer.MeasureText(miss.Text, miss.Font).Width;
-                            miss.Left = (ClientSize.Width - miss.Width) / 2 - 3;
+                            miss.Left = ((ClientSize.Width - miss.Width) / 2) - 3;
                             break;
 
                         case 1:
                             good.Text = hit300.ToString();
                             good.Width = TextRenderer.MeasureText(good.Text, good.Font).Width;
-                            good.Left = (ClientSize.Width - good.Width) / 2 - 120;
+                            good.Left = ((ClientSize.Width - good.Width) / 2) - 120;
 
                             ok.Text = hit100.ToString();
                             ok.Width = TextRenderer.MeasureText(ok.Text, ok.Font).Width;
-                            ok.Left = (ClientSize.Width - ok.Width) / 2 - 61;
+                            ok.Left = ((ClientSize.Width - ok.Width) / 2) - 61;
 
                             miss.Text = hitMiss.ToString();
                             miss.Width = TextRenderer.MeasureText(miss.Text, miss.Font).Width;
-                            miss.Left = (ClientSize.Width - miss.Width) / 2 - 3;
+                            miss.Left = ((ClientSize.Width - miss.Width) / 2) - 3;
                             break;
 
                         case 2:
                             good.Text = hit300.ToString();
                             good.Width = TextRenderer.MeasureText(good.Text, good.Font).Width;
-                            good.Left = (ClientSize.Width - good.Width) / 2 - 120;
+                            good.Left = ((ClientSize.Width - good.Width) / 2) - 120;
 
                             ok.Text = (hit100 + hit50).ToString();
                             ok.Width = TextRenderer.MeasureText(ok.Text, ok.Font).Width;
-                            ok.Left = (ClientSize.Width - ok.Width) / 2 - 61;
+                            ok.Left = ((ClientSize.Width - ok.Width) / 2) - 61;
 
                             miss.Text = hitMiss.ToString();
                             miss.Width = TextRenderer.MeasureText(miss.Text, miss.Font).Width;
-                            miss.Left = (ClientSize.Width - miss.Width) / 2 - 3;
+                            miss.Left = ((ClientSize.Width - miss.Width) / 2) - 3;
                             break;
 
                         case 3:
                             good.Text = (hit300 + hitGeki).ToString();
                             good.Width = TextRenderer.MeasureText(good.Text, good.Font).Width;
-                            good.Left = (ClientSize.Width - good.Width) / 2 - 120;
+                            good.Left = ((ClientSize.Width - good.Width) / 2) - 120;
 
                             ok.Text = (hitKatu + hit100 + hit50).ToString();
                             ok.Width = TextRenderer.MeasureText(ok.Text, ok.Font).Width;
-                            ok.Left = (ClientSize.Width - ok.Width) / 2 - 61;
+                            ok.Left = ((ClientSize.Width - ok.Width) / 2) - 61;
 
                             miss.Text = hitMiss.ToString();
                             miss.Width = TextRenderer.MeasureText(miss.Text, miss.Font).Width;
-                            miss.Left = (ClientSize.Width - miss.Width) / 2 - 3;
+                            miss.Left = ((ClientSize.Width - miss.Width) / 2) - 3;
                             break;
                     }
 
