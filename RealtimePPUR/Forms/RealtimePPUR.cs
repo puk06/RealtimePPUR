@@ -18,6 +18,7 @@ using OsuMemoryDataProvider.OsuMemoryModels;
 using RealtimePPUR.Classes;
 using Path = System.IO.Path;
 using static RealtimePPUR.Classes.Helper;
+using osu.Framework.Graphics.Primitives;
 
 namespace RealtimePPUR.Forms
 {
@@ -125,8 +126,8 @@ namespace RealtimePPUR.Forms
                 foreach (string line in lines)
                 {
                     string[] parts = line.Split('=');
-
                     if (parts.Length != 2) continue;
+
                     string name = parts[0].Trim();
                     string value = parts[1].Trim();
                     configDictionary[name] = value;
@@ -1700,8 +1701,10 @@ namespace RealtimePPUR.Forms
                 string[] lines = File.ReadAllLines(filePath);
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    if (!lines[i].Contains("=")) continue;
-                    string key = lines[i].Split('=')[0].Trim();
+                    string[] parts = lines[i].Split('=');
+                    if (parts.Length != 2) continue;
+
+                    string key = parts[0].Trim();
                     for (int j = 0; j < param.Count; j++)
                     {
                         if (key != param.ElementAt(j).Key) continue;
