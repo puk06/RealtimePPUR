@@ -1707,7 +1707,7 @@ namespace RealtimePPUR.Forms
                     for (int j = 0; j < param.Count; j++)
                     {
                         if (key != param.ElementAt(j).Key) continue;
-                        lines[i] = $"{param.ElementAt(j).Key} = {param.ElementAt(j).Value}";
+                        lines[i] = $"{param.ElementAt(j).Key}={param.ElementAt(j).Value}";
                         break;
                     }
                 }
