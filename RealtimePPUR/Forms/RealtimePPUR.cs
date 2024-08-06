@@ -18,7 +18,6 @@ using OsuMemoryDataProvider.OsuMemoryModels;
 using RealtimePPUR.Classes;
 using Path = System.IO.Path;
 using static RealtimePPUR.Classes.Helper;
-using osu.Framework.Graphics.Primitives;
 
 namespace RealtimePPUR.Forms
 {
