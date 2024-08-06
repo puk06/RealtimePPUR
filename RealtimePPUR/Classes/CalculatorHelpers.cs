@@ -278,6 +278,7 @@ namespace RealtimePPUR.Classes
             return new ModMultiplierModDivider { ModMultiplier = modMultiplier, ModDivider = modDivider };
         }
 
+        // TODO: Fix this method
         public static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
         {
             const int hitValue = 320;
