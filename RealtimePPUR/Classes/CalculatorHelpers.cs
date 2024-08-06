@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
@@ -8,7 +9,6 @@ using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mania.Objects;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
@@ -377,9 +377,12 @@ namespace RealtimePPUR.Classes
         {
             return mode switch
             {
-                0 => beatmap.HitObjects.Count + beatmap.HitObjects.OfType<Slider>().Sum(s => s.NestedHitObjects.Count - 1),
+                0 => beatmap.HitObjects.Count +
+                     beatmap.HitObjects.OfType<Slider>().Sum(s => s.NestedHitObjects.Count - 1),
                 1 => beatmap.HitObjects.OfType<Hit>().Count(),
-                2 => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>().SelectMany(j => j.NestedHitObjects).Count(h => h is not TinyDroplet),
+                2 => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>()
+                    .SelectMany(j => j.NestedHitObjects)
+                    .Count(h => h is not TinyDroplet),
                 3 => 0,
                 _ => throw new ArgumentException("Invalid ruleset ID provided.")
             };

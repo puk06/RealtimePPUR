@@ -46,6 +46,7 @@ namespace RealtimePPUR
             };
             var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
+            difficultyAttributes.MaxCombo = GetMaxCombo(beatmap, mode);
             var performanceCalculator = ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
 
@@ -164,6 +165,11 @@ namespace RealtimePPUR
 
     public class ProcessorWorkingBeatmap(IBeatmap beatmap) : WorkingBeatmap(beatmap.BeatmapInfo, null)
     {
+        public ProcessorWorkingBeatmap(string file)
+            : this(ReadFromFile(file))
+        {
+        }
+
         private static Beatmap ReadFromFile(string filename)
         {
             using var stream = File.OpenRead(filename);
@@ -171,12 +177,12 @@ namespace RealtimePPUR
             return Decoder.GetDecoder<Beatmap>(reader).Decode(reader);
         }
 
-        public static ProcessorWorkingBeatmap FromFile(string file) => new(ReadFromFile(file));
+        public static ProcessorWorkingBeatmap FromFile(string file) => new (file);
 
         protected override IBeatmap GetBeatmap() => beatmap;
-        protected override Texture GetBackground() => null!;
-        protected override Track GetBeatmapTrack() => null!;
-        protected override ISkin GetSkin() => null!;
-        public override Stream? GetStream(string storagePath) => null;
+        protected override Texture GetBackground() => null;
+        protected override Track GetBeatmapTrack() => null;
+        protected override ISkin GetSkin() => null;
+        public override Stream GetStream(string storagePath) => null;
     }
 }
