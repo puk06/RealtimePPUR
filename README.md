@@ -1,5 +1,7 @@
 ![](https://github.com/puk06/RealtimePPUR-old/assets/86549420/5a41b979-3176-443a-91f0-6150d9243cda)
 
+# RealtimePPUR ![License](https://img.shields.io/github/license/puk06/RealtimePPUR?style=flat-square) ![Release](https://img.shields.io/github/v/release/puk06/RealtimePPUR?style=flat-square) ![Language](https://img.shields.io/badge/language-c%23-green?style=flat-square) ![CodeFactor](https://www.codefactor.io/repository/github/puk06/RealtimePPUR/badge)
+
 # RealtimePPUR
 このソフトウェアは、osuのゲーム内でリアルタイムPP、URと、オフセットがどれほどズレているか教えてくれるソフトです。
 
