@@ -309,5 +309,24 @@ namespace RealtimePPUR.Classes
                 menuItem.Checked = !menuItem.Checked;
             }
         }
+
+        public static void ErrorLogger(Exception error, string prevError)
+        {
+            try
+            {
+                if (error.Message == prevError) return;
+                prevError = error.Message;
+                const string filePath = "Error.log";
+                StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
+                sw.WriteLine("[" + DateTime.Now + "]");
+                sw.WriteLine(error);
+                sw.WriteLine();
+                sw.Close();
+            }
+            catch
+            {
+                Console.WriteLine("エラーログの書き込みに失敗しました");
+            }
+        }
     }
 }
