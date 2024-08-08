@@ -6,7 +6,6 @@ using osu.Game.Rulesets;
 using osu.Game.Rulesets.Catch;
 using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Mania;
-using osu.Game.Rulesets.Mania.Objects;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Objects;
@@ -88,11 +87,9 @@ namespace RealtimePPUR.Classes
 
                 case 3:
                     {
-                        int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
-
                         return new Dictionary<HitResult, int>
                         {
-                            [HitResult.Perfect] = totalHits,
+                            [HitResult.Perfect] = beatmap.HitObjects.Count,
                             [HitResult.Great] = 0,
                             [HitResult.Good] = 0,
                             [HitResult.Ok] = 0,
@@ -162,7 +159,7 @@ namespace RealtimePPUR.Classes
 
                 case 3:
                     {
-                        int totalHits = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+                        int totalHits = beatmap.HitObjects.Count;
 
                         return new Dictionary<HitResult, int>
                         {
@@ -278,7 +275,6 @@ namespace RealtimePPUR.Classes
             return new ModMultiplierModDivider { ModMultiplier = modMultiplier, ModDivider = modDivider };
         }
 
-        // TODO: Fix this method
         public static int ManiaScoreCalculator(IBeatmap beatmap, HitsResult hits, string[] mods, int currentScore)
         {
             const int hitValue = 320;
@@ -287,7 +283,7 @@ namespace RealtimePPUR.Classes
             const int hitPunishment = 0;
 
             int totalNotes = hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss;
-            int objectCount = beatmap.HitObjects.Count + beatmap.HitObjects.Count(ho => ho is HoldNote);
+            int objectCount = beatmap.HitObjects.Count;
 
             const int maxScore = 1000000;
             double bonus = 100;
@@ -383,7 +379,7 @@ namespace RealtimePPUR.Classes
                 2 => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>()
                     .SelectMany(j => j.NestedHitObjects)
                     .Count(h => h is not TinyDroplet),
-                3 => 0,
+                3 => beatmap.HitObjects.Count,
                 _ => throw new ArgumentException("Invalid ruleset ID provided.")
             };
         }

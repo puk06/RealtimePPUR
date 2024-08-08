@@ -154,19 +154,6 @@ namespace RealtimePPUR.Classes
 
                     data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                     data.CurrentPerformanceAttributes = performanceAttributesCurrent;
-
-
-                    // おふざけ機能
-
-                    // 現在のBPM (IfFCのところに表示)
-                    //var currentBpm = beatmapCurrent.ControlPointInfo.TimingPoints.OfType<TimingControlPoint>().Last(tp => tp.Time <= args.Time).BPM;
-                    //data.PerformanceAttributesIffc.Total = currentBpm;
-
-                    // 現在のSV (CurrentPPのところに表示)
-                    //var currentSv = beatmapCurrent.ControlPointInfo.AllControlPoints.OfType<DifficultyControlPoint>().Last(tp => tp.Time <= args.Time).SliderVelocity;
-                    //data.CurrentPerformanceAttributes.Total = currentSv;
-
-                    // おふざけ機能
                 }
 
                 return data;
