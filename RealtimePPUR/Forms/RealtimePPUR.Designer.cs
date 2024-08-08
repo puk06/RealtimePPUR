@@ -395,7 +395,7 @@ namespace RealtimePPUR.Forms
             resetFontToolStripMenuItem.Name = "resetFontToolStripMenuItem";
             resetFontToolStripMenuItem.Size = new Size(190, 22);
             resetFontToolStripMenuItem.Text = "Reset Font";
-            resetFontToolStripMenuItem.Click += ResetFontToolStripMenuItem_Click_1;
+            resetFontToolStripMenuItem.Click += ResetFontToolStripMenuItem_Click;
             // 
             // discordRichPresenceToolStripMenuItem
             // 

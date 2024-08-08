@@ -349,7 +349,6 @@ namespace RealtimePPUR.Forms
             return configDictionary.TryGetValue(key, out string test) ? test : value;
         }
 
-        // Add the font file
         private void AddFontFile()
         {
             // Add the font files
@@ -1315,7 +1314,6 @@ namespace RealtimePPUR.Forms
                                         $"{Math.Round(IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(baseAddresses.Player.Mods.Value).Show)}  {baseAddresses.Player.Combo}x  {ConvertHits(baseAddresses.Player.Mode, hits)}"
                                 }
                             });
-
                             break;
 
                         case OsuMemoryStatus.Playing when
@@ -1335,47 +1333,8 @@ namespace RealtimePPUR.Forms
                                         $"{Math.Round(IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total), 2)}pp  +{string.Join("", ParseMods(baseAddresses.Player.Mods.Value).Show)}  {baseAddresses.Player.Combo}x  {ConvertHits(baseAddresses.Player.Mode, hits)}"
                                 }
                             });
-
                             break;
 
-                        case OsuMemoryStatus.NotRunning:
-                            break;
-                        case OsuMemoryStatus.MainMenu:
-                            break;
-                        case OsuMemoryStatus.EditingMap:
-                            break;
-                        case OsuMemoryStatus.GameShutdownAnimation:
-                            break;
-                        case OsuMemoryStatus.SongSelectEdit:
-                            break;
-                        case OsuMemoryStatus.SongSelect:
-                            break;
-                        case OsuMemoryStatus.WIP_NoIdeaWhatThisIs:
-                            break;
-                        case OsuMemoryStatus.ResultsScreen:
-                            break;
-                        case OsuMemoryStatus.GameStartupAnimation:
-                            break;
-                        case OsuMemoryStatus.MultiplayerRooms:
-                            break;
-                        case OsuMemoryStatus.MultiplayerRoom:
-                            break;
-                        case OsuMemoryStatus.MultiplayerSongSelect:
-                            break;
-                        case OsuMemoryStatus.MultiplayerResultsscreen:
-                            break;
-                        case OsuMemoryStatus.OsuDirect:
-                            break;
-                        case OsuMemoryStatus.RankingTagCoop:
-                            break;
-                        case OsuMemoryStatus.RankingTeam:
-                            break;
-                        case OsuMemoryStatus.ProcessingBeatmaps:
-                            break;
-                        case OsuMemoryStatus.Tourney:
-                            break;
-                        case OsuMemoryStatus.Unknown:
-                            break;
                         default:
                             _client.SetPresence(new RichPresence
                             {
@@ -1389,7 +1348,6 @@ namespace RealtimePPUR.Forms
                                         $"RealtimePPUR ({CURRENT_VERSION})"
                                 }
                             });
-
                             break;
                     }
                 }
@@ -1593,7 +1551,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        private void ResetFontToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void ResetFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
             if (!fontsizeResult)
