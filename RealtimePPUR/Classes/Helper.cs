@@ -309,5 +309,24 @@ namespace RealtimePPUR.Classes
                 menuItem.Checked = !menuItem.Checked;
             }
         }
+
+        public static void WriteConfigFile(string filePath, Dictionary<string, string> parameters)
+        {
+            string[] lines = File.ReadAllLines(filePath);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] parts = lines[i].Split('=');
+                if (parts.Length != 2) continue;
+
+                string key = parts[0].Trim();
+                for (int j = 0; j < parameters.Count; j++)
+                {
+                    if (key != parameters.ElementAt(j).Key) continue;
+                    lines[i] = $"{parameters.ElementAt(j).Key}={parameters.ElementAt(j).Value}";
+                    break;
+                }
+            }
+            File.WriteAllLines(filePath, lines);
+        }
     }
 }

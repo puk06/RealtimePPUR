@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static RealtimePPUR.Classes.Helper;
 
 namespace RealtimePPUR.Forms
 {
@@ -43,8 +45,13 @@ namespace RealtimePPUR.Forms
             string message = string.Join("/", sortPriority);
             try
             {
-                Clipboard.SetText(message);
-                MessageBox.Show($"Config.cfgのINGAMEOVERLAYPRIORITYの所をクリップボードに自動保存された文章に書き換えてください！再起動したら反映します！\n\nRewrite the INGAMEOVERLAYPRIORITY section of Config.cfg with the text automatically saved to the clipboard! It will be reflected after rebooting!\n\nコピーされた文章(Copied text): {message}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                const string filePath = "Config.cfg";
+                var param = new Dictionary<string, string>
+                {
+                    { "INGAMEOVERLAYPRIORITY", message }
+                };
+                WriteConfigFile(filePath, param);
+                MessageBox.Show("Config.cfgのINGAMEOVERLAYPRIORITYの値を変更しました。再起動したら反映します！\n\nChanged the value of INGAMEOVERLAYPRIORITY in Config.cfg. It will be reflected after rebooting!", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch
             {

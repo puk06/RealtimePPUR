@@ -1,4 +1,6 @@
+using System;
 using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets;
 using osu.Game.Scoring;
 using System.Linq;
@@ -57,6 +59,7 @@ namespace RealtimePPUR.Classes
             data.PerformanceAttributesIffc = performanceAttributes;
             data.IfFcHitResult = staticsSs;
             data.ExpectedManiaScore = 0;
+            data.CurrentBpm = 0;
 
             var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
 
@@ -155,6 +158,23 @@ namespace RealtimePPUR.Classes
                     data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                     data.CurrentPerformanceAttributes = performanceAttributesCurrent;
                 }
+
+                var timingPoints = beatmap.ControlPointInfo.TimingPoints;
+                TimingControlPoint lastTimingPoint = null;
+
+                foreach (var tp in timingPoints)
+                {
+                    if (tp is not null && tp.Time <= args.Time)
+                    {
+                        lastTimingPoint = tp;
+                    }
+                }
+
+                if (lastTimingPoint == null) return data;
+
+                var currentBpm = lastTimingPoint.BPM;
+                currentBpm = Math.Round(currentBpm, 1);
+                data.CurrentBpm = currentBpm;
 
                 return data;
             }

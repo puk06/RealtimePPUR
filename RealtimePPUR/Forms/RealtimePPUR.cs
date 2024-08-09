@@ -18,7 +18,6 @@ using OsuMemoryDataProvider.OsuMemoryModels;
 using RealtimePPUR.Classes;
 using Path = System.IO.Path;
 using static RealtimePPUR.Classes.Helper;
-using osu.Game.Rulesets.Taiko.Objects;
 
 namespace RealtimePPUR.Forms
 {
@@ -114,6 +113,7 @@ namespace RealtimePPUR.Forms
                 higherScoreToolStripMenuItem.Checked = false;
                 highestScoreToolStripMenuItem.Checked = false;
                 userScoreToolStripMenuItem.Checked = false;
+                currentBPMToolStripMenuItem.Checked = false;
                 discordRichPresenceToolStripMenuItem.Checked = false;
                 pPLossModeToolStripMenuItem.Checked = false;
                 ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
@@ -193,6 +193,7 @@ namespace RealtimePPUR.Forms
                 higherScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("HIGHERSCOREDIFF");
                 highestScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("HIGHESTSCOREDIFF");
                 userScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("USERSCORE");
+                currentBPMToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTBPM");
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
                 ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16");
@@ -351,11 +352,9 @@ namespace RealtimePPUR.Forms
 
         private void AddFontFile()
         {
-            // Add the font files
             fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
             fontCollection.AddFontFile("./src/Fonts/Nexa Light.otf");
 
-            // Set the font
             foreach (FontFamily font in fontCollection.Families)
             {
                 switch (font.Name)
@@ -783,6 +782,14 @@ namespace RealtimePPUR.Forms
                         if (userScoreToolStripMenuItem.Checked)
                         {
                             displayFormat += "Score: " + userScore + "\n";
+                        }
+
+                        break;
+
+                    case 17:
+                        if (currentBPMToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "BPM: " + calculatedData.CurrentBpm + "\n";
                         }
 
                         break;
@@ -1381,7 +1388,7 @@ namespace RealtimePPUR.Forms
         {
             const int radius = 11;
             const int diameter = radius * 2;
-            GraphicsPath gp = new ();
+            GraphicsPath gp = new();
             gp.AddPie(0, 0, diameter, diameter, 180, 90);
             gp.AddPie(Width - diameter, 0, diameter, diameter, 270, 90);
             gp.AddPie(0, Height - diameter, diameter, diameter, 90, 90);
@@ -1639,7 +1646,7 @@ namespace RealtimePPUR.Forms
                     return;
                 }
 
-                var param = new Dictionary<string, string>
+                var parameters = new Dictionary<string, string>
                 {
                     { "SR", sRToolStripMenuItem.Checked ? "true" : "false" },
                     { "SSPP", sSPPToolStripMenuItem.Checked ? "true" : "false" },
@@ -1656,24 +1663,11 @@ namespace RealtimePPUR.Forms
                     { "HEALTHPERCENTAGE", healthPercentageToolStripMenuItem.Checked ? "true" : "false" },
                     { "CURRENTPOSITION", currentPositionToolStripMenuItem.Checked ? "true" : "false" },
                     { "HIGHERSCOREDIFF", higherScoreToolStripMenuItem.Checked ? "true" : "false" },
-                    { "USERSCORE", userScoreToolStripMenuItem.Checked ? "true" : "false" }
+                    { "USERSCORE", userScoreToolStripMenuItem.Checked ? "true" : "false" },
+                    { "CURRENTBPM", currentBPMToolStripMenuItem.Checked ? "true" : "false" }
                 };
 
-                string[] lines = File.ReadAllLines(filePath);
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    string[] parts = lines[i].Split('=');
-                    if (parts.Length != 2) continue;
-
-                    string key = parts[0].Trim();
-                    for (int j = 0; j < param.Count; j++)
-                    {
-                        if (key != param.ElementAt(j).Key) continue;
-                        lines[i] = $"{param.ElementAt(j).Key}={param.ElementAt(j).Value}";
-                        break;
-                    }
-                }
-                File.WriteAllLines(filePath, lines);
+                WriteConfigFile(filePath, parameters);
                 MessageBox.Show("Config.cfgの保存が完了しました！", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception error)

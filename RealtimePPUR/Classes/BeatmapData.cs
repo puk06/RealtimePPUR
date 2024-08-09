@@ -14,5 +14,6 @@ namespace RealtimePPUR.Classes
         public PerformanceAttributes PerformanceAttributesIffc { get; set; }
         public Dictionary<HitResult, int> IfFcHitResult { get; set; }
         public int ExpectedManiaScore { get; set; }
+        public double CurrentBpm { get; set; }
     }
 }

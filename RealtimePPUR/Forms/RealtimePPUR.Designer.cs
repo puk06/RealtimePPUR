@@ -72,9 +72,10 @@ namespace RealtimePPUR.Forms
             loadFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             resetFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             discordRichPresenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             inGameValue = new System.Windows.Forms.Label();
-            saveConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            currentBPMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -103,7 +104,7 @@ namespace RealtimePPUR.Forms
             sr.MouseDown += RealtimePPUR_MouseDown;
             sr.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _iffc
+            // iffc
             // 
             iffc.BackColor = Color.Transparent;
             iffc.ForeColor = Color.White;
@@ -154,7 +155,7 @@ namespace RealtimePPUR.Forms
             miss.MouseDown += RealtimePPUR_MouseDown;
             miss.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _avgoffset
+            // avgoffset
             // 
             avgoffset.AutoSize = true;
             avgoffset.BackColor = Color.Transparent;
@@ -167,7 +168,7 @@ namespace RealtimePPUR.Forms
             avgoffset.MouseDown += RealtimePPUR_MouseDown;
             avgoffset.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _ur
+            // ur
             // 
             ur.AutoSize = true;
             ur.BackColor = Color.Transparent;
@@ -181,7 +182,7 @@ namespace RealtimePPUR.Forms
             ur.MouseDown += RealtimePPUR_MouseDown;
             ur.MouseMove += RealtimePPUR_MouseMove;
             // 
-            // _avgoffsethelp
+            // avgoffsethelp
             // 
             avgoffsethelp.AutoSize = true;
             avgoffsethelp.BackColor = Color.Transparent;
@@ -238,7 +239,7 @@ namespace RealtimePPUR.Forms
             // 
             // inGameOverlayToolStripMenuItem
             // 
-            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem });
+            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem });
             inGameOverlayToolStripMenuItem.Name = "inGameOverlayToolStripMenuItem";
             inGameOverlayToolStripMenuItem.Size = new Size(190, 22);
             inGameOverlayToolStripMenuItem.Text = "InGameOverlay";
@@ -402,7 +403,14 @@ namespace RealtimePPUR.Forms
             discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
             discordRichPresenceToolStripMenuItem.Size = new Size(190, 22);
             discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
-            discordRichPresenceToolStripMenuItem.Click += ToggleChecked;
+            discordRichPresenceToolStripMenuItem.Click +=  ToggleChecked;
+            // 
+            // saveConfigToolStripMenuItem
+            // 
+            saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
+            saveConfigToolStripMenuItem.Size = new Size(190, 22);
+            saveConfigToolStripMenuItem.Text = "Save Config";
+            saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
             // 
             // closeToolStripMenuItem
             // 
@@ -421,16 +429,15 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
-            // saveConfigToolStripMenuItem
+            // currentBPMToolStripMenuItem
             // 
-            saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
-            saveConfigToolStripMenuItem.Size = new Size(190, 22);
-            saveConfigToolStripMenuItem.Text = "Save Config";
-            saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
+            currentBPMToolStripMenuItem.Name = "currentBPMToolStripMenuItem";
+            currentBPMToolStripMenuItem.Size = new Size(184, 22);
+            currentBPMToolStripMenuItem.Text = "CurrentBPM";
+            currentBPMToolStripMenuItem.Click += ToggleChecked;
             // 
             // RealtimePpur
             // 
-
             this.avgoffsethelp.Font = new System.Drawing.Font(GuiFont, 20F, System.Drawing.FontStyle.Bold);
             this.ur.Font = new System.Drawing.Font(GuiFont, 25F, System.Drawing.FontStyle.Bold);
             this.avgoffset.Font = new System.Drawing.Font(GuiFont, 13F, System.Drawing.FontStyle.Bold);
@@ -508,6 +515,7 @@ namespace RealtimePPUR.Forms
         private System.Windows.Forms.ToolStripMenuItem discordRichPresenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pPLossModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveConfigToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem currentBPMToolStripMenuItem;
     }
 }
 
