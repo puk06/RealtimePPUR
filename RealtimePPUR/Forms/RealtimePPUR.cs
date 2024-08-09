@@ -85,6 +85,19 @@ namespace RealtimePPUR.Forms
             public int Left, Top, Right, Bottom;
         }
 
+        // Initialize
+        private void RealtimePpur_Shown(object sender, EventArgs e)
+        {
+            TopMost = true;
+            Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
+            Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
+            Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
+            updateMemoryThread.Start();
+            updatePpDataThread.Start();
+            updateDiscordRichPresenceThread.Start();
+            UpdateLoop();
+        }
+
         public RealtimePpur()
         {
             AddFontFile();
@@ -341,16 +354,6 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        private bool CheckConfigDictionaryValue(string key)
-        {
-            return configDictionary.TryGetValue(key, out string test) && test == "true";
-        }
-
-        private string CheckConfigDictionaryString(string key, string value)
-        {
-            return configDictionary.TryGetValue(key, out string test) ? test : value;
-        }
-
         private void AddFontFile()
         {
             fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
@@ -370,18 +373,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        private void RealtimePpur_Shown(object sender, EventArgs e)
-        {
-            TopMost = true;
-            Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
-            Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
-            Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
-            updateMemoryThread.Start();
-            updatePpDataThread.Start();
-            updateDiscordRichPresenceThread.Start();
-            UpdateLoop();
-        }
-
+        // Loop
         private async void UpdateLoop()
         {
             while (true)
@@ -562,456 +554,6 @@ namespace RealtimePPUR.Forms
                     ur.Text = "0";
                     avgoffsethelp.Text = "0";
                 }
-            }
-        }
-
-        private void RenderIngameOverlay(HitsResult hits, BeatmapData calculatedData, int currentGamemodeValue)
-        {
-            double starRatingValue = IsNaNWithNum(Math.Round(calculatedData.CurrentDifficultyAttributes.StarRating, 2));
-            double fullSrValue = IsNaNWithNum(Math.Round(calculatedData.DifficultyAttributes.StarRating, 2));
-            double ssppValue = IsNaNWithNum(calculatedData.PerformanceAttributes.Total);
-            double currentPpValue = IsNaNWithNum(calculatedData.CurrentPerformanceAttributes.Total);
-            double ifFcPpValue = IsNaNWithNum(calculatedData.PerformanceAttributesIffc.Total);
-
-            var leaderBoardData = GetLeaderBoard(baseAddresses.LeaderBoard, baseAddresses.Player.Score);
-            double healthPercentage = IsNaNWithNum(Math.Round(baseAddresses.Player.HP / 2, 1));
-            int userScore = hits.Score;
-
-            int currentPosition = leaderBoardData["currentPosition"];
-            int higherScore = leaderBoardData["higherScore"];
-            int highestScore = leaderBoardData["highestScore"];
-
-            displayFormat = "";
-            var ingameoverlayPriorityArray = ingameoverlayPriority.Replace(" ", "").Split('/');
-            foreach (var priorityValue in ingameoverlayPriorityArray)
-            {
-                var priorityValueResult = int.TryParse(priorityValue, out int priorityValueInt);
-                if (!priorityValueResult) continue;
-                switch (priorityValueInt)
-                {
-                    case 1:
-                        if (sRToolStripMenuItem.Checked)
-                        {
-                            if (pPLossModeToolStripMenuItem.Checked && currentGamemode is 1 or 3)
-                            {
-                                displayFormat += "SR: " + starRatingValue + "\n";
-                            }
-                            else
-                            {
-                                displayFormat += "SR: " + starRatingValue + " / " + fullSrValue + "\n";
-                            }
-                        }
-
-                        break;
-
-                    case 2:
-                        if (sSPPToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "SSPP: " + Math.Round(ssppValue) + "pp\n";
-                        }
-
-                        break;
-
-                    case 3:
-                        if (currentPPToolStripMenuItem.Checked)
-                        {
-                            displayFormat += ifFCPPToolStripMenuItem.Checked switch
-                            {
-                                true when currentGamemodeValue != 3 => "PP: " + Math.Round(currentPpValue) + " / " +
-                                                                  Math.Round(ifFcPpValue) + "pp\n",
-                                true => "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(ssppValue) + "pp\n",
-                                _ => "PP: " + Math.Round(currentPpValue) + "pp\n"
-                            };
-                        }
-
-                        break;
-
-                    case 4:
-                        if (currentACCToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + "%\n";
-                        }
-
-                        break;
-
-                    case 5:
-                        if (hitsToolStripMenuItem.Checked)
-                        {
-                            switch (currentGamemodeValue)
-                            {
-                                case 0:
-                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
-                                    break;
-
-                                case 1:
-                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss}\n";
-                                    break;
-
-                                case 2:
-                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
-                                    break;
-
-                                case 3:
-                                    displayFormat += $"Hits: {hits.HitGeki}/{hits.Hit300}/{hits.HitKatu}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
-                                    break;
-                            }
-                        }
-
-                        break;
-
-                    case 6:
-                        if (ifFCHitsToolStripMenuItem.Checked)
-                        {
-                            int ifFcGood = calculatedData.IfFcHitResult[HitResult.Great];
-                            int ifFcOk = currentGamemodeValue == 2
-                                ? calculatedData.IfFcHitResult[HitResult.LargeTickHit]
-                                : calculatedData.IfFcHitResult[HitResult.Ok];
-                            int ifFcBad = currentGamemodeValue switch
-                            {
-                                0 => calculatedData.IfFcHitResult[HitResult.Meh],
-                                1 => 0,
-                                2 => calculatedData.IfFcHitResult[HitResult.SmallTickHit],
-                                _ => 0
-                            };
-                            const int ifFcMiss = 0;
-
-                            switch (currentGamemodeValue)
-                            {
-                                case 0:
-                                    displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
-                                    break;
-
-                                case 1:
-                                    displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcMiss}\n";
-                                    break;
-
-                                case 2:
-                                    displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
-                                    break;
-                            }
-                        }
-
-                        break;
-
-                    case 7:
-                        if (uRToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "UR: " + urValue + "\n";
-                        }
-
-                        break;
-
-                    case 8:
-                        if (offsetHelpToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "OffsetHelp: " + Math.Round(avgOffsethelp) + "\n";
-                        }
-
-                        break;
-
-                    case 9:
-                        if (expectedManiaScoreToolStripMenuItem.Checked && currentGamemodeValue == 3)
-                        {
-                            displayFormat += "ManiaScore: " + calculatedData.ExpectedManiaScore + "\n";
-                        }
-
-                        break;
-
-                    case 10:
-                        if (avgOffsetToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "AvgOffset: " + avgOffset + "\n";
-                        }
-
-                        break;
-
-                    case 11:
-                        if (progressToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "Progress: " + Math.Round(baseAddresses.GeneralData.AudioTime /
-                                baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
-                        }
-
-                        break;
-
-                    case 12:
-                        if (healthPercentageToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "HP: " + healthPercentage + "%\n";
-                        }
-
-                        break;
-
-                    case 13:
-                        if (currentPositionToolStripMenuItem.Checked && currentPosition != 0)
-                        {
-                            if (currentPosition > 50)
-                            {
-                                displayFormat += "Position: >#50" + "\n";
-                            }
-                            else
-                            {
-                                displayFormat += "Position: #" + currentPosition + "\n";
-                            }
-                        }
-
-                        break;
-
-                    case 14:
-                        if (higherScoreToolStripMenuItem.Checked && higherScore != 0)
-                        {
-                            displayFormat += "HigherDiff: " + (higherScore - userScore) + "\n";
-                        }
-
-                        break;
-
-                    case 15:
-                        switch (highestScoreToolStripMenuItem.Checked)
-                        {
-                            case true when highestScore != 0 && currentPosition == 1:
-                                displayFormat += "HighestDiff: You're Top!!" + "\n";
-                                break;
-
-                            case true when highestScore != 0:
-                                displayFormat += "HighestDiff: " + (highestScore - userScore) + "\n";
-                                break;
-                        }
-
-                        break;
-
-                    case 16:
-                        if (userScoreToolStripMenuItem.Checked)
-                        {
-                            displayFormat += "Score: " + userScore + "\n";
-                        }
-
-                        break;
-
-                    case 17:
-                        if (currentBPMToolStripMenuItem.Checked)
-                        {
-                            var currentBpm = calculatedData.CurrentBpm;
-                            if (prevModStrings.Contains("dt") || prevModStrings.Contains("nc"))
-                            {
-                                currentBpm *= 1.5;
-                                currentBpm = Math.Round(currentBpm, 1);
-                            } 
-                            else if (prevModStrings.Contains("ht"))
-                            {
-                                currentBpm *= 0.75;
-                                currentBpm = Math.Round(currentBpm, 1);
-                            }
-
-                            displayFormat += "BPM: " + currentBpm + "\n";
-                        }
-
-                        break;
-                }
-            }
-
-            inGameValue.Text = displayFormat;
-
-            if (isosumode)
-            {
-                var processes = Process.GetProcessesByName("osu!");
-                if (processes.Length > 0)
-                {
-                    Process osuProcess = processes[0];
-                    IntPtr osuMainWindowHandle = osuProcess.MainWindowHandle;
-                    if (GetWindowRect(osuMainWindowHandle, out Rect rect) &&
-                        baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing &&
-                        GetForegroundWindow() == osuMainWindowHandle && osuMainWindowHandle != IntPtr.Zero)
-                    {
-                        if (!nowPlaying)
-                        {
-                            x = Location.X;
-                            y = Location.Y;
-                            nowPlaying = true;
-                        }
-
-                        BackgroundImage = null;
-                        currentBackgroundImage = 0;
-                        inGameValue.Visible = true;
-                        avgoffsethelp.Visible = false;
-                        sr.Visible = false;
-                        iffc.Visible = false;
-                        currentPp.Visible = false;
-                        good.Visible = false;
-                        ok.Visible = false;
-                        miss.Visible = false;
-                        avgoffset.Visible = false;
-                        ur.Visible = false;
-                        Region = null;
-                        Size = new Size(inGameValue.Width, inGameValue.Height);
-                        Location = new Point(rect.Left + osuModeValue["left"] + 2,
-                            rect.Top + osuModeValue["top"]);
-                    }
-                    else if (nowPlaying)
-                    {
-                        switch (mode)
-                        {
-                            case 0:
-                                if (currentBackgroundImage != 1)
-                                {
-                                    ClientSize = new Size(316, 130);
-                                    RoundCorners();
-                                    BackgroundImage = Properties.Resources.PPUR;
-                                    currentBackgroundImage = 1;
-                                }
-
-                                break;
-
-                            case 1:
-                                if (currentBackgroundImage != 2)
-                                {
-                                    ClientSize = new Size(316, 65);
-                                    RoundCorners();
-                                    BackgroundImage = Properties.Resources.PP;
-                                    currentBackgroundImage = 2;
-                                }
-
-                                break;
-
-                            case 2:
-                                if (currentBackgroundImage != 3)
-                                {
-                                    ClientSize = new Size(316, 65);
-                                    RoundCorners();
-                                    BackgroundImage = Properties.Resources.UR;
-                                    currentBackgroundImage = 3;
-                                }
-
-                                break;
-                        }
-
-                        if (nowPlaying)
-                        {
-                            Location = new Point(x, y);
-                            nowPlaying = false;
-                        }
-
-                        inGameValue.Visible = false;
-                        sr.Visible = true;
-                        iffc.Visible = true;
-                        currentPp.Visible = true;
-                        good.Visible = true;
-                        ok.Visible = true;
-                        miss.Visible = true;
-                        avgoffset.Visible = true;
-                        ur.Visible = true;
-                        avgoffsethelp.Visible = true;
-                    }
-                }
-                else if (nowPlaying)
-                {
-                    switch (mode)
-                    {
-                        case 0:
-                            if (currentBackgroundImage != 1)
-                            {
-                                ClientSize = new Size(316, 130);
-                                RoundCorners();
-                                BackgroundImage = Properties.Resources.PPUR;
-                                currentBackgroundImage = 1;
-                            }
-
-                            break;
-
-                        case 1:
-                            if (currentBackgroundImage != 2)
-                            {
-                                ClientSize = new Size(316, 65);
-                                RoundCorners();
-                                BackgroundImage = Properties.Resources.PP;
-                                currentBackgroundImage = 2;
-                            }
-
-                            break;
-
-                        case 2:
-                            if (currentBackgroundImage != 3)
-                            {
-                                ClientSize = new Size(316, 65);
-                                RoundCorners();
-                                BackgroundImage = Properties.Resources.UR;
-                                currentBackgroundImage = 3;
-                            }
-
-                            break;
-                    }
-
-                    if (nowPlaying)
-                    {
-                        Location = new Point(x, y);
-                        nowPlaying = false;
-                    }
-
-                    inGameValue.Visible = false;
-                    sr.Visible = true;
-                    iffc.Visible = true;
-                    currentPp.Visible = true;
-                    good.Visible = true;
-                    ok.Visible = true;
-                    miss.Visible = true;
-                    avgoffset.Visible = true;
-                    ur.Visible = true;
-                    avgoffsethelp.Visible = true;
-                }
-            }
-            else if (nowPlaying)
-            {
-                switch (mode)
-                {
-                    case 0:
-                        if (currentBackgroundImage != 1)
-                        {
-                            ClientSize = new Size(316, 130);
-                            RoundCorners();
-                            BackgroundImage = Properties.Resources.PPUR;
-                            currentBackgroundImage = 1;
-                        }
-
-                        break;
-
-                    case 1:
-                        if (currentBackgroundImage != 2)
-                        {
-                            ClientSize = new Size(316, 65);
-                            RoundCorners();
-                            BackgroundImage = Properties.Resources.PP;
-                            currentBackgroundImage = 2;
-                        }
-
-                        break;
-
-                    case 2:
-                        if (currentBackgroundImage != 3)
-                        {
-                            ClientSize = new Size(316, 65);
-                            RoundCorners();
-                            BackgroundImage = Properties.Resources.UR;
-                            currentBackgroundImage = 3;
-                        }
-
-                        break;
-                }
-
-                if (nowPlaying)
-                {
-                    Location = new Point(x, y);
-                    nowPlaying = false;
-                }
-
-                inGameValue.Visible = false;
-                sr.Visible = true;
-                iffc.Visible = true;
-                currentPp.Visible = true;
-                good.Visible = true;
-                ok.Visible = true;
-                miss.Visible = true;
-                avgoffset.Visible = true;
-                ur.Visible = true;
-                avgoffsethelp.Visible = true;
             }
         }
 
@@ -1379,40 +921,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        private void ErrorLogger(Exception error)
-        {
-            try
-            {
-                if (error.Message == prevErrorMessage) return;
-                prevErrorMessage = error.Message;
-                const string filePath = "Error.log";
-                StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
-                sw.WriteLine("[" + DateTime.Now + "]");
-                sw.WriteLine(error);
-                sw.WriteLine();
-                sw.Close();
-            }
-            catch
-            {
-                Console.WriteLine("エラーログの書き込みに失敗しました");
-            }
-        }
-
-        private void RoundCorners()
-        {
-            const int radius = 11;
-            const int diameter = radius * 2;
-            GraphicsPath gp = new();
-            gp.AddPie(0, 0, diameter, diameter, 180, 90);
-            gp.AddPie(Width - diameter, 0, diameter, diameter, 270, 90);
-            gp.AddPie(0, Height - diameter, diameter, diameter, 90, 90);
-            gp.AddPie(Width - diameter, Height - diameter, diameter, diameter, 0, 90);
-            gp.AddRectangle(new Rectangle(radius, 0, Width - diameter, Height));
-            gp.AddRectangle(new Rectangle(0, radius, radius, Height - diameter));
-            gp.AddRectangle(new Rectangle(Width - radius, radius, radius, Height - diameter));
-            Region = new Region(gp);
-        }
-
+        //Mode
         private void RealtimePPURToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (mode == 0) return;
@@ -1470,9 +979,10 @@ namespace RealtimePPUR.Forms
             mode = 2;
         }
 
+        // Font
         private void ChangeFontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FontDialog font = new FontDialog();
+            FontDialog font = new();
             try
             {
                 if (font.ShowDialog() == DialogResult.Cancel) return;
@@ -1600,6 +1110,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
+        // Move Window
         private void RealtimePPUR_MouseDown(object sender, MouseEventArgs e)
         {
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left) mousePoint = new Point(e.X, e.Y);
@@ -1612,8 +1123,12 @@ namespace RealtimePPUR.Forms
             Top += e.Y - mousePoint.Y;
         }
 
+        // Close
         private void CloseToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
+        private void RealtimePPUR_Closed(object sender, EventArgs e) => Application.Exit();
+
+        // osu! Mode
         private void OsuModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var lefttest = configDictionary.TryGetValue("LEFT", out string leftvalue);
@@ -1640,14 +1155,484 @@ namespace RealtimePPUR.Forms
             osuModeToolStripMenuItem.Checked = isosumode;
         }
 
-        private void RealtimePPUR_Closed(object sender, EventArgs e) => Application.Exit();
-
         private void ChangePriorityToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form priorityForm = new ChangePriorityForm();
             priorityForm.Show();
         }
 
+        private void RenderIngameOverlay(HitsResult hits, BeatmapData calculatedData, int currentGamemodeValue)
+        {
+            inGameValue.Text = SetIngameValue(calculatedData, hits, currentGamemodeValue);
+            CheckOsuMode();
+        }
+
+        private void CheckOsuMode()
+        {
+            if (isosumode)
+            {
+                var processes = Process.GetProcessesByName("osu!");
+                if (processes.Length > 0)
+                {
+                    Process osuProcess = processes[0];
+                    IntPtr osuMainWindowHandle = osuProcess.MainWindowHandle;
+                    if (GetWindowRect(osuMainWindowHandle, out Rect rect) &&
+                        baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing &&
+                        GetForegroundWindow() == osuMainWindowHandle && osuMainWindowHandle != IntPtr.Zero)
+                    {
+                        if (!nowPlaying)
+                        {
+                            x = Location.X;
+                            y = Location.Y;
+                            nowPlaying = true;
+                        }
+
+                        BackgroundImage = null;
+                        currentBackgroundImage = 0;
+                        inGameValue.Visible = true;
+                        avgoffsethelp.Visible = false;
+                        sr.Visible = false;
+                        iffc.Visible = false;
+                        currentPp.Visible = false;
+                        good.Visible = false;
+                        ok.Visible = false;
+                        miss.Visible = false;
+                        avgoffset.Visible = false;
+                        ur.Visible = false;
+                        Region = null;
+                        Size = new Size(inGameValue.Width, inGameValue.Height);
+                        Location = new Point(rect.Left + osuModeValue["left"] + 2,
+                            rect.Top + osuModeValue["top"]);
+                    }
+                    else if (nowPlaying)
+                    {
+                        switch (mode)
+                        {
+                            case 0:
+                                if (currentBackgroundImage != 1)
+                                {
+                                    ClientSize = new Size(316, 130);
+                                    RoundCorners();
+                                    BackgroundImage = Properties.Resources.PPUR;
+                                    currentBackgroundImage = 1;
+                                }
+
+                                break;
+
+                            case 1:
+                                if (currentBackgroundImage != 2)
+                                {
+                                    ClientSize = new Size(316, 65);
+                                    RoundCorners();
+                                    BackgroundImage = Properties.Resources.PP;
+                                    currentBackgroundImage = 2;
+                                }
+
+                                break;
+
+                            case 2:
+                                if (currentBackgroundImage != 3)
+                                {
+                                    ClientSize = new Size(316, 65);
+                                    RoundCorners();
+                                    BackgroundImage = Properties.Resources.UR;
+                                    currentBackgroundImage = 3;
+                                }
+
+                                break;
+                        }
+
+                        if (nowPlaying)
+                        {
+                            Location = new Point(x, y);
+                            nowPlaying = false;
+                        }
+
+                        inGameValue.Visible = false;
+                        sr.Visible = true;
+                        iffc.Visible = true;
+                        currentPp.Visible = true;
+                        good.Visible = true;
+                        ok.Visible = true;
+                        miss.Visible = true;
+                        avgoffset.Visible = true;
+                        ur.Visible = true;
+                        avgoffsethelp.Visible = true;
+                    }
+                }
+                else if (nowPlaying)
+                {
+                    switch (mode)
+                    {
+                        case 0:
+                            if (currentBackgroundImage != 1)
+                            {
+                                ClientSize = new Size(316, 130);
+                                RoundCorners();
+                                BackgroundImage = Properties.Resources.PPUR;
+                                currentBackgroundImage = 1;
+                            }
+
+                            break;
+
+                        case 1:
+                            if (currentBackgroundImage != 2)
+                            {
+                                ClientSize = new Size(316, 65);
+                                RoundCorners();
+                                BackgroundImage = Properties.Resources.PP;
+                                currentBackgroundImage = 2;
+                            }
+
+                            break;
+
+                        case 2:
+                            if (currentBackgroundImage != 3)
+                            {
+                                ClientSize = new Size(316, 65);
+                                RoundCorners();
+                                BackgroundImage = Properties.Resources.UR;
+                                currentBackgroundImage = 3;
+                            }
+
+                            break;
+                    }
+
+                    if (nowPlaying)
+                    {
+                        Location = new Point(x, y);
+                        nowPlaying = false;
+                    }
+
+                    inGameValue.Visible = false;
+                    sr.Visible = true;
+                    iffc.Visible = true;
+                    currentPp.Visible = true;
+                    good.Visible = true;
+                    ok.Visible = true;
+                    miss.Visible = true;
+                    avgoffset.Visible = true;
+                    ur.Visible = true;
+                    avgoffsethelp.Visible = true;
+                }
+            }
+            else if (nowPlaying)
+            {
+                switch (mode)
+                {
+                    case 0:
+                        if (currentBackgroundImage != 1)
+                        {
+                            ClientSize = new Size(316, 130);
+                            RoundCorners();
+                            BackgroundImage = Properties.Resources.PPUR;
+                            currentBackgroundImage = 1;
+                        }
+
+                        break;
+
+                    case 1:
+                        if (currentBackgroundImage != 2)
+                        {
+                            ClientSize = new Size(316, 65);
+                            RoundCorners();
+                            BackgroundImage = Properties.Resources.PP;
+                            currentBackgroundImage = 2;
+                        }
+
+                        break;
+
+                    case 2:
+                        if (currentBackgroundImage != 3)
+                        {
+                            ClientSize = new Size(316, 65);
+                            RoundCorners();
+                            BackgroundImage = Properties.Resources.UR;
+                            currentBackgroundImage = 3;
+                        }
+
+                        break;
+                }
+
+                if (nowPlaying)
+                {
+                    Location = new Point(x, y);
+                    nowPlaying = false;
+                }
+
+                inGameValue.Visible = false;
+                sr.Visible = true;
+                iffc.Visible = true;
+                currentPp.Visible = true;
+                good.Visible = true;
+                ok.Visible = true;
+                miss.Visible = true;
+                avgoffset.Visible = true;
+                ur.Visible = true;
+                avgoffsethelp.Visible = true;
+            }
+        }
+
+        private string SetIngameValue(BeatmapData calculatedData, HitsResult hits, int currentGamemodeValue)
+        {
+            double starRatingValue = IsNaNWithNum(Math.Round(calculatedData.CurrentDifficultyAttributes.StarRating, 2));
+            double fullSrValue = IsNaNWithNum(Math.Round(calculatedData.DifficultyAttributes.StarRating, 2));
+            double ssppValue = IsNaNWithNum(calculatedData.PerformanceAttributes.Total);
+            double currentPpValue = IsNaNWithNum(calculatedData.CurrentPerformanceAttributes.Total);
+            double ifFcPpValue = IsNaNWithNum(calculatedData.PerformanceAttributesIffc.Total);
+
+            var leaderBoardData = GetLeaderBoard(baseAddresses.LeaderBoard, baseAddresses.Player.Score);
+            double healthPercentage = IsNaNWithNum(Math.Round(baseAddresses.Player.HP / 2, 1));
+            int userScore = hits.Score;
+
+            int currentPosition = leaderBoardData["currentPosition"];
+            int higherScore = leaderBoardData["higherScore"];
+            int highestScore = leaderBoardData["highestScore"];
+
+            var ingameoverlayPriorityArray = ingameoverlayPriority.Replace(" ", "").Split('/');
+
+            displayFormat = "";
+            foreach (var priorityValue in ingameoverlayPriorityArray)
+            {
+                var priorityValueResult = int.TryParse(priorityValue, out int priorityValueInt);
+                if (!priorityValueResult) continue;
+                switch (priorityValueInt)
+                {
+                    case 1:
+                        if (sRToolStripMenuItem.Checked)
+                        {
+                            if (pPLossModeToolStripMenuItem.Checked && currentGamemode is 1 or 3)
+                            {
+                                displayFormat += "SR: " + starRatingValue + "\n";
+                            }
+                            else
+                            {
+                                displayFormat += "SR: " + starRatingValue + " / " + fullSrValue + "\n";
+                            }
+                        }
+
+                        break;
+
+                    case 2:
+                        if (sSPPToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "SSPP: " + Math.Round(ssppValue) + "pp\n";
+                        }
+
+                        break;
+
+                    case 3:
+                        if (currentPPToolStripMenuItem.Checked)
+                        {
+                            displayFormat += ifFCPPToolStripMenuItem.Checked switch
+                            {
+                                true when currentGamemodeValue != 3 => "PP: " + Math.Round(currentPpValue) + " / " +
+                                                                  Math.Round(ifFcPpValue) + "pp\n",
+                                true => "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(ssppValue) + "pp\n",
+                                _ => "PP: " + Math.Round(currentPpValue) + "pp\n"
+                            };
+                        }
+
+                        break;
+
+                    case 4:
+                        if (currentACCToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + "%\n";
+                        }
+
+                        break;
+
+                    case 5:
+                        if (hitsToolStripMenuItem.Checked)
+                        {
+                            switch (currentGamemodeValue)
+                            {
+                                case 0:
+                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
+                                    break;
+
+                                case 1:
+                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss}\n";
+                                    break;
+
+                                case 2:
+                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
+                                    break;
+
+                                case 3:
+                                    displayFormat += $"Hits: {hits.HitGeki}/{hits.Hit300}/{hits.HitKatu}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
+                                    break;
+                            }
+                        }
+
+                        break;
+
+                    case 6:
+                        if (ifFCHitsToolStripMenuItem.Checked)
+                        {
+                            int ifFcGood = calculatedData.IfFcHitResult[HitResult.Great];
+                            int ifFcOk = currentGamemodeValue == 2
+                                ? calculatedData.IfFcHitResult[HitResult.LargeTickHit]
+                                : calculatedData.IfFcHitResult[HitResult.Ok];
+                            int ifFcBad = currentGamemodeValue switch
+                            {
+                                0 => calculatedData.IfFcHitResult[HitResult.Meh],
+                                1 => 0,
+                                2 => calculatedData.IfFcHitResult[HitResult.SmallTickHit],
+                                _ => 0
+                            };
+                            const int ifFcMiss = 0;
+
+                            switch (currentGamemodeValue)
+                            {
+                                case 0:
+                                    displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
+                                    break;
+
+                                case 1:
+                                    displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcMiss}\n";
+                                    break;
+
+                                case 2:
+                                    displayFormat += $"IFFCHits: {ifFcGood}/{ifFcOk}/{ifFcBad}/{ifFcMiss}\n";
+                                    break;
+                            }
+                        }
+
+                        break;
+
+                    case 7:
+                        if (uRToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "UR: " + urValue + "\n";
+                        }
+
+                        break;
+
+                    case 8:
+                        if (offsetHelpToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "OffsetHelp: " + Math.Round(avgOffsethelp) + "\n";
+                        }
+
+                        break;
+
+                    case 9:
+                        if (expectedManiaScoreToolStripMenuItem.Checked && currentGamemodeValue == 3)
+                        {
+                            displayFormat += "ManiaScore: " + calculatedData.ExpectedManiaScore + "\n";
+                        }
+
+                        break;
+
+                    case 10:
+                        if (avgOffsetToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "AvgOffset: " + avgOffset + "\n";
+                        }
+
+                        break;
+
+                    case 11:
+                        if (progressToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "Progress: " + Math.Round(baseAddresses.GeneralData.AudioTime /
+                                baseAddresses.GeneralData.TotalAudioTime * 100) + "%\n";
+                        }
+
+                        break;
+
+                    case 12:
+                        if (healthPercentageToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "HP: " + healthPercentage + "%\n";
+                        }
+
+                        break;
+
+                    case 13:
+                        if (currentPositionToolStripMenuItem.Checked && currentPosition != 0)
+                        {
+                            if (currentPosition > 50)
+                            {
+                                displayFormat += "Position: >#50" + "\n";
+                            }
+                            else
+                            {
+                                displayFormat += "Position: #" + currentPosition + "\n";
+                            }
+                        }
+
+                        break;
+
+                    case 14:
+                        if (higherScoreToolStripMenuItem.Checked && higherScore != 0)
+                        {
+                            displayFormat += "HigherDiff: " + (higherScore - userScore) + "\n";
+                        }
+
+                        break;
+
+                    case 15:
+                        switch (highestScoreToolStripMenuItem.Checked)
+                        {
+                            case true when highestScore != 0 && currentPosition == 1:
+                                displayFormat += "HighestDiff: You're Top!!" + "\n";
+                                break;
+
+                            case true when highestScore != 0:
+                                displayFormat += "HighestDiff: " + (highestScore - userScore) + "\n";
+                                break;
+                        }
+
+                        break;
+
+                    case 16:
+                        if (userScoreToolStripMenuItem.Checked)
+                        {
+                            displayFormat += "Score: " + userScore + "\n";
+                        }
+
+                        break;
+
+                    case 17:
+                        if (currentBPMToolStripMenuItem.Checked)
+                        {
+                            var currentBpm = calculatedData.CurrentBpm;
+                            if (prevModStrings.Contains("dt") || prevModStrings.Contains("nc"))
+                            {
+                                currentBpm *= 1.5;
+                                currentBpm = Math.Round(currentBpm, 1);
+                            }
+                            else if (prevModStrings.Contains("ht"))
+                            {
+                                currentBpm *= 0.75;
+                                currentBpm = Math.Round(currentBpm, 1);
+                            }
+
+                            displayFormat += "BPM: " + currentBpm + "\n";
+                        }
+
+                        break;
+                }
+            }
+
+            return displayFormat;
+        }
+
+        // Check Config
+        private bool CheckConfigDictionaryValue(string key)
+        {
+            return configDictionary.TryGetValue(key, out string test) && test == "true";
+        }
+
+        private string CheckConfigDictionaryString(string key, string value)
+        {
+            return configDictionary.TryGetValue(key, out string test) ? test : value;
+        }
+
+        // Save Config
         private void SaveConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -1689,6 +1674,42 @@ namespace RealtimePPUR.Forms
                 ErrorLogger(error);
                 MessageBox.Show("Config.cfgの保存に失敗しました。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // Error Logger
+        private void ErrorLogger(Exception error)
+        {
+            try
+            {
+                if (error.Message == prevErrorMessage) return;
+                prevErrorMessage = error.Message;
+                const string filePath = "Error.log";
+                StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
+                sw.WriteLine("[" + DateTime.Now + "]");
+                sw.WriteLine(error);
+                sw.WriteLine();
+                sw.Close();
+            }
+            catch
+            {
+                Console.WriteLine("エラーログの書き込みに失敗しました");
+            }
+        }
+
+        // Round Corners
+        private void RoundCorners()
+        {
+            const int radius = 11;
+            const int diameter = radius * 2;
+            GraphicsPath gp = new();
+            gp.AddPie(0, 0, diameter, diameter, 180, 90);
+            gp.AddPie(Width - diameter, 0, diameter, diameter, 270, 90);
+            gp.AddPie(0, Height - diameter, diameter, diameter, 90, 90);
+            gp.AddPie(Width - diameter, Height - diameter, diameter, diameter, 0, 90);
+            gp.AddRectangle(new Rectangle(radius, 0, Width - diameter, Height));
+            gp.AddRectangle(new Rectangle(0, radius, radius, Height - diameter));
+            gp.AddRectangle(new Rectangle(Width - radius, radius, radius, Height - diameter));
+            Region = new Region(gp);
         }
     }
 }
