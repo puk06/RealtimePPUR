@@ -57,6 +57,7 @@ namespace RealtimePPUR.Forms
         private readonly Stopwatch stopwatch = new();
         private HitsResult previousHits = new();
         private string prevErrorMessage;
+        private string[] prevModStrings;
 
         private readonly Dictionary<string, string> configDictionary = new();
         private readonly StructuredOsuMemoryReader sreader = new();
@@ -564,7 +565,6 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        // TODO: BPMをDT,NCに対応させる
         private void RenderIngameOverlay(HitsResult hits, BeatmapData calculatedData, int currentGamemodeValue)
         {
             double starRatingValue = IsNaNWithNum(Math.Round(calculatedData.CurrentDifficultyAttributes.StarRating, 2));
@@ -790,7 +790,19 @@ namespace RealtimePPUR.Forms
                     case 17:
                         if (currentBPMToolStripMenuItem.Checked)
                         {
-                            displayFormat += "BPM: " + calculatedData.CurrentBpm + "\n";
+                            var currentBpm = calculatedData.CurrentBpm;
+                            if (prevModStrings.Contains("dt") || prevModStrings.Contains("nc"))
+                            {
+                                currentBpm *= 1.5;
+                                currentBpm = Math.Round(currentBpm, 1);
+                            } 
+                            else if (prevModStrings.Contains("ht"))
+                            {
+                                currentBpm *= 0.75;
+                                currentBpm = Math.Round(currentBpm, 1);
+                            }
+
+                            displayFormat += "BPM: " + currentBpm + "\n";
                         }
 
                         break;
@@ -1202,6 +1214,7 @@ namespace RealtimePPUR.Forms
                     };
 
                     if (playing) mods = ParseMods(baseAddresses.Player.Mods.Value).Calculate;
+                    prevModStrings = mods;
 
                     double acc = CalculateAcc(hits, currentGamemode);
 
