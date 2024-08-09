@@ -11,7 +11,6 @@ namespace RealtimePPUR.Forms
     {
         private int index;
         private readonly int max;
-
         public ChangePriorityForm()
         {
             InitializeComponent();

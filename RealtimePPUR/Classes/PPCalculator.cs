@@ -171,12 +171,10 @@ namespace RealtimePPUR.Classes
                     }
                 }
 
-                if (lastTimingPoint != null)
-                {
-                    var currentBpm = lastTimingPoint.BPM;
-                    currentBpm = Math.Round(currentBpm, 1);
-                    data.CurrentBpm = currentBpm;
-                }
+                if (lastTimingPoint == null) return data;
+
+                var currentBpm = lastTimingPoint.BPM;
+                data.CurrentBpm = currentBpm;
 
                 return data;
             }

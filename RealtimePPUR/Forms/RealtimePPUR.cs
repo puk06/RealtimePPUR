@@ -921,7 +921,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
-        //Mode
+        // Mode
         private void RealtimePPURToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (mode == 0) return;
@@ -1600,16 +1600,17 @@ namespace RealtimePPUR.Forms
                         if (currentBPMToolStripMenuItem.Checked)
                         {
                             var currentBpm = calculatedData.CurrentBpm;
+
                             if (prevModStrings.Contains("dt") || prevModStrings.Contains("nc"))
                             {
                                 currentBpm *= 1.5;
-                                currentBpm = Math.Round(currentBpm, 1);
                             }
                             else if (prevModStrings.Contains("ht"))
                             {
                                 currentBpm *= 0.75;
-                                currentBpm = Math.Round(currentBpm, 1);
                             }
+
+                            currentBpm = Math.Round(currentBpm, 1);
 
                             displayFormat += "BPM: " + currentBpm + "\n";
                         }

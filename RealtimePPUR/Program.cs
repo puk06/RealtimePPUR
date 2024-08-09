@@ -12,15 +12,16 @@ namespace RealtimePPUR
     internal static class Program
     {
         [STAThread]
-        private static async Task Main()
+        private static void Main()
         {
             try
             {
-                await CheckFiles();
+                CheckFiles().Wait();
                 CultureInfo.CurrentCulture = new CultureInfo("en-us");
                 CultureInfo.CurrentUICulture = new CultureInfo("en-us");
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
+
                 Application.Run(new RealtimePpur());
             }
             catch (Exception softwareError)
