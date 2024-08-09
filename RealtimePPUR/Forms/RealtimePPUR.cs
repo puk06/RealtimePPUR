@@ -23,7 +23,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.0.8-Release";
+        private const string CURRENT_VERSION = "v1.0.9-Release";
 
         private Label currentPp, sr, iffc, good, ok, miss, avgoffset, ur, avgoffsethelp;
 
