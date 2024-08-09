@@ -116,7 +116,7 @@ namespace RealtimePPUR.Forms
                 currentBPMToolStripMenuItem.Checked = false;
                 discordRichPresenceToolStripMenuItem.Checked = false;
                 pPLossModeToolStripMenuItem.Checked = false;
-                ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16";
+                ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17";
                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                 customSongsFolder = "";
             }
@@ -196,7 +196,7 @@ namespace RealtimePPUR.Forms
                 currentBPMToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTBPM");
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
-                ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16");
+                ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17");
                 if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && customSongsFolderValue.ToLower() != "songs")
                 {
                     customSongsFolder = customSongsFolderValue;
@@ -564,6 +564,7 @@ namespace RealtimePPUR.Forms
             }
         }
 
+        // TODO: BPMをDT,NCに対応させる
         private void RenderIngameOverlay(HitsResult hits, BeatmapData calculatedData, int currentGamemodeValue)
         {
             double starRatingValue = IsNaNWithNum(Math.Round(calculatedData.CurrentDifficultyAttributes.StarRating, 2));
@@ -591,7 +592,7 @@ namespace RealtimePPUR.Forms
                     case 1:
                         if (sRToolStripMenuItem.Checked)
                         {
-                            if (pPLossModeToolStripMenuItem.Checked && this.currentGamemode is 1 or 3)
+                            if (pPLossModeToolStripMenuItem.Checked && currentGamemode is 1 or 3)
                             {
                                 displayFormat += "SR: " + starRatingValue + "\n";
                             }
