@@ -10,11 +10,9 @@ namespace RealtimePPUR.Forms
     public partial class ChangePriorityForm : Form
     {
         private int index;
-        private readonly int max;
         public ChangePriorityForm()
         {
             InitializeComponent();
-            max = sortPriorityList.Items.Count;
         }
 
         private void SortPriorityList_MouseDown(object o, MouseEventArgs e)
@@ -22,10 +20,10 @@ namespace RealtimePPUR.Forms
             Point p = MousePosition;
             p = sortPriorityList.PointToClient(p);
             index = sortPriorityList.IndexFromPoint(p);
-            if (index > -1) sortPriorityList.DoDragDrop(sortPriorityList.Items[index].ToString(), DragDropEffects.Copy);
+            if (index > -1) sortPriorityList.DoDragDrop(sortPriorityList.Items[index].ToString(), DragDropEffects.Move);
         }
 
-        private void SortPriorityList_DragEnter(object o, DragEventArgs e) => e.Effect = DragDropEffects.Copy;
+        private void SortPriorityList_DragEnter(object o, DragEventArgs e) => e.Effect = DragDropEffects.Move;
 
         private void SortPriorityList_DragDrop(object o, DragEventArgs e)
         {
@@ -33,9 +31,17 @@ namespace RealtimePPUR.Forms
             Point p = MousePosition;
             p = sortPriorityList.PointToClient(p);
             int ind = sortPriorityList.IndexFromPoint(p);
-            if (!(ind > -1 && ind < max)) return;
-            sortPriorityList.Items[index] = sortPriorityList.Items[ind];
-            sortPriorityList.Items[ind] = str;
+
+            if (ind == -1 || ind == sortPriorityList.Items.Count - 1)
+            {
+                sortPriorityList.Items.RemoveAt(index);
+                sortPriorityList.Items.Add(str);
+            }
+            else if (ind != index)
+            {
+                sortPriorityList.Items.RemoveAt(index);
+                sortPriorityList.Items.Insert(ind, str);
+            }
         }
 
         private void OkButton_Click(object sender, EventArgs e)
