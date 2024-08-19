@@ -5,6 +5,16 @@
 # RealtimePPUR
 このソフトウェアは、osuのゲーム内でリアルタイムPP、URと、オフセットがどれほどズレているか教えてくれるソフトです。
 
+## ☕ Support Me
+
+もし私の活動を応援していただけるなら、Ko-fiでコーヒーをおごっていただけると嬉しいです！
+If you enjoy my work and would like to support my efforts, you can buy me a coffee on Ko-fi!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/pukorufu)
+
+### サポートのお願い
+私のプロジェクトが役に立ったり、気に入っていただけた場合、サポートをいただけると今後の開発の励みになります。どうぞよろしくお願いします！
+
 # Functions
 - **リアルタイムで表示されるPPやUR、SR**
   > * リアルタイムでSR、PP、URを計算してソフト上、InGameOverlayに表示します！
