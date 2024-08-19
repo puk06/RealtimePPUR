@@ -307,6 +307,7 @@ namespace RealtimePPUR.Classes
             if (sender is ToolStripMenuItem menuItem)
             {
                 menuItem.Checked = !menuItem.Checked;
+                DebugLogger($"{menuItem.Text} is now {menuItem.Checked}");
             }
         }
 
@@ -327,6 +328,20 @@ namespace RealtimePPUR.Classes
                 }
             }
             File.WriteAllLines(filePath, lines);
+        }
+
+        public static string ConfigValueToString(bool value) => value ? "true" : "false";
+
+        public static void ShowErrorMessageBox(string message) =>
+            MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        public static void ShowInformationMessageBox(string message) => 
+            MessageBox.Show(message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        public static void DebugLogger(string message)
+        {
+            Debug.WriteLine("[" + DateTime.Now + "] " + message);
+            Console.WriteLine("[" + DateTime.Now + "] " + message);
         }
     }
 }

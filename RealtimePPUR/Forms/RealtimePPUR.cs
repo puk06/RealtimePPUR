@@ -23,7 +23,8 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.0.9-Release";
+        private const string CURRENT_VERSION = "v1.1.0-Release";
+        private const bool DEBUG_MODE = true;
 
         private Label currentPp, sr, iffc, good, ok, miss, avgoffset, ur, avgoffsethelp;
 
@@ -79,6 +80,9 @@ namespace RealtimePPUR.Forms
         [DllImport("user32.dll")]
         private static extern bool GetWindowRect(IntPtr hWnd, out Rect rect);
 
+        [DllImport("kernel32.dll")]
+        static extern bool AllocConsole();
+
         [StructLayout(LayoutKind.Sequential)]
         private struct Rect
         {
@@ -100,15 +104,18 @@ namespace RealtimePPUR.Forms
 
         public RealtimePpur()
         {
+            if (DEBUG_MODE) AllocConsole();
+
             AddFontFile();
             InitializeComponent();
+
+            DebugLogger("RealtimePPUR Initialized.");
 
             if (File.Exists("Error.log")) File.Delete("Error.log");
 
             if (!File.Exists("Config.cfg"))
             {
-                MessageBox.Show("Config.cfgがフォルダ内に存在しないため、すべての項目がOffとして設定されます。アップデートチェックのみ行われます。", "情報",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ShowInformationMessageBox("Config.cfgがフォルダ内に存在しないため、すべての項目がOffとして設定されます。アップデートチェックのみ行われます。");
                 GithubUpdateChecker(CURRENT_VERSION);
                 sRToolStripMenuItem.Checked = false;
                 sSPPToolStripMenuItem.Checked = false;
@@ -158,8 +165,7 @@ namespace RealtimePPUR.Forms
                     var defaultModeResult = int.TryParse(defaultmodestring, out int defaultmode);
                     if (!defaultModeResult || defaultmode is not (0 or 1 or 2))
                     {
-                        MessageBox.Show("Config.cfgのDEFAULTMODEの値が不正であったため、初期値の0が適用されます。0、1、2のどれかを入力してください。", "エラー",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ShowErrorMessageBox("Config.cfgのDEFAULTMODEの値が不正であったため、初期値の0が適用されます。0、1、2のどれかを入力してください。");
                     }
                     else
                     {
@@ -211,7 +217,7 @@ namespace RealtimePPUR.Forms
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
                 ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17");
-                if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && customSongsFolderValue.ToLower() != "songs")
+                if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
                 {
                     customSongsFolder = customSongsFolderValue;
                 }
@@ -249,14 +255,12 @@ namespace RealtimePPUR.Forms
                             }
                             catch
                             {
-                                MessageBox.Show(
-                                    "Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。", "エラー",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                                ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。");
                                 var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                                 if (!fontsizeResult)
                                 {
-                                    MessageBox.Show("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。", "エラー",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                 }
                                 else
@@ -264,8 +268,7 @@ namespace RealtimePPUR.Forms
                                     var result = float.TryParse(fontsizeValue, out float fontsize);
                                     if (!result)
                                     {
-                                        MessageBox.Show("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。", "エラー",
-                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                                         inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                     }
                                     else
@@ -277,13 +280,11 @@ namespace RealtimePPUR.Forms
                         }
                         else
                         {
-                            MessageBox.Show("Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。",
-                                "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。");
                             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                             if (!fontsizeResult)
                             {
-                                MessageBox.Show("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。", "エラー",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                             }
                             else
@@ -291,8 +292,7 @@ namespace RealtimePPUR.Forms
                                 var result = float.TryParse(fontsizeValue, out float fontsize);
                                 if (!result)
                                 {
-                                    MessageBox.Show("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。", "エラー",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                 }
                                 else
@@ -307,8 +307,7 @@ namespace RealtimePPUR.Forms
                         var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                         if (!fontsizeResult)
                         {
-                            MessageBox.Show("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。", "エラー", MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                            ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                             inGameValue.Font = new Font(InGameOverlayFont, 19F);
                         }
                         else
@@ -316,8 +315,7 @@ namespace RealtimePPUR.Forms
                             var result = float.TryParse(fontsizeValue, out float fontsize);
                             if (!result)
                             {
-                                MessageBox.Show("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。", "エラー",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                             }
                             else
@@ -332,8 +330,7 @@ namespace RealtimePPUR.Forms
                     var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                     if (!fontsizeResult)
                     {
-                        MessageBox.Show("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。", "エラー", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
+                        ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                         inGameValue.Font = new Font(InGameOverlayFont, 19F);
                     }
                     else
@@ -341,8 +338,7 @@ namespace RealtimePPUR.Forms
                         var result = float.TryParse(fontsizeValue, out float fontsize);
                         if (!result)
                         {
-                            MessageBox.Show("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。", "エラー",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                             inGameValue.Font = new Font(InGameOverlayFont, 19F);
                         }
                         else
@@ -356,6 +352,7 @@ namespace RealtimePPUR.Forms
 
         private void AddFontFile()
         {
+            DebugLogger("Loading fonts...");
             fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
             fontCollection.AddFontFile("./src/Fonts/Nexa Light.otf");
 
@@ -371,6 +368,7 @@ namespace RealtimePPUR.Forms
                         break;
                 }
             }
+            DebugLogger("Fonts loaded.");
         }
 
         // Loop
@@ -569,13 +567,15 @@ namespace RealtimePPUR.Forms
                     {
                         Process osuProcess = Process.GetProcessesByName("osu!")[0];
                         string tempOsuDirectory = Path.GetDirectoryName(osuProcess.MainModule.FileName);
-
+                        DebugLogger($"osu! directory: {tempOsuDirectory}");
                         if (string.IsNullOrEmpty(tempOsuDirectory) || !Directory.Exists(tempOsuDirectory))
                             throw new Exception("osu! directory not found.");
 
                         osuDirectory = tempOsuDirectory;
                         songsPath = GetSongsFolderLocation(osuDirectory, customSongsFolder);
                         isDirectoryLoaded = true;
+                        DebugLogger($"Songs folder: {songsPath}");
+                        DebugLogger("Directory Data initialized.");
                     }
 
                     if (!isDirectoryLoaded) throw new Exception("osu! directory not found.");
@@ -643,13 +643,25 @@ namespace RealtimePPUR.Forms
 
                     if (preTitle != currentMapString)
                     {
+                        DebugLogger("Map change detected.");
+                        DebugLogger($"{preTitle} -> {currentMapString}");
+                        DebugLogger($"Current map string: {currentMapString}");
                         string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
                             currentOsuFileName ?? "");
+                        DebugLogger($"Current beatmap path: {osuBeatmapPath}");
+
+                        if (!File.Exists(osuBeatmapPath))
+                        {
+                            // Fix the beatmap path(idk why)
+                            osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName ?? "");
+                        }
+                        
                         if (!File.Exists(osuBeatmapPath)) throw new Exception("Beatmap file not found.");
 
                         int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
                         if (currentBeatmapGamemodeTemp is -1 or not (0 or 1 or 2 or 3))
                             throw new Exception("Invalid gamemode.");
+                        DebugLogger($"Current beatmap gamemode: {currentBeatmapGamemodeTemp}");
 
                         currentBeatmapGamemode = currentBeatmapGamemodeTemp;
                         currentGamemode = currentBeatmapGamemode == 0 ? currentOsuGamemode : currentBeatmapGamemode;
@@ -657,10 +669,12 @@ namespace RealtimePPUR.Forms
                         if (calculator == null)
                         {
                             calculator = new PpCalculator(osuBeatmapPath, currentGamemode);
+                            DebugLogger("Calculator initialized.");
                         }
                         else
                         {
                             calculator.SetMap(osuBeatmapPath, currentGamemode);
+                            DebugLogger("Calculator updated.");
                         }
 
                         preTitle = currentMapString;
@@ -673,6 +687,7 @@ namespace RealtimePPUR.Forms
                         {
                             calculator.SetMode(currentOsuGamemode);
                             currentGamemode = currentOsuGamemode;
+                            DebugLogger($"Gamemode changed to {currentOsuGamemode}");
                         }
 
                         preOsuGamemode = currentOsuGamemode;
@@ -804,6 +819,8 @@ namespace RealtimePPUR.Forms
                 }
             }
 
+            DebugLogger("Connected to Discord.");
+
             while (true)
             {
                 try
@@ -812,6 +829,7 @@ namespace RealtimePPUR.Forms
 
                     if (Process.GetProcessesByName("osu!").Length == 0)
                     {
+                        DebugLogger("Discord Rich Presence Cleared");
                         _client.ClearPresence();
                         continue;
                     }
@@ -854,6 +872,8 @@ namespace RealtimePPUR.Forms
                         Combo = baseAddresses.Player.MaxCombo,
                         Score = baseAddresses.Player.Score
                     };
+
+                    if (calculatedObject == null) continue;
 
                     switch (baseAddresses.GeneralData.OsuStatus)
                     {
@@ -938,6 +958,8 @@ namespace RealtimePPUR.Forms
                 }
             }
 
+            DebugLogger("RealtimePPUR mode enabled.");
+
             mode = 0;
         }
 
@@ -956,6 +978,8 @@ namespace RealtimePPUR.Forms
                     control.Location = control.Location with { Y = control.Location.Y + 65 };
                 }
             }
+
+            DebugLogger("RealtimePP mode enabled.");
 
             mode = 1;
         }
@@ -976,6 +1000,8 @@ namespace RealtimePPUR.Forms
                 }
             }
 
+            DebugLogger("Offset Helper mode enabled.");
+
             mode = 2;
         }
 
@@ -986,7 +1012,7 @@ namespace RealtimePPUR.Forms
             try
             {
                 if (font.ShowDialog() == DialogResult.Cancel) return;
-
+                DebugLogger($"Font changed to {font.Font.Name} {font.Font.Size} {font.Font.Style}");
                 inGameValue.Font = font.Font;
                 DialogResult fontfDialogResult = MessageBox.Show("このフォントを保存しますか？", "情報", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information);
@@ -1003,9 +1029,7 @@ namespace RealtimePPUR.Forms
                             $"※絶対にこのファイルを自分で編集しないでください！\n※フォント名などを編集してしまうとフォントが見つからず、Windows標準のフォントが割り当てられてしまいます。\n※もし編集してしまった場合はこのファイルを削除することをお勧めします。\nFONTNAME={font.Font.Name}\nFONTSIZE={font.Font.Size}\nFONTSTYLE={font.Font.Style}";
                         sw.WriteLine(fontInfo);
                         sw.Close();
-                        MessageBox.Show(
-                            "フォントの保存に成功しました。Config.cfgのUSECUSTOMFONTをtrueにすることで起動時から保存されたフォントを使用できます。右クリック→Load Fontからでも読み込むことが可能です！",
-                            "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ShowInformationMessageBox("フォントの保存に成功しました。Config.cfgのUSECUSTOMFONTをtrueにすることで起動時から保存されたフォントを使用できます。右クリック→Load Fontからでも読み込むことが可能です！");
                     }
                     else
                     {
@@ -1015,21 +1039,17 @@ namespace RealtimePPUR.Forms
                         byte[] fontInfoByte = System.Text.Encoding.UTF8.GetBytes(fontInfo);
                         fs.Write(fontInfoByte, 0, fontInfoByte.Length);
                         fs.Close();
-                        MessageBox.Show(
-                            "フォントの保存に成功しました。Config.cfgのUSECUSTOMFONTをtrueにすることで起動時から保存されたフォントを使用できます。右クリック→Load Fontからでも読み込むことが可能です！",
-                            "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ShowInformationMessageBox("フォントの保存に成功しました。Config.cfgのUSECUSTOMFONTをtrueにすることで起動時から保存されたフォントを使用できます。右クリック→Load Fontからでも読み込むことが可能です！");
                     }
                 }
                 catch
                 {
-                    MessageBox.Show("フォントの保存に失敗しました。もしFontファイルが作成されていたら削除することをお勧めします。", "エラー", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    ShowErrorMessageBox("フォントの保存に失敗しました。もしFontファイルが作成されていたら削除することをお勧めします。");
                 }
             }
             catch
             {
-                MessageBox.Show("フォントの変更に失敗しました。対応していないフォントです。", "エラー",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowErrorMessageBox("フォントの変更に失敗しました。対応していないフォントです。");
             }
         }
 
@@ -1057,6 +1077,7 @@ namespace RealtimePPUR.Forms
                 {
                     try
                     {
+                        DebugLogger($"Font loaded: {fontNameValue} {fontSizeValue} {fontStyleValue}");
                         inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue),
                             (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
                         MessageBox.Show(
@@ -1065,20 +1086,17 @@ namespace RealtimePPUR.Forms
                     }
                     catch
                     {
-                        MessageBox.Show("Fontファイルのフォント情報が不正、もしくは非対応であったため読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。",
-                            "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ShowErrorMessageBox("Fontファイルのフォント情報が不正、もしくは非対応であったため読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Fontファイルのフォント情報が不正であったため、読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。", "エラー",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。");
                 }
             }
             else
             {
-                MessageBox.Show("Fontファイルが存在しません。一度Change Fontでフォントを保存してください。", "エラー", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                ShowErrorMessageBox("Fontファイルが存在しません。一度Change Fontでフォントを保存してください。");
             }
         }
 
@@ -1087,27 +1105,24 @@ namespace RealtimePPUR.Forms
             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
             if (!fontsizeResult)
             {
-                MessageBox.Show("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。", "エラー", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                MessageBox.Show("フォントのリセットが完了しました！", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 var result = float.TryParse(fontsizeValue, out float fontsize);
                 if (!result)
                 {
-                    MessageBox.Show("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。", "エラー", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                    MessageBox.Show("フォントのリセットが完了しました！", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
                     inGameValue.Font = new Font(InGameOverlayFont, fontsize);
-                    MessageBox.Show("フォントのリセットが完了しました！", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+                ShowInformationMessageBox("フォントのリセットが完了しました！");
             }
+            DebugLogger("Font reset.");
         }
 
         // Move Window
@@ -1135,8 +1150,7 @@ namespace RealtimePPUR.Forms
             var toptest = configDictionary.TryGetValue("TOP", out string topvalue);
             if (!lefttest || !toptest)
             {
-                MessageBox.Show("Config.cfgにLEFTまたはTOPの値が存在しなかったため、osu! Modeの起動に失敗しました。", "エラー", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                ShowErrorMessageBox("Config.cfgにLEFTまたはTOPの値が存在しなかったため、osu! Modeの起動に失敗しました。");
                 return;
             }
 
@@ -1144,8 +1158,7 @@ namespace RealtimePPUR.Forms
             var topResult = int.TryParse(topvalue, out int top);
             if ((!leftResult || !topResult) && !isosumode)
             {
-                MessageBox.Show("Config.cfgのLEFT、またはTOPの値が不正であったため、osu! Modeの起動に失敗しました。LEFT、TOPには数値以外入力しないでください。",
-                    "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowErrorMessageBox("Config.cfgのLEFT、またはTOPの値が不正であったため、osu! Modeの起動に失敗しました。LEFT、TOPには数値以外入力しないでください。");
                 return;
             }
 
@@ -1641,39 +1654,38 @@ namespace RealtimePPUR.Forms
                 const string filePath = "Config.cfg";
                 if (!File.Exists(filePath))
                 {
-                    MessageBox.Show("Config.cfgが見つかりませんでした。RealtimePPURをダウンロードし直してください。", "エラー", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    ShowErrorMessageBox("Config.cfgが見つかりませんでした。RealtimePPURをダウンロードし直してください。");
                     return;
                 }
 
                 var parameters = new Dictionary<string, string>
                 {
-                    { "SR", sRToolStripMenuItem.Checked ? "true" : "false" },
-                    { "SSPP", sSPPToolStripMenuItem.Checked ? "true" : "false" },
-                    { "CURRENTPP", currentPPToolStripMenuItem.Checked ? "true" : "false" },
-                    { "CURRENTACC", currentACCToolStripMenuItem.Checked ? "true" : "false" },
-                    { "HITS", hitsToolStripMenuItem.Checked ? "true" : "false" },
-                    { "IFFCHITS", ifFCHitsToolStripMenuItem.Checked ? "true" : "false" },
-                    { "UR", uRToolStripMenuItem.Checked ? "true" : "false" },
-                    { "OFFSETHELP", offsetHelpToolStripMenuItem.Checked ? "true" : "false" },
-                    { "EXPECTEDMANIASCORE", expectedManiaScoreToolStripMenuItem.Checked ? "true" : "false" },
-                    { "AVGOFFSET", avgOffsetToolStripMenuItem.Checked ? "true" : "false" },
-                    { "PROGRESS", progressToolStripMenuItem.Checked ? "true" : "false" },
-                    { "IFFCPP", ifFCPPToolStripMenuItem.Checked ? "true" : "false" },
-                    { "HEALTHPERCENTAGE", healthPercentageToolStripMenuItem.Checked ? "true" : "false" },
-                    { "CURRENTPOSITION", currentPositionToolStripMenuItem.Checked ? "true" : "false" },
-                    { "HIGHERSCOREDIFF", higherScoreToolStripMenuItem.Checked ? "true" : "false" },
-                    { "USERSCORE", userScoreToolStripMenuItem.Checked ? "true" : "false" },
-                    { "CURRENTBPM", currentBPMToolStripMenuItem.Checked ? "true" : "false" }
+                    { "SR", ConfigValueToString(sRToolStripMenuItem.Checked) },
+                    { "SSPP", ConfigValueToString(sSPPToolStripMenuItem.Checked) },
+                    { "CURRENTPP", ConfigValueToString(currentPPToolStripMenuItem.Checked ) },
+                    { "CURRENTACC", ConfigValueToString(currentACCToolStripMenuItem.Checked) },
+                    { "HITS", ConfigValueToString(hitsToolStripMenuItem.Checked) },
+                    { "IFFCHITS", ConfigValueToString(ifFCHitsToolStripMenuItem.Checked) },
+                    { "UR", ConfigValueToString(uRToolStripMenuItem.Checked) },
+                    { "OFFSETHELP", ConfigValueToString(offsetHelpToolStripMenuItem.Checked) },
+                    { "EXPECTEDMANIASCORE", ConfigValueToString(expectedManiaScoreToolStripMenuItem.Checked) },
+                    { "AVGOFFSET", ConfigValueToString(avgOffsetToolStripMenuItem.Checked) },
+                    { "PROGRESS", ConfigValueToString(progressToolStripMenuItem.Checked) },
+                    { "IFFCPP", ConfigValueToString(ifFCPPToolStripMenuItem.Checked) },
+                    { "HEALTHPERCENTAGE", ConfigValueToString(healthPercentageToolStripMenuItem.Checked) },
+                    { "CURRENTPOSITION", ConfigValueToString(currentPositionToolStripMenuItem.Checked) },
+                    { "HIGHERSCOREDIFF", ConfigValueToString(higherScoreToolStripMenuItem.Checked) },
+                    { "USERSCORE", ConfigValueToString(userScoreToolStripMenuItem.Checked) },
+                    { "CURRENTBPM", ConfigValueToString(currentBPMToolStripMenuItem.Checked) }
                 };
 
                 WriteConfigFile(filePath, parameters);
-                MessageBox.Show("Config.cfgの保存が完了しました！", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ShowInformationMessageBox("Config.cfgの保存が完了しました！");
             }
             catch (Exception error)
             {
                 ErrorLogger(error);
-                MessageBox.Show("Config.cfgの保存に失敗しました。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowErrorMessageBox("Config.cfgの保存に失敗しました。");
             }
         }
 
@@ -1683,6 +1695,7 @@ namespace RealtimePPUR.Forms
             try
             {
                 if (error.Message == prevErrorMessage) return;
+                DebugLogger("Error: " + error.Message);
                 prevErrorMessage = error.Message;
                 const string filePath = "Error.log";
                 StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
@@ -1693,7 +1706,7 @@ namespace RealtimePPUR.Forms
             }
             catch
             {
-                Console.WriteLine("エラーログの書き込みに失敗しました");
+                DebugLogger("Error Logger Failed");
             }
         }
 

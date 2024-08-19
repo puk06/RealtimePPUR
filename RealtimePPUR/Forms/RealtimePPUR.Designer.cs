@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using static RealtimePPUR.Classes.Helper;
 
 namespace RealtimePPUR.Forms
