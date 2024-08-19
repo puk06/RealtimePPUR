@@ -1676,7 +1676,9 @@ namespace RealtimePPUR.Forms
                     { "CURRENTPOSITION", ConfigValueToString(currentPositionToolStripMenuItem.Checked) },
                     { "HIGHERSCOREDIFF", ConfigValueToString(higherScoreToolStripMenuItem.Checked) },
                     { "USERSCORE", ConfigValueToString(userScoreToolStripMenuItem.Checked) },
-                    { "CURRENTBPM", ConfigValueToString(currentBPMToolStripMenuItem.Checked) }
+                    { "CURRENTBPM", ConfigValueToString(currentBPMToolStripMenuItem.Checked) },
+                    { "PPLOSSMODE", ConfigValueToString(pPLossModeToolStripMenuItem.Checked) },
+                    { "DISCORDRICHPRESENCE", ConfigValueToString(discordRichPresenceToolStripMenuItem.Checked) }
                 };
 
                 WriteConfigFile(filePath, parameters);
