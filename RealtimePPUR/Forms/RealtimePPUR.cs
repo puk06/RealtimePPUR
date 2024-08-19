@@ -255,7 +255,6 @@ namespace RealtimePPUR.Forms
                             }
                             catch
                             {
-
                                 ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。");
                                 var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                                 if (!fontsizeResult)
