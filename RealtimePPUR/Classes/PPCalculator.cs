@@ -121,7 +121,6 @@ namespace RealtimePPUR.Classes
 
                 if (args.PplossMode && mode is 1 or 3)
                 {
-
                     var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsLoss, mode),
