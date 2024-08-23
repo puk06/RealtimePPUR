@@ -18,6 +18,7 @@ using OsuMemoryDataProvider.OsuMemoryModels;
 using RealtimePPUR.Classes;
 using Path = System.IO.Path;
 using static RealtimePPUR.Classes.Helper;
+using static RealtimePPUR.Classes.CalculatorHelpers;
 
 namespace RealtimePPUR.Forms
 {
@@ -64,7 +65,6 @@ namespace RealtimePPUR.Forms
         private readonly StructuredOsuMemoryReader sreader = new();
         private readonly OsuBaseAddresses baseAddresses = new();
         private readonly string customSongsFolder;
-
         private readonly Dictionary<string, int> osuModeValue = new()
         {
             { "left", 0 },
@@ -214,9 +214,10 @@ namespace RealtimePPUR.Forms
                 highestScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("HIGHESTSCOREDIFF");
                 userScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("USERSCORE");
                 currentBPMToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTBPM");
+                currentRankToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTRANK");
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
-                ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17");
+                ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18");
                 if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
                 {
                     customSongsFolder = customSongsFolderValue;
@@ -652,7 +653,25 @@ namespace RealtimePPUR.Forms
                         if (!File.Exists(osuBeatmapPath))
                         {
                             // Fix the beatmap path(idk why)
+                            DebugLogger("Beatmap file not found. Trying to fix the path...");
                             osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName ?? "");
+                            DebugLogger($"Current beatmap path: {osuBeatmapPath}");
+
+                            if (!File.Exists(osuBeatmapPath))
+                            {
+                                DebugLogger("Beatmap file not found. Trying to fix the path again...");
+                                osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", currentOsuFileName?.Trim() ?? "");
+                                DebugLogger($"Current beatmap path: {osuBeatmapPath}");
+                            }
+
+                            if (!File.Exists(osuBeatmapPath))
+                            {
+                                DebugLogger("Beatmap file not found. Trying to fix the path again...");
+                                osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName?.Trim() ?? "");
+                                DebugLogger($"Current beatmap path: {osuBeatmapPath}");
+                            }
+
+                            if (File.Exists(osuBeatmapPath)) DebugLogger("Beatmap file found.");
                         }
                         
                         if (!File.Exists(osuBeatmapPath)) throw new Exception("Beatmap file not found.");
@@ -1450,7 +1469,7 @@ namespace RealtimePPUR.Forms
                     case 4:
                         if (currentACCToolStripMenuItem.Checked)
                         {
-                            displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + "%\n";
+                            displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + " / " + Math.Round((GetAccuracy(calculatedData.HitResultLossMode, currentGamemode) * 100), 2) + "%\n";
                         }
 
                         break;
@@ -1465,7 +1484,7 @@ namespace RealtimePPUR.Forms
                                     break;
 
                                 case 1:
-                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss}\n";
+                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss} ({hits.HitGeki})\n";
                                     break;
 
                                 case 2:
@@ -1625,6 +1644,15 @@ namespace RealtimePPUR.Forms
                             currentBpm = Math.Round(currentBpm, 1);
 
                             displayFormat += "BPM: " + currentBpm + "\n";
+                        }
+
+                        break;
+
+                    case 18:
+                        if (currentRankToolStripMenuItem.Checked)
+                        {
+                            var mods = ParseMods(baseAddresses.Player.Mods.Value).Show;
+                            displayFormat += "Rank: " + GetCurrentRank(calculatedData.HitResults, currentGamemode, mods) + " / " + GetCurrentRank(calculatedData.HitResultLossMode, currentGamemode, mods) + "\n";
                         }
 
                         break;

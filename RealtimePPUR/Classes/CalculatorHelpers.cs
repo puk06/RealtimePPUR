@@ -141,40 +141,44 @@ namespace RealtimePPUR.Classes
             };
         }
 
-        public static Dictionary<HitResult, int> GenerateHitResultsForLossMode(IBeatmap beatmap, HitsResult hits, int mode)
+        public static Dictionary<HitResult, int> GenerateHitResultsForLossMode(Dictionary<HitResult, int> statics, HitsResult hits, int mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case 1:
-                    {
-                        int countGreat = GetMaxCombo(beatmap, mode);
-
-                        return new Dictionary<HitResult, int>
-                        {
-                            { HitResult.Great, countGreat - hits.Hit100 - hits.HitMiss },
-                            { HitResult.Ok, hits.Hit100 },
-                            { HitResult.Miss, hits.HitMiss }
-                        };
-                    }
-
-                case 3:
-                    {
-                        int totalHits = beatmap.HitObjects.Count;
-
-                        return new Dictionary<HitResult, int>
-                        {
-                            [HitResult.Perfect] = totalHits - hits.Hit300 - hits.HitKatu - hits.Hit100 - hits.Hit50 - hits.HitMiss,
-                            [HitResult.Great] = hits.Hit300,
-                            [HitResult.Good] = hits.HitKatu,
-                            [HitResult.Ok] = hits.Hit100,
-                            [HitResult.Meh] = hits.Hit50,
-                            [HitResult.Miss] = hits.HitMiss
-                        };
-                    }
-
-                default:
-                    throw new ArgumentException("Invalid mode provided.");
-            }
+                0 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, statics[HitResult.Great] - hits.Hit100 - hits.Hit50 - hits.HitMiss },
+                    { HitResult.Ok, hits.Hit100 },
+                    { HitResult.Meh, hits.Hit50 },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                1 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, statics[HitResult.Great] - hits.Hit100 - hits.HitMiss },
+                    { HitResult.Ok, hits.Hit100 },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                2 => new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, statics[HitResult.Great] - hits.Hit100 - hits.Hit50 - hits.HitKatu },
+                    { HitResult.LargeTickHit, hits.Hit100 },
+                    { HitResult.SmallTickHit, hits.Hit50 },
+                    { HitResult.SmallTickMiss, hits.HitKatu },
+                    { HitResult.Miss, hits.HitMiss }
+                },
+                3 => new Dictionary<HitResult, int>
+                {
+                    [HitResult.Perfect] =
+                        statics[HitResult.Perfect] - hits.Hit300 - hits.HitKatu - hits.Hit100 - hits.Hit50 -
+                        hits.HitMiss,
+                    [HitResult.Great] = hits.Hit300,
+                    [HitResult.Good] = hits.HitKatu,
+                    [HitResult.Ok] = hits.Hit100,
+                    [HitResult.Meh] = hits.Hit50,
+                    [HitResult.Miss] = hits.HitMiss
+                },
+                _ => throw new ArgumentException("Invalid mode provided.")
+            };
         }
 
         public static Dictionary<HitResult, int> CalcIfFc(IBeatmap beatmap, HitsResult hits, int mode)
@@ -367,6 +371,137 @@ namespace RealtimePPUR.Classes
                 default:
                     throw new ArgumentException("Invalid mode provided.");
             }
+        }
+
+        public static string GetCurrentRank(IReadOnlyDictionary<HitResult, int> statistics, int mode, string[] mods)
+        {
+            string rank = "Unknown";
+            bool silver = mods.Contains("hd") || mods.Contains("fl");
+            switch (mode)
+            {
+                case 0:
+                    {
+                        var h300 = statistics[HitResult.Great];
+                        var h100 = statistics[HitResult.Ok];
+                        var h50 = statistics[HitResult.Meh];
+                        var h0 = statistics[HitResult.Miss];
+
+                        int total = h300 + h100 + h50 + h0;
+                        double r300 = (double)h300 / total;
+                        double r50 = (double)h50 / total;
+
+                        switch (r300)
+                        {
+                            case 1:
+                                rank = silver ? "XH" : "X";
+                                break;
+                            case > 0.9 when r50 < 0.01 && h0 == 0:
+                                rank = silver ? "SH" : "S";
+                                break;
+                            case > 0.8 when h0 == 0:
+                            case > 0.9:
+                                rank = "A";
+                                break;
+                            case > 0.7 when h0 == 0:
+                            case > 0.8:
+                                rank = "B";
+                                break;
+                            case > 0.6:
+                                rank = "C";
+                                break;
+                            default:
+                                rank = "D";
+                                break;
+                        }
+                    }
+
+                    break;
+
+                case 1:
+                    {
+                        var h300 = statistics[HitResult.Great];
+                        var h100 = statistics[HitResult.Ok];
+                        var h0 = statistics[HitResult.Miss];
+                        int total = h300 + h100 + h0;
+                        double r300 = (double)h300 / total;
+
+                        switch (r300)
+                        {
+                            case 1:
+                                rank = silver ? "XH" : "X";
+                                break;
+                            case > 0.9 when h0 == 0:
+                                rank = silver ? "SH" : "S";
+                                break;
+                            case > 0.8 when h0 == 0:
+                            case > 0.9:
+                                rank = "A";
+                                break;
+                            case > 0.7 when h0 == 0:
+                            case > 0.8:
+                                rank = "B";
+                                break;
+                            case > 0.6:
+                                rank = "C";
+                                break;
+                            default:
+                                rank = "D";
+                                break;
+                        }
+                    }
+
+                    break;
+
+
+                case 2:
+                    {
+                        var h300 = statistics[HitResult.Great];
+                        var h100 = statistics[HitResult.LargeTickHit];
+                        var h50 = statistics[HitResult.SmallTickHit];
+                        var katu = statistics[HitResult.SmallTickMiss];
+                        var h0 = statistics[HitResult.Miss];
+                        int total = h300 + h100 + h50 + h0 + katu;
+                        double acc = total > 0 ? (h50 + h100 + h300) / (double)total : 1;
+
+                        rank = acc switch
+                        {
+                            1 => silver ? "XH" : "X",
+                            > 0.98 => silver ? "SH" : "S",
+                            > 0.94 => "A",
+                            > 0.9 => "B",
+                            > 0.85 => "C",
+                            _ => "D"
+                        };
+                    }
+
+                    break;
+
+                case 3:
+                    {
+                        var h300 = statistics[HitResult.Perfect];
+                        var h100 = statistics[HitResult.Great];
+                        var h50 = statistics[HitResult.Good];
+                        var geki = statistics[HitResult.Ok];
+                        var katu = statistics[HitResult.Meh];
+                        var h0 = statistics[HitResult.Miss];
+                        int total = h300 + h100 + h50 + h0 + geki + katu;
+                        double acc = total > 0 ? (h50 * 50 + h100 * 100 + katu * 200 + (h300 + geki) * 300) / (total * 300.0) : 1;
+
+                        rank = acc switch
+                        {
+                            1 => silver ? "XH" : "X",
+                            > 0.95 => silver ? "SH" : "S",
+                            > 0.9 => "A",
+                            > 0.8 => "B",
+                            > 0.7 => "C",
+                            _ => "D"
+                        };
+                    }
+
+                    break;
+            }
+
+            return rank;
         }
 
         public static int GetMaxCombo(IBeatmap beatmap, int mode)

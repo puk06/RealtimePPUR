@@ -1,4 +1,3 @@
-using System;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets;
@@ -62,6 +61,8 @@ namespace RealtimePPUR.Classes
             data.CurrentBpm = 0;
 
             var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
+            data.HitResults = statisticsCurrent;
+            data.HitResultLossMode = statisticsCurrent;
 
             if (resultScreen)
             {
@@ -93,6 +94,9 @@ namespace RealtimePPUR.Classes
 
             if (!playing) return data;
             {
+                var staticsLoss = GenerateHitResultsForLossMode(staticsSs, hits, mode);
+                data.HitResultLossMode = staticsLoss;
+
                 if (mode != 3)
                 {
                     var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
@@ -117,7 +121,6 @@ namespace RealtimePPUR.Classes
 
                 if (args.PplossMode && mode is 1 or 3)
                 {
-                    var staticsLoss = GenerateHitResultsForLossMode(beatmap, hits, mode);
 
                     var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                     {

@@ -34,49 +34,50 @@ namespace RealtimePPUR.Forms
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RealtimePpur));
-            currentPp = new System.Windows.Forms.Label();
-            sr = new System.Windows.Forms.Label();
-            iffc = new System.Windows.Forms.Label();
-            good = new System.Windows.Forms.Label();
-            ok = new System.Windows.Forms.Label();
-            miss = new System.Windows.Forms.Label();
-            avgoffset = new System.Windows.Forms.Label();
-            ur = new System.Windows.Forms.Label();
-            avgoffsethelp = new System.Windows.Forms.Label();
-            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
-            modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            realtimePPURToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            offsetHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            realtimePPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            osuModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            inGameOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            sRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            sSPPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            currentPPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            currentACCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            hitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ifFCHitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            uRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            offsetHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            expectedManiaScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            avgOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            progressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ifFCPPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            healthPercentageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            currentPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            higherScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            highestScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            userScoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            pPLossModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            changePriorityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            changeFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            loadFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            resetFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            discordRichPresenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            saveConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            inGameValue = new System.Windows.Forms.Label();
-            currentBPMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            currentPp = new Label();
+            sr = new Label();
+            iffc = new Label();
+            good = new Label();
+            ok = new Label();
+            miss = new Label();
+            avgoffset = new Label();
+            ur = new Label();
+            avgoffsethelp = new Label();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            modeToolStripMenuItem = new ToolStripMenuItem();
+            realtimePPURToolStripMenuItem = new ToolStripMenuItem();
+            offsetHelperToolStripMenuItem = new ToolStripMenuItem();
+            realtimePPToolStripMenuItem = new ToolStripMenuItem();
+            osuModeToolStripMenuItem = new ToolStripMenuItem();
+            inGameOverlayToolStripMenuItem = new ToolStripMenuItem();
+            sRToolStripMenuItem = new ToolStripMenuItem();
+            sSPPToolStripMenuItem = new ToolStripMenuItem();
+            currentPPToolStripMenuItem = new ToolStripMenuItem();
+            currentACCToolStripMenuItem = new ToolStripMenuItem();
+            hitsToolStripMenuItem = new ToolStripMenuItem();
+            ifFCHitsToolStripMenuItem = new ToolStripMenuItem();
+            uRToolStripMenuItem = new ToolStripMenuItem();
+            offsetHelpToolStripMenuItem = new ToolStripMenuItem();
+            expectedManiaScoreToolStripMenuItem = new ToolStripMenuItem();
+            avgOffsetToolStripMenuItem = new ToolStripMenuItem();
+            progressToolStripMenuItem = new ToolStripMenuItem();
+            ifFCPPToolStripMenuItem = new ToolStripMenuItem();
+            healthPercentageToolStripMenuItem = new ToolStripMenuItem();
+            currentPositionToolStripMenuItem = new ToolStripMenuItem();
+            higherScoreToolStripMenuItem = new ToolStripMenuItem();
+            highestScoreToolStripMenuItem = new ToolStripMenuItem();
+            userScoreToolStripMenuItem = new ToolStripMenuItem();
+            currentBPMToolStripMenuItem = new ToolStripMenuItem();
+            pPLossModeToolStripMenuItem = new ToolStripMenuItem();
+            changePriorityToolStripMenuItem = new ToolStripMenuItem();
+            changeFontToolStripMenuItem = new ToolStripMenuItem();
+            loadFontToolStripMenuItem = new ToolStripMenuItem();
+            resetFontToolStripMenuItem = new ToolStripMenuItem();
+            discordRichPresenceToolStripMenuItem = new ToolStripMenuItem();
+            saveConfigToolStripMenuItem = new ToolStripMenuItem();
+            closeToolStripMenuItem = new ToolStripMenuItem();
+            inGameValue = new Label();
+            currentRankToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -176,7 +177,7 @@ namespace RealtimePPUR.Forms
             ur.ForeColor = Color.White;
             ur.Location = new Point(217, 70);
             ur.Name = "ur";
-            ur.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            ur.RightToLeft = RightToLeft.No;
             ur.Size = new Size(13, 15);
             ur.TabIndex = 0;
             ur.Text = "0";
@@ -199,13 +200,13 @@ namespace RealtimePPUR.Forms
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(191, 268);
             // 
             // modeToolStripMenuItem
             // 
-            modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { realtimePPURToolStripMenuItem, offsetHelperToolStripMenuItem, realtimePPToolStripMenuItem });
+            modeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { realtimePPURToolStripMenuItem, offsetHelperToolStripMenuItem, realtimePPToolStripMenuItem });
             modeToolStripMenuItem.Name = "modeToolStripMenuItem";
             modeToolStripMenuItem.Size = new Size(190, 22);
             modeToolStripMenuItem.Text = "Mode";
@@ -240,7 +241,7 @@ namespace RealtimePPUR.Forms
             // 
             // inGameOverlayToolStripMenuItem
             // 
-            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem });
+            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem });
             inGameOverlayToolStripMenuItem.Name = "inGameOverlayToolStripMenuItem";
             inGameOverlayToolStripMenuItem.Size = new Size(190, 22);
             inGameOverlayToolStripMenuItem.Text = "InGameOverlay";
@@ -364,6 +365,13 @@ namespace RealtimePPUR.Forms
             userScoreToolStripMenuItem.Text = "UserScore";
             userScoreToolStripMenuItem.Click += ToggleChecked;
             // 
+            // currentBPMToolStripMenuItem
+            // 
+            currentBPMToolStripMenuItem.Name = "currentBPMToolStripMenuItem";
+            currentBPMToolStripMenuItem.Size = new Size(184, 22);
+            currentBPMToolStripMenuItem.Text = "CurrentBPM";
+            currentBPMToolStripMenuItem.Click += ToggleChecked;
+            // 
             // pPLossModeToolStripMenuItem
             // 
             pPLossModeToolStripMenuItem.Name = "pPLossModeToolStripMenuItem";
@@ -404,7 +412,7 @@ namespace RealtimePPUR.Forms
             discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
             discordRichPresenceToolStripMenuItem.Size = new Size(190, 22);
             discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
-            discordRichPresenceToolStripMenuItem.Click +=  ToggleChecked;
+            discordRichPresenceToolStripMenuItem.Click += ToggleChecked;
             // 
             // saveConfigToolStripMenuItem
             // 
@@ -430,12 +438,12 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
-            // currentBPMToolStripMenuItem
+            // currentRankToolStripMenuItem
             // 
-            currentBPMToolStripMenuItem.Name = "currentBPMToolStripMenuItem";
-            currentBPMToolStripMenuItem.Size = new Size(184, 22);
-            currentBPMToolStripMenuItem.Text = "CurrentBPM";
-            currentBPMToolStripMenuItem.Click += ToggleChecked;
+            currentRankToolStripMenuItem.Name = "currentRankToolStripMenuItem";
+            currentRankToolStripMenuItem.Size = new Size(184, 22);
+            currentRankToolStripMenuItem.Text = "CurrentRank";
+            currentRankToolStripMenuItem.Click += ToggleChecked;
             // 
             // RealtimePpur
             // 
@@ -449,7 +457,7 @@ namespace RealtimePPUR.Forms
             this.sr.Font = new System.Drawing.Font(GuiFont, 13F, System.Drawing.FontStyle.Bold);
             this.currentPp.Font = new System.Drawing.Font(GuiFont, 20F, System.Drawing.FontStyle.Bold);
             AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.PPUR;
             ClientSize = new Size(316, 130);
             ContextMenuStrip = contextMenuStrip1;
@@ -463,9 +471,9 @@ namespace RealtimePPUR.Forms
             Controls.Add(avgoffset);
             Controls.Add(ur);
             Controls.Add(avgoffsethelp);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new System.Windows.Forms.Padding(4);
+            Margin = new Padding(4);
             MaximizeBox = false;
             Name = "RealtimePpur";
             Text = "RealtimePPUR";
@@ -517,6 +525,7 @@ namespace RealtimePPUR.Forms
         private System.Windows.Forms.ToolStripMenuItem pPLossModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem currentBPMToolStripMenuItem;
+        private ToolStripMenuItem currentRankToolStripMenuItem;
     }
 }
 
