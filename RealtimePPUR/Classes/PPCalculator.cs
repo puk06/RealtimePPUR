@@ -56,6 +56,7 @@ namespace RealtimePPUR.Classes
             data.CurrentPerformanceAttributes = performanceAttributes;
             data.DifficultyAttributesIffc = difficultyAttributes;
             data.PerformanceAttributesIffc = performanceAttributes;
+            data.PerformanceAttributesLossMode = performanceAttributes;
             data.IfFcHitResult = staticsSs;
             data.ExpectedManiaScore = 0;
             data.CurrentBpm = 0;
@@ -94,13 +95,53 @@ namespace RealtimePPUR.Classes
 
             if (!playing) return data;
             {
-                var staticsLoss = GenerateHitResultsForLossMode(staticsSs, hits, mode);
-                data.HitResultLossMode = staticsLoss;
-
-                if (mode != 3)
+                Beatmap beatmapCurrent = new();
+                var hitObjects = workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
+                beatmapCurrent.HitObjects.AddRange(hitObjects);
+                beatmapCurrent.ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo;
+                beatmapCurrent.BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo;
+                var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                 {
-                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+                    Accuracy = GetAccuracy(statisticsCurrent, mode),
+                    MaxCombo = args.Combo,
+                    Statistics = statisticsCurrent,
+                    Mods = mods,
+                    TotalScore = args.Score
+                };
 
+                var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
+                var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
+                var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
+                var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
+                var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
+
+                data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
+                data.CurrentPerformanceAttributes = performanceAttributesCurrent;
+
+                var staticsLoss = GenerateHitResultsForLossMode(staticsSs, hits, mode);
+                var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+
+                data.HitResultLossMode = staticsLoss;
+                data.HitResults = staticsForCalcIfFc;
+
+                if (mode is 1 or 3)
+                {
+                    var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
+                    {
+                        Accuracy = GetAccuracy(staticsLoss, mode),
+                        MaxCombo = args.Combo,
+                        Statistics = staticsLoss,
+                        Mods = mods,
+                        TotalScore = args.Score
+                    };
+
+                    var performanceAttributesLossMode = performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
+                    data.PerformanceAttributesLossMode = performanceAttributesLossMode;
+                    if (mode == 3) data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
+                }
+
+                if (mode is not 3)
+                {
                     var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                     {
                         Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
@@ -112,56 +153,7 @@ namespace RealtimePPUR.Classes
 
                     var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
                     data.PerformanceAttributesIffc = performanceAttributesIffc;
-                    data.IfFcHitResult = staticsForCalcIfFc;
                 }
-                else
-                {
-                    data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
-                }
-
-                if (args.PplossMode && mode is 1 or 3)
-                {
-
-                    var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
-                    {
-                        Accuracy = GetAccuracy(staticsLoss, mode),
-                        MaxCombo = args.Combo,
-                        Statistics = staticsLoss,
-                        Mods = mods,
-                        TotalScore = args.Score
-                    };
-
-                    var performanceAttributesCurrent = performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
-
-                    data.CurrentDifficultyAttributes = difficultyAttributes;
-                    data.CurrentPerformanceAttributes = performanceAttributesCurrent;
-                }
-                else
-                {
-                    Beatmap beatmapCurrent = new();
-                    var hitObjects = workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
-                    beatmapCurrent.HitObjects.AddRange(hitObjects);
-                    beatmapCurrent.ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo;
-                    beatmapCurrent.BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo;
-                    var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
-                    {
-                        Accuracy = GetAccuracy(statisticsCurrent, mode),
-                        MaxCombo = args.Combo,
-                        Statistics = statisticsCurrent,
-                        Mods = mods,
-                        TotalScore = args.Score
-                    };
-
-                    var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
-                    var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
-                    var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                    var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
-                    var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
-
-                    data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
-                    data.CurrentPerformanceAttributes = performanceAttributesCurrent;
-                }
-
 
                 var timingPoints = beatmap.ControlPointInfo.TimingPoints;
                 TimingControlPoint lastTimingPoint = null;

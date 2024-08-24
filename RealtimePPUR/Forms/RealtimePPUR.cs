@@ -126,7 +126,7 @@ namespace RealtimePPUR.Forms
                 offsetHelpToolStripMenuItem.Checked = false;
                 avgOffsetToolStripMenuItem.Checked = false;
                 progressToolStripMenuItem.Checked = false;
-                ifFCPPToolStripMenuItem.Checked = false;
+                LossModePPToolStripMenuItem.Checked = false;
                 ifFCHitsToolStripMenuItem.Checked = false;
                 expectedManiaScoreToolStripMenuItem.Checked = false;
                 healthPercentageToolStripMenuItem.Checked = false;
@@ -205,7 +205,7 @@ namespace RealtimePPUR.Forms
                 offsetHelpToolStripMenuItem.Checked = CheckConfigDictionaryValue("OFFSETHELP");
                 avgOffsetToolStripMenuItem.Checked = CheckConfigDictionaryValue("AVGOFFSET");
                 progressToolStripMenuItem.Checked = CheckConfigDictionaryValue("PROGRESS");
-                ifFCPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("IFFCPP");
+                LossModePPToolStripMenuItem.Checked = CheckConfigDictionaryValue("LOSSMODEPP");
                 ifFCHitsToolStripMenuItem.Checked = CheckConfigDictionaryValue("IFFCHITS");
                 expectedManiaScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("EXPECTEDMANIASCORE");
                 healthPercentageToolStripMenuItem.Checked = CheckConfigDictionaryValue("HEALTHPERCENTAGE");
@@ -454,7 +454,9 @@ namespace RealtimePPUR.Forms
                     double starRatingValue = IsNaNWithNum(Math.Round(calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
                     double ssppValue = IsNaNWithNum(calculatedObject.PerformanceAttributes.Total);
                     double currentPpValue = IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total);
+                    if (pPLossModeToolStripMenuItem.Checked) currentPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
                     double ifFcPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesIffc.Total);
+                    double lossPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
 
                     avgoffset.Text = Math.Round(avgOffset, 2) + "ms";
                     avgoffset.Width = TextRenderer.MeasureText(avgoffset.Text, avgoffset.Font).Width;
@@ -468,9 +470,40 @@ namespace RealtimePPUR.Forms
                     sr.Text = starRatingValue.ToString(CultureInfo.CurrentCulture);
                     sr.Width = TextRenderer.MeasureText(sr.Text, sr.Font).Width;
 
-                    iffc.Text = (isPlayingBool || isResultScreenValue) && currentGamemodeValue != 3
-                        ? Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue)
-                        : Math.Round(ssppValue).ToString(CultureInfo.CurrentCulture);
+                    if (isPlayingBool)
+                    {
+                        if (currentGamemodeValue is 1 or 3)
+                        {
+                            if (pPLossModeToolStripMenuItem.Checked)
+                            {
+                                iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
+                            }
+                            else
+                            {
+                                iffc.Text = Math.Round(lossPpValue) + " / " + Math.Round(ssppValue);
+                            }
+                        }
+                        else
+                        {
+                            iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
+                        }
+                    } 
+                    else if (isResultScreen)
+                    {
+                        if (currentGamemodeValue != 3)
+                        {
+                            iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
+                        }
+                        else
+                        {
+                            iffc.Text = Math.Round(ssppValue).ToString(CultureInfo.CurrentCulture);
+                        }
+                    }
+                    else
+                    {
+                        iffc.Text = Math.Round(ssppValue).ToString(CultureInfo.CurrentCulture);
+                    }
+
                     iffc.Width = TextRenderer.MeasureText(iffc.Text, iffc.Font).Width;
 
                     currentPp.Text = Math.Round(currentPpValue).ToString(CultureInfo.CurrentCulture);
@@ -800,8 +833,7 @@ namespace RealtimePPUR.Forms
                         Score = hits.Score,
                         NoClassicMod = IS_NO_CLASSIC_MOD,
                         Mods = mods,
-                        Time = baseAddresses.GeneralData.AudioTime,
-                        PplossMode = pPLossModeToolStripMenuItem.Checked
+                        Time = baseAddresses.GeneralData.AudioTime
                     };
                     var result = calculator?.Calculate(calcArgs, playing,
                         resultScreen && !playing, hits);
@@ -1411,6 +1443,7 @@ namespace RealtimePPUR.Forms
             double ssppValue = IsNaNWithNum(calculatedData.PerformanceAttributes.Total);
             double currentPpValue = IsNaNWithNum(calculatedData.CurrentPerformanceAttributes.Total);
             double ifFcPpValue = IsNaNWithNum(calculatedData.PerformanceAttributesIffc.Total);
+            double lossModePpValue = IsNaNWithNum(calculatedData.PerformanceAttributesLossMode.Total);
 
             var leaderBoardData = GetLeaderBoard(baseAddresses.LeaderBoard, baseAddresses.Player.Score);
             double healthPercentage = IsNaNWithNum(Math.Round(baseAddresses.Player.HP / 2, 1));
@@ -1432,14 +1465,7 @@ namespace RealtimePPUR.Forms
                     case 1:
                         if (sRToolStripMenuItem.Checked)
                         {
-                            if (pPLossModeToolStripMenuItem.Checked && currentGamemode is 1 or 3)
-                            {
-                                displayFormat += "SR: " + starRatingValue + "\n";
-                            }
-                            else
-                            {
-                                displayFormat += "SR: " + starRatingValue + " / " + fullSrValue + "\n";
-                            }
+                            displayFormat += "SR: " + starRatingValue + " / " + fullSrValue + "\n";
                         }
 
                         break;
@@ -1455,13 +1481,21 @@ namespace RealtimePPUR.Forms
                     case 3:
                         if (currentPPToolStripMenuItem.Checked)
                         {
-                            displayFormat += ifFCPPToolStripMenuItem.Checked switch
+                            if (LossModePPToolStripMenuItem.Checked)
                             {
-                                true when currentGamemodeValue != 3 => "PP: " + Math.Round(currentPpValue) + " / " +
-                                                                  Math.Round(ifFcPpValue) + "pp\n",
-                                true => "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(ssppValue) + "pp\n",
-                                _ => "PP: " + Math.Round(currentPpValue) + "pp\n"
-                            };
+                                if (currentGamemodeValue is 1 or 3)
+                                {
+                                    displayFormat += "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(lossModePpValue) + "pp\n";
+                                }
+                                else
+                                {
+                                    displayFormat += "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(ifFcPpValue) + "pp\n";
+                                }
+                            }
+                            else
+                            {
+                                displayFormat += "PP: " + Math.Round(currentPpValue) + "pp\n";
+                            }
                         }
 
                         break;
@@ -1652,7 +1686,9 @@ namespace RealtimePPUR.Forms
                         if (currentRankToolStripMenuItem.Checked)
                         {
                             var mods = ParseMods(baseAddresses.Player.Mods.Value).Show;
-                            displayFormat += "Rank: " + GetCurrentRank(calculatedData.HitResults, currentGamemode, mods) + " / " + GetCurrentRank(calculatedData.HitResultLossMode, currentGamemode, mods) + "\n";
+                            var currentRank = GetCurrentRank(calculatedData.HitResults, currentGamemodeValue, mods);
+                            var currentRankLossMode = GetCurrentRank(calculatedData.HitResultLossMode, currentGamemodeValue, mods);
+                            displayFormat += "Rank: " + currentRank + " / " + currentRankLossMode + "\n";
                         }
 
                         break;
@@ -1698,7 +1734,7 @@ namespace RealtimePPUR.Forms
                     { "EXPECTEDMANIASCORE", ConfigValueToString(expectedManiaScoreToolStripMenuItem.Checked) },
                     { "AVGOFFSET", ConfigValueToString(avgOffsetToolStripMenuItem.Checked) },
                     { "PROGRESS", ConfigValueToString(progressToolStripMenuItem.Checked) },
-                    { "IFFCPP", ConfigValueToString(ifFCPPToolStripMenuItem.Checked) },
+                    { "IFFCPP", ConfigValueToString(LossModePPToolStripMenuItem.Checked) },
                     { "HEALTHPERCENTAGE", ConfigValueToString(healthPercentageToolStripMenuItem.Checked) },
                     { "CURRENTPOSITION", ConfigValueToString(currentPositionToolStripMenuItem.Checked) },
                     { "HIGHERSCOREDIFF", ConfigValueToString(higherScoreToolStripMenuItem.Checked) },

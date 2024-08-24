@@ -12,6 +12,7 @@ namespace RealtimePPUR.Classes
         public PerformanceAttributes PerformanceAttributes { get; set; }
         public DifficultyAttributes DifficultyAttributesIffc { get; set; }
         public PerformanceAttributes PerformanceAttributesIffc { get; set; }
+        public PerformanceAttributes PerformanceAttributesLossMode { get; set; }
         public Dictionary<HitResult, int> HitResults { get; set; }
         public Dictionary<HitResult, int> IfFcHitResult { get; set; }
         public Dictionary<HitResult, int> HitResultLossMode { get; set; }

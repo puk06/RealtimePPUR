@@ -10,6 +10,5 @@ namespace RealtimePPUR.Classes
         public bool NoClassicMod { get; set; }
         public string[] Mods { get; set; } = Array.Empty<string>();
         public int? Time { get; set; }
-        public bool PplossMode { get; set; }
     }
 }
