@@ -198,14 +198,13 @@ namespace RealtimePPUR.Forms
 
                 sRToolStripMenuItem.Checked = CheckConfigDictionaryValue("SR");
                 sSPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("SSPP");
-                currentPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTPP");
                 currentACCToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTACC");
                 hitsToolStripMenuItem.Checked = CheckConfigDictionaryValue("HITS");
                 uRToolStripMenuItem.Checked = CheckConfigDictionaryValue("UR");
                 offsetHelpToolStripMenuItem.Checked = CheckConfigDictionaryValue("OFFSETHELP");
                 avgOffsetToolStripMenuItem.Checked = CheckConfigDictionaryValue("AVGOFFSET");
                 progressToolStripMenuItem.Checked = CheckConfigDictionaryValue("PROGRESS");
-                ifFCPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("LOSSMODEPP");
+                ifFCPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("IFFCPP");
                 ifFCHitsToolStripMenuItem.Checked = CheckConfigDictionaryValue("IFFCHITS");
                 expectedManiaScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("EXPECTEDMANIASCORE");
                 healthPercentageToolStripMenuItem.Checked = CheckConfigDictionaryValue("HEALTHPERCENTAGE");
@@ -260,7 +259,7 @@ namespace RealtimePPUR.Forms
                                 var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                                 if (!fontsizeResult)
                                 {
-                                    ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
+                                    ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                 }
                                 else
@@ -268,7 +267,7 @@ namespace RealtimePPUR.Forms
                                     var result = float.TryParse(fontsizeValue, out float fontsize);
                                     if (!result)
                                     {
-                                        ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
+                                        ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                                         inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                     }
                                     else
@@ -284,7 +283,7 @@ namespace RealtimePPUR.Forms
                             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                             if (!fontsizeResult)
                             {
-                                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
+                                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                             }
                             else
@@ -292,7 +291,7 @@ namespace RealtimePPUR.Forms
                                 var result = float.TryParse(fontsizeValue, out float fontsize);
                                 if (!result)
                                 {
-                                    ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
+                                    ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                 }
                                 else
@@ -307,7 +306,7 @@ namespace RealtimePPUR.Forms
                         var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                         if (!fontsizeResult)
                         {
-                            ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
+                            ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                             inGameValue.Font = new Font(InGameOverlayFont, 19F);
                         }
                         else
@@ -315,7 +314,7 @@ namespace RealtimePPUR.Forms
                             var result = float.TryParse(fontsizeValue, out float fontsize);
                             if (!result)
                             {
-                                ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
+                                ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                             }
                             else
@@ -330,7 +329,7 @@ namespace RealtimePPUR.Forms
                     var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                     if (!fontsizeResult)
                     {
-                        ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
+                        ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                         inGameValue.Font = new Font(InGameOverlayFont, 19F);
                     }
                     else
@@ -338,7 +337,7 @@ namespace RealtimePPUR.Forms
                         var result = float.TryParse(fontsizeValue, out float fontsize);
                         if (!result)
                         {
-                            ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
+                            ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
                             inGameValue.Font = new Font(InGameOverlayFont, 19F);
                         }
                         else
@@ -1155,7 +1154,7 @@ namespace RealtimePPUR.Forms
             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
             if (!fontsizeResult)
             {
-                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
+                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
             }
             else
