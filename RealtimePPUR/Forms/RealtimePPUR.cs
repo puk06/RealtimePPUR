@@ -126,7 +126,7 @@ namespace RealtimePPUR.Forms
                 offsetHelpToolStripMenuItem.Checked = false;
                 avgOffsetToolStripMenuItem.Checked = false;
                 progressToolStripMenuItem.Checked = false;
-                LossModePPToolStripMenuItem.Checked = false;
+                ifFCPPToolStripMenuItem.Checked = false;
                 ifFCHitsToolStripMenuItem.Checked = false;
                 expectedManiaScoreToolStripMenuItem.Checked = false;
                 healthPercentageToolStripMenuItem.Checked = false;
@@ -205,7 +205,7 @@ namespace RealtimePPUR.Forms
                 offsetHelpToolStripMenuItem.Checked = CheckConfigDictionaryValue("OFFSETHELP");
                 avgOffsetToolStripMenuItem.Checked = CheckConfigDictionaryValue("AVGOFFSET");
                 progressToolStripMenuItem.Checked = CheckConfigDictionaryValue("PROGRESS");
-                LossModePPToolStripMenuItem.Checked = CheckConfigDictionaryValue("LOSSMODEPP");
+                ifFCPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("LOSSMODEPP");
                 ifFCHitsToolStripMenuItem.Checked = CheckConfigDictionaryValue("IFFCHITS");
                 expectedManiaScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("EXPECTEDMANIASCORE");
                 healthPercentageToolStripMenuItem.Checked = CheckConfigDictionaryValue("HEALTHPERCENTAGE");
@@ -260,7 +260,7 @@ namespace RealtimePPUR.Forms
                                 var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                                 if (!fontsizeResult)
                                 {
-                                    ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
+                                    ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
                                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                 }
                                 else
@@ -268,7 +268,7 @@ namespace RealtimePPUR.Forms
                                     var result = float.TryParse(fontsizeValue, out float fontsize);
                                     if (!result)
                                     {
-                                        ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
+                                        ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
                                         inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                     }
                                     else
@@ -284,7 +284,7 @@ namespace RealtimePPUR.Forms
                             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                             if (!fontsizeResult)
                             {
-                                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
+                                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
                                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                             }
                             else
@@ -292,7 +292,7 @@ namespace RealtimePPUR.Forms
                                 var result = float.TryParse(fontsizeValue, out float fontsize);
                                 if (!result)
                                 {
-                                    ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
+                                    ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
                                     inGameValue.Font = new Font(InGameOverlayFont, 19F);
                                 }
                                 else
@@ -307,7 +307,7 @@ namespace RealtimePPUR.Forms
                         var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                         if (!fontsizeResult)
                         {
-                            ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
+                            ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
                             inGameValue.Font = new Font(InGameOverlayFont, 19F);
                         }
                         else
@@ -315,7 +315,7 @@ namespace RealtimePPUR.Forms
                             var result = float.TryParse(fontsizeValue, out float fontsize);
                             if (!result)
                             {
-                                ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
+                                ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
                                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                             }
                             else
@@ -330,7 +330,7 @@ namespace RealtimePPUR.Forms
                     var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
                     if (!fontsizeResult)
                     {
-                        ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
+                        ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
                         inGameValue.Font = new Font(InGameOverlayFont, 19F);
                     }
                     else
@@ -338,7 +338,7 @@ namespace RealtimePPUR.Forms
                         var result = float.TryParse(fontsizeValue, out float fontsize);
                         if (!result)
                         {
-                            ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
+                            ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の18が適用されます。");
                             inGameValue.Font = new Font(InGameOverlayFont, 19F);
                         }
                         else
@@ -381,7 +381,7 @@ namespace RealtimePPUR.Forms
                 {
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     bool isPlayingBool = isplaying;
-                    bool isResultScreenValue = isResultScreen;
+                    bool isResultScreenBool = isResultScreen;
                     int currentGamemodeValue = currentGamemode;
                     OsuMemoryStatus status = currentStatus;
 
@@ -488,7 +488,7 @@ namespace RealtimePPUR.Forms
                             iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
                         }
                     } 
-                    else if (isResultScreen)
+                    else if (isResultScreenBool)
                     {
                         if (currentGamemodeValue != 3)
                         {
@@ -1155,7 +1155,7 @@ namespace RealtimePPUR.Forms
             var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string fontsizeValue);
             if (!fontsizeResult)
             {
-                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
+                ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の18が適用されます。");
                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
             }
             else
@@ -1481,7 +1481,7 @@ namespace RealtimePPUR.Forms
                     case 3:
                         if (currentPPToolStripMenuItem.Checked)
                         {
-                            if (LossModePPToolStripMenuItem.Checked)
+                            if (ifFCPPToolStripMenuItem.Checked)
                             {
                                 if (currentGamemodeValue is 1 or 3)
                                 {
@@ -1578,7 +1578,7 @@ namespace RealtimePPUR.Forms
                     case 8:
                         if (offsetHelpToolStripMenuItem.Checked)
                         {
-                            displayFormat += "OffsetHelp: " + Math.Round(avgOffsethelp) + "\n";
+                            displayFormat += "Offset: " + Math.Round(avgOffsethelp) + "\n";
                         }
 
                         break;
@@ -1734,7 +1734,7 @@ namespace RealtimePPUR.Forms
                     { "EXPECTEDMANIASCORE", ConfigValueToString(expectedManiaScoreToolStripMenuItem.Checked) },
                     { "AVGOFFSET", ConfigValueToString(avgOffsetToolStripMenuItem.Checked) },
                     { "PROGRESS", ConfigValueToString(progressToolStripMenuItem.Checked) },
-                    { "IFFCPP", ConfigValueToString(LossModePPToolStripMenuItem.Checked) },
+                    { "IFFCPP", ConfigValueToString(ifFCPPToolStripMenuItem.Checked) },
                     { "HEALTHPERCENTAGE", ConfigValueToString(healthPercentageToolStripMenuItem.Checked) },
                     { "CURRENTPOSITION", ConfigValueToString(currentPositionToolStripMenuItem.Checked) },
                     { "HIGHERSCOREDIFF", ConfigValueToString(higherScoreToolStripMenuItem.Checked) },

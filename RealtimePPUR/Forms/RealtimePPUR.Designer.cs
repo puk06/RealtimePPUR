@@ -61,7 +61,7 @@ namespace RealtimePPUR.Forms
             expectedManiaScoreToolStripMenuItem = new ToolStripMenuItem();
             avgOffsetToolStripMenuItem = new ToolStripMenuItem();
             progressToolStripMenuItem = new ToolStripMenuItem();
-            LossModePPToolStripMenuItem = new ToolStripMenuItem();
+            ifFCPPToolStripMenuItem = new ToolStripMenuItem();
             healthPercentageToolStripMenuItem = new ToolStripMenuItem();
             currentPositionToolStripMenuItem = new ToolStripMenuItem();
             higherScoreToolStripMenuItem = new ToolStripMenuItem();
@@ -241,7 +241,7 @@ namespace RealtimePPUR.Forms
             // 
             // inGameOverlayToolStripMenuItem
             // 
-            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, LossModePPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem });
+            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem });
             inGameOverlayToolStripMenuItem.Name = "inGameOverlayToolStripMenuItem";
             inGameOverlayToolStripMenuItem.Size = new Size(190, 22);
             inGameOverlayToolStripMenuItem.Text = "InGameOverlay";
@@ -323,12 +323,12 @@ namespace RealtimePPUR.Forms
             progressToolStripMenuItem.Text = "Progress";
             progressToolStripMenuItem.Click += ToggleChecked;
             // 
-            // LossModePPToolStripMenuItem
+            // ifFCPPToolStripMenuItem
             // 
-            LossModePPToolStripMenuItem.Name = "LossModePPToolStripMenuItem";
-            LossModePPToolStripMenuItem.Size = new Size(184, 22);
-            LossModePPToolStripMenuItem.Text = "LossModePP";
-            LossModePPToolStripMenuItem.Click += ToggleChecked;
+            ifFCPPToolStripMenuItem.Name = "ifFCPPToolStripMenuItem";
+            ifFCPPToolStripMenuItem.Size = new Size(184, 22);
+            ifFCPPToolStripMenuItem.Text = "IFFCPP | LossModePP";
+            ifFCPPToolStripMenuItem.Click += ToggleChecked;
             // 
             // healthPercentageToolStripMenuItem
             // 
@@ -513,7 +513,7 @@ namespace RealtimePPUR.Forms
         private System.Windows.Forms.ToolStripMenuItem changeFontToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetFontToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadFontToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem LossModePPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ifFCPPToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ifFCHitsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expectedManiaScoreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changePriorityToolStripMenuItem;
