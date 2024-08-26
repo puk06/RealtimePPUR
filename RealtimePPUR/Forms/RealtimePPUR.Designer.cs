@@ -217,6 +217,7 @@ namespace RealtimePPUR.Forms
             realtimePPURToolStripMenuItem.Size = new Size(148, 22);
             realtimePPURToolStripMenuItem.Text = "RealtimePPUR";
             realtimePPURToolStripMenuItem.Click += RealtimePPURToolStripMenuItem_Click;
+            realtimePPURToolStripMenuItem.Checked = true;
             // 
             // offsetHelperToolStripMenuItem
             // 

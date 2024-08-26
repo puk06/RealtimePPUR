@@ -193,6 +193,7 @@ namespace RealtimePPUR.Forms
                                 mode = 2;
                                 break;
                         }
+                        ChangeSoftwareMode(mode);
                     }
                 }
 
@@ -1010,6 +1011,7 @@ namespace RealtimePPUR.Forms
             DebugLogger("RealtimePPUR mode enabled.");
 
             mode = 0;
+            ChangeSoftwareMode(mode);
         }
 
         private void RealtimePPToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1031,6 +1033,7 @@ namespace RealtimePPUR.Forms
             DebugLogger("RealtimePP mode enabled.");
 
             mode = 1;
+            ChangeSoftwareMode(mode);
         }
 
         private void OffsetHelperToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1052,6 +1055,7 @@ namespace RealtimePPUR.Forms
             DebugLogger("Offset Helper mode enabled.");
 
             mode = 2;
+            ChangeSoftwareMode(mode);
         }
 
         // Font
@@ -1432,6 +1436,30 @@ namespace RealtimePPUR.Forms
                 avgoffset.Visible = true;
                 ur.Visible = true;
                 avgoffsethelp.Visible = true;
+            }
+        }
+
+        private void ChangeSoftwareMode(int softwareMode)
+        {
+            switch (softwareMode)
+            {
+                case 0:
+                    realtimePPURToolStripMenuItem.Checked = true;
+                    realtimePPToolStripMenuItem.Checked = false;
+                    offsetHelperToolStripMenuItem.Checked = false;
+                    break;
+
+                case 1:
+                    realtimePPURToolStripMenuItem.Checked = false;
+                    realtimePPToolStripMenuItem.Checked = true;
+                    offsetHelperToolStripMenuItem.Checked = false;
+                    break;
+
+                case 2:
+                    realtimePPURToolStripMenuItem.Checked = false;
+                    realtimePPToolStripMenuItem.Checked = false;
+                    offsetHelperToolStripMenuItem.Checked = true;
+                    break;
             }
         }
 
