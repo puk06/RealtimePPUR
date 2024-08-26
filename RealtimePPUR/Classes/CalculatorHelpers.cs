@@ -485,7 +485,7 @@ namespace RealtimePPUR.Classes
                         var katu = statistics[HitResult.Meh];
                         var h0 = statistics[HitResult.Miss];
                         int total = h300 + h100 + h50 + h0 + geki + katu;
-                        double acc = total > 0 ? (h50 * 50 + h100 * 100 + katu * 200 + (h300 + geki) * 300) / (total * 300.0) : 1;
+                        double acc = total > 0 ? ((h50 * 50) + (h100 * 100) + (katu * 200) + ((h300 + geki) * 300)) / (total * 300.0) : 1;
 
                         rank = acc switch
                         {
