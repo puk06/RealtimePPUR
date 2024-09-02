@@ -122,7 +122,7 @@ namespace RealtimePPUR.Classes
                 var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
 
                 data.HitResultLossMode = staticsLoss;
-                data.HitResults = staticsForCalcIfFc;
+                data.IfFcHitResult = staticsForCalcIfFc;
 
                 if (mode is 1 or 3)
                 {

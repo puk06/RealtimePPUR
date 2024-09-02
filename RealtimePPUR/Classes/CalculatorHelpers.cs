@@ -452,7 +452,6 @@ namespace RealtimePPUR.Classes
 
                     break;
 
-
                 case 2:
                     {
                         var h300 = statistics[HitResult.Great];
