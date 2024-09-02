@@ -18,7 +18,9 @@ const SOFTWARE_LIBRARY = [
     "Newtonsoft.Json.dll",
     "Octokit.dll",
     "OsuMemoryDataProvider.dll",
-    "ProcessMemoryDataFinder.dll"
+    "ProcessMemoryDataFinder.dll",
+    "MessagePack.dll",
+    "MessagePack.Annotations.dll"
 ];
 
 const REALTIMEPPUR_FILES = [
@@ -28,7 +30,7 @@ const REALTIMEPPUR_FILES = [
     "RealtimePPUR.runtimeconfig.json"
 ];
 
-const BUILD_FOLDER = "../../../build";
+const BUILD_FOLDER = "../../build";
 
 if (!fs.existsSync(BUILD_FOLDER)) {
     fs.mkdirSync(BUILD_FOLDER);
