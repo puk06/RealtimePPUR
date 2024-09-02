@@ -28,7 +28,7 @@ const REALTIMEPPUR_FILES = [
     "RealtimePPUR.runtimeconfig.json"
 ];
 
-const BUILD_FOLDER = "./build";
+const BUILD_FOLDER = "../../../build";
 
 if (!fs.existsSync(BUILD_FOLDER)) {
     fs.mkdirSync(BUILD_FOLDER);
@@ -67,19 +67,17 @@ for (const file of REALTIMEPPUR_FILES) {
     fs.unlinkSync(file);
 }
 
-const files2 = fs.readdirSync(".");
-for (const file of files2) {
-    if (file !== "build" && file !== "build.js") {
-        const filePath = path.join(".", file);
-        const stat = fs.statSync(filePath);
+const fileList = fs.readdirSync(".");
+for (const file of fileList) {
+    const filePath = path.join(".", file);
+    const stat = fs.statSync(filePath);
 
-        if (stat.isDirectory()) {
-            console.log(`Deleting folder ${filePath}`);
-            fs.rmSync(filePath, { recursive: true, force: true });
-        } else {
-            console.log(`Deleting file ${filePath}`);
-            fs.unlinkSync(filePath);
-        }
+    if (stat.isDirectory()) {
+        console.log(`Deleting folder ${filePath}`);
+        fs.rmSync(filePath, { recursive: true, force: true });
+    } else {
+        console.log(`Deleting file ${filePath}`);
+        fs.unlinkSync(filePath);
     }
 }
 

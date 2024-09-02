@@ -53,4 +53,12 @@
 		<NoWarn>$(NoWarn);CA1416</NoWarn>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
+
+	<Target Name="CopyAndRunBuildJs" AfterTargets="AfterBuild">
+		<!-- Copy build.js to the output directory -->
+		<Copy SourceFiles="build.js" DestinationFolder="$(OutDir)" />
+
+		<!-- Run node build.js with the output directory as the working directory -->
+		<Exec Command="node build.js" WorkingDirectory="$(OutDir)" />
+	</Target>
 </Project>
