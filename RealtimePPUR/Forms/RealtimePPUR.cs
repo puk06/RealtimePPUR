@@ -197,6 +197,7 @@ namespace RealtimePPUR.Forms
                     }
                 }
 
+                // InGameOverlay
                 sRToolStripMenuItem.Checked = CheckConfigDictionaryValue("SR");
                 sSPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("SSPP");
                 currentPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTPP");
@@ -216,6 +217,7 @@ namespace RealtimePPUR.Forms
                 userScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("USERSCORE");
                 currentBPMToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTBPM");
                 currentRankToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTRANK");
+
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
                 ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18");
