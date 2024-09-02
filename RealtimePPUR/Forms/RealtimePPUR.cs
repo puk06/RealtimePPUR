@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.0-Release";
+        private const string CURRENT_VERSION = "v1.1.1-Release";
         private const bool DEBUG_MODE = true;
 
         private Label currentPp, sr, iffc, good, ok, miss, avgoffset, ur, avgoffsethelp;
@@ -199,6 +199,7 @@ namespace RealtimePPUR.Forms
 
                 sRToolStripMenuItem.Checked = CheckConfigDictionaryValue("SR");
                 sSPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("SSPP");
+                currentPPToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTPP");
                 currentACCToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTACC");
                 hitsToolStripMenuItem.Checked = CheckConfigDictionaryValue("HITS");
                 uRToolStripMenuItem.Checked = CheckConfigDictionaryValue("UR");
@@ -379,6 +380,7 @@ namespace RealtimePPUR.Forms
                 await Task.Delay(15);
                 try
                 {
+                    if (!TopMost) TopMost = true;
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     bool isPlayingBool = isplaying;
                     bool isResultScreenBool = isResultScreen;
