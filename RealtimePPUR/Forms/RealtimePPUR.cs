@@ -25,7 +25,7 @@ namespace RealtimePPUR.Forms
     public sealed partial class RealtimePpur : Form
     {
         private const string CURRENT_VERSION = "v1.1.1-Release";
-        private const bool DEBUG_MODE = true;
+        private const bool DEBUG_MODE = false;
 
         private Label currentPp, sr, iffc, good, ok, miss, avgoffset, ur, avgoffsethelp;
 

@@ -8,6 +8,8 @@ const OSU_LIBRARY = [
     "osu.Game.Rulesets.Catch.dll",
     "osu.Game.Rulesets.Mania.dll",
     "osu.Framework.dll",
+    "MessagePack.dll",
+    "MessagePack.Annotations.dll",
     "AutoMapper.dll",
     "osuTK.dll",
     "Realm.dll"
@@ -18,9 +20,7 @@ const SOFTWARE_LIBRARY = [
     "Newtonsoft.Json.dll",
     "Octokit.dll",
     "OsuMemoryDataProvider.dll",
-    "ProcessMemoryDataFinder.dll",
-    "MessagePack.dll",
-    "MessagePack.Annotations.dll"
+    "ProcessMemoryDataFinder.dll"
 ];
 
 const REALTIMEPPUR_FILES = [
