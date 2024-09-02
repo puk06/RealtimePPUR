@@ -5,22 +5,13 @@ using System.Text;
 
 namespace RealtimePPUR.Updater.Classes
 {
-    public class Updater
+    public class Updater(string version)
     {
-        private readonly string version;
-        private readonly string arch;
-
-        public Updater(string version, string arch)
-        {
-            this.version = version;
-            this.arch = arch;
-        }
-
         private const string BASEURL = "https://github.com/puk06/RealtimePPUR/releases/download/";
 
         public async Task Update()
         {
-            var downloadUrl = $"{BASEURL}{version}/RealtimePPUR-{arch}.zip";
+            var downloadUrl = $"{BASEURL}{version}/RealtimePPUR.zip";
             var tempPath = Path.GetTempPath();
             var tempFile = Path.Combine(tempPath, "RealtimePPUR.zip");
             var extractPath = Path.Combine(tempPath, "RealtimePPUR.Temp");

@@ -48,8 +48,7 @@ namespace RealtimePPUR.Updater
                 }
 
                 Console.WriteLine("RealtimePPURを終了しました。アップデートを開始します。");
-                var arch = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-                var updater = new Classes.Updater(latestVersion, arch);
+                var updater = new Classes.Updater(latestVersion);
 
                 await updater.Update();
 
