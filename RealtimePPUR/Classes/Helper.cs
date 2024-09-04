@@ -262,7 +262,7 @@ namespace RealtimePPUR.Classes
                 ProcessStartInfo args = new()
                 {
                     FileName = $"\"{updaterPath}\"",
-                    Arguments = $"\"{currentVersion}\" \"{author}\" \"{repository}\"",
+                    Arguments = $"\"{latestRelease}\" \"{author}\" \"{repository}\"",
                     UseShellExecute = true
                 };
 
