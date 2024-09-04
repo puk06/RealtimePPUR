@@ -25,7 +25,11 @@ namespace RealtimePPUR.Forms
     public sealed partial class RealtimePpur : Form
     {
         private const string CURRENT_VERSION = "v1.1.1-Release";
+#if DEBUG
+        private const bool DEBUG_MODE = true;
+#else
         private const bool DEBUG_MODE = false;
+#endif
 
         private Label currentPp, sr, iffc, good, ok, miss, avgoffset, ur, avgoffsethelp;
 
@@ -491,7 +495,7 @@ namespace RealtimePPUR.Forms
                         {
                             iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
                         }
-                    } 
+                    }
                     else if (isResultScreenBool)
                     {
                         if (currentGamemodeValue != 3)
@@ -710,7 +714,7 @@ namespace RealtimePPUR.Forms
 
                             if (File.Exists(osuBeatmapPath)) DebugLogger("Beatmap file found.");
                         }
-                        
+
                         if (!File.Exists(osuBeatmapPath)) throw new Exception("Beatmap file not found.");
 
                         int currentBeatmapGamemodeTemp = await GetMapMode(osuBeatmapPath);
