@@ -249,18 +249,20 @@ namespace RealtimePPUR.Classes
                         "アップデートのお知らせ", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result != DialogResult.Yes) return;
 
-                if (!File.Exists("./Updater/RealtimePPUR.Updater.exe"))
+                if (!File.Exists("./Updater/Software Updater.exe"))
                 {
                     MessageBox.Show("アップデーターが見つかりませんでした。手動でダウンロードしてください。", "エラー", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return;
                 }
 
-                string updaterPath = Path.GetFullPath("./Updater/RealtimePPUR.Updater.exe");
+                string updaterPath = Path.GetFullPath("./Updater/Software Updater.exe");
+                const string author = "puk06";
+                const string repository = "RealtimePPUR";
                 ProcessStartInfo args = new()
                 {
                     FileName = $"\"{updaterPath}\"",
-                    Arguments = currentVersion,
+                    Arguments = $"\"{currentVersion}\" \"{author}\" \"{repository}\"",
                     UseShellExecute = true
                 };
 
@@ -335,7 +337,7 @@ namespace RealtimePPUR.Classes
         public static void ShowErrorMessageBox(string message) =>
             MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-        public static void ShowInformationMessageBox(string message) => 
+        public static void ShowInformationMessageBox(string message) =>
             MessageBox.Show(message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         public static void DebugLogger(string message)
