@@ -259,10 +259,11 @@ namespace RealtimePPUR.Classes
                 string updaterPath = Path.GetFullPath("./Updater/Software Updater.exe");
                 const string author = "puk06";
                 const string repository = "RealtimePPUR";
+                const string executableName = "RealtimePPUR";
                 ProcessStartInfo args = new()
                 {
                     FileName = $"\"{updaterPath}\"",
-                    Arguments = $"\"{latestRelease}\" \"{author}\" \"{repository}\"",
+                    Arguments = $"\"{latestRelease}\" \"{author}\" \"{repository}\" \"{executableName}\"",
                     UseShellExecute = true
                 };
 
