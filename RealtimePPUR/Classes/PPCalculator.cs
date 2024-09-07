@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets;
@@ -45,7 +47,8 @@ namespace RealtimePPUR.Classes
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
 
             // Fix the combo for osu! standard
-            difficultyAttributes.MaxCombo = GetMaxCombo(beatmap, mode);
+            var maxCombo = GetMaxCombo(beatmap, mode);
+            difficultyAttributes.MaxCombo = maxCombo;
 
             var performanceCalculator = ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
@@ -72,7 +75,8 @@ namespace RealtimePPUR.Classes
                     Accuracy = args.Accuracy / 100,
                     MaxCombo = args.Combo,
                     Statistics = statisticsCurrent,
-                    Mods = mods
+                    Mods = mods,
+                    TotalScore = args.Score
                 };
                 var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
                 data.CurrentPerformanceAttributes = performanceAttributesResult;
@@ -112,6 +116,10 @@ namespace RealtimePPUR.Classes
                 var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
                 var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
                 var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
+
+                // Fix the combo for osu! standard
+                difficultyAttributesCurrent.MaxCombo = maxCombo;
+
                 var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
                 var performanceAttributesCurrent = performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
 
