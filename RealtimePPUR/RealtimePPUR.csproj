@@ -62,6 +62,6 @@
 		<Exec Command="node build.js" WorkingDirectory="$(OutDir)" />
 
 		<!-- Run RealtimePPUR.exe from the bin/build directory -->
-		<Exec Command="RealtimePPUR.exe" WorkingDirectory="bin\build" />
+		<!-- <Exec Command="RealtimePPUR.exe" WorkingDirectory="bin\build" /> -->
 	</Target>
 </Project>
