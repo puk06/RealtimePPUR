@@ -18,8 +18,9 @@ If you enjoy my work and would like to support my efforts, you can buy me a coff
 - **リアルタイムで表示されるPPやUR、SR**
   > * リアルタイムでSR、PP、URを計算してソフト上、InGameOverlayに表示します！
 
-- **PPやSR、Hitsなど、すべての情報を表示することができるInGameOverlay**
+- **PPやSR、Hitsなど、様々な情報を表示することができるInGameOverlay**
   > * 様々なカスタマイズが可能なInGameOverlay(ゲーム内オーバーレイ)!
+  > * injectorを使わないので、osu!の規約に違反することはありません！
 
 - **他人のリプレイ画面を開くとPPを見ることができる機能**
   > * ランキングなどで他人のリザルトを開くと、IFFC、SSPP、SR、PPを計算して表示します！
@@ -34,10 +35,18 @@ If you enjoy my work and would like to support my efforts, you can buy me a coff
   > * コンバートのところでも話しましたが、このソフトは全Modeに完全対応しています！！！
 
 # How to use
-RealtimePPUR.exeを起動するだけです。
+青く、PPと書かれたアイコンのRealtimePPUR.exeを起動するだけです。
 
 # How to switch to Offset Helper and RealtimePP?
 ソフト上で右クリック→Modeから変更できます。
+
+# How to save Config?
+右クリックメニューからSave Configをクリックすることで設定を保存できます。
+
+# How to edit Config?
+フォルダ内にあるConfig.cfgを編集することで設定を変更できます。
+
+説明がたくさんあるので、わかりやすいと思います。
 
 # How to use InGameOverlay?
 
@@ -53,7 +62,7 @@ RealtimePPUR.exeを起動するだけです。
 
 InGameOverlayに表示するものは右クリックメニューのInGameOverlayから編集できます。
 <br>
-その他細かい設定(デフォルトでオンにしておく物や位置、フォントサイズなど)はフォルダ内のConfig.txtを編集することで設定を変更できます。
+その他細かい設定(デフォルトでオンにしておく物や位置、フォントサイズなど)はフォルダ内のConfig.cfgを編集することで設定を変更できます。
 
 # Special Thanks
 - **[Vanilla](https://twitter.com/Van1IIa) For Saggesting IngameOverlay Font!!!**
