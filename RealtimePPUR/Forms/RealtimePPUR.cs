@@ -45,7 +45,7 @@ namespace RealtimePPUR.Forms
         private bool isDirectoryLoaded;
         private string osuDirectory;
         private string songsPath;
-        private string preTitle;
+        private string preMapPath;
         private PpCalculator calculator;
         private bool isplaying;
         private bool isResultScreen;
@@ -664,6 +664,8 @@ namespace RealtimePPUR.Forms
                     bool resultScreen = isResultScreen;
                     string currentMapString = baseAddresses.Beatmap.MapString;
                     string currentOsuFileName = baseAddresses.Beatmap.OsuFileName;
+                    string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
+                        currentOsuFileName ?? "");
                     OsuMemoryStatus status = currentStatus;
 
                     if (status == OsuMemoryStatus.Playing)
@@ -682,13 +684,9 @@ namespace RealtimePPUR.Forms
                         avgOffsethelp = (int)Math.Round(-avgOffset);
                     }
 
-                    if (preTitle != currentMapString)
+                    if (preMapPath != osuBeatmapPath)
                     {
                         DebugLogger("Map change detected.");
-                        DebugLogger($"{preTitle} -> {currentMapString}");
-                        DebugLogger($"Current map string: {currentMapString}");
-                        string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
-                            currentOsuFileName ?? "");
                         DebugLogger($"Current beatmap path: {osuBeatmapPath}");
 
                         if (!File.Exists(osuBeatmapPath))
@@ -736,7 +734,7 @@ namespace RealtimePPUR.Forms
                             DebugLogger("Calculator updated.");
                         }
 
-                        preTitle = currentMapString;
+                        preMapPath = currentMapString;
                     }
 
                     if (currentOsuGamemode != preOsuGamemode)

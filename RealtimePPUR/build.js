@@ -12,12 +12,12 @@ const OSU_LIBRARY = [
     "MessagePack.Annotations.dll",
     "AutoMapper.dll",
     "osuTK.dll",
-    "Realm.dll"
+    "Realm.dll",
+    "Newtonsoft.Json.dll",
 ];
 
 const SOFTWARE_LIBRARY = [
-    "DiscordRPC.dll",
-    "Newtonsoft.Json.dll",
+    "DiscordRPC.dll"
     "Octokit.dll",
     "OsuMemoryDataProvider.dll",
     "ProcessMemoryDataFinder.dll"
