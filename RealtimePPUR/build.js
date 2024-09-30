@@ -17,7 +17,7 @@ const OSU_LIBRARY = [
 ];
 
 const SOFTWARE_LIBRARY = [
-    "DiscordRPC.dll"
+    "DiscordRPC.dll",
     "Octokit.dll",
     "OsuMemoryDataProvider.dll",
     "ProcessMemoryDataFinder.dll"
