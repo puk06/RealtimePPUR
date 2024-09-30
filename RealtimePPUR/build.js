@@ -13,7 +13,7 @@ const OSU_LIBRARY = [
     "AutoMapper.dll",
     "osuTK.dll",
     "Realm.dll",
-    "Newtonsoft.Json.dll",
+    "Newtonsoft.Json.dll"
 ];
 
 const SOFTWARE_LIBRARY = [
