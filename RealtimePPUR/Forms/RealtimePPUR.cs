@@ -462,7 +462,7 @@ namespace RealtimePPUR.Forms
                     double starRatingValue = IsNaNWithNum(Math.Round(calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
                     double ssppValue = IsNaNWithNum(calculatedObject.PerformanceAttributes.Total);
                     double currentPpValue = IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total);
-                    if (pPLossModeToolStripMenuItem.Checked) currentPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
+                    if (pPLossModeToolStripMenuItem.Checked && !isResultScreenBool) currentPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
                     double ifFcPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesIffc.Total);
                     double lossPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
 
