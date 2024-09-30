@@ -734,7 +734,7 @@ namespace RealtimePPUR.Forms
                             DebugLogger("Calculator updated.");
                         }
 
-                        preMapPath = currentMapString;
+                        preMapPath = osuBeatmapPath;
                     }
 
                     if (currentOsuGamemode != preOsuGamemode)
