@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.2-Release";
+        private const string CURRENT_VERSION = "v1.1.3-Release";
 #if DEBUG
         private const bool DEBUG_MODE = true;
 #else
@@ -1518,12 +1518,23 @@ namespace RealtimePPUR.Forms
                             {
                                 if (currentGamemodeValue is 1 or 3)
                                 {
-                                    displayFormat += "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(lossModePpValue) + "pp\n";
+                                    if (pPLossModeToolStripMenuItem.Checked)
+                                    {
+                                        displayFormat += "PP: " + Math.Round(lossModePpValue) + " / " + Math.Round(ifFcPpValue) + "pp\n";
+                                    }
+                                    else
+                                    {
+                                        displayFormat += "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(lossModePpValue) + "pp\n";
+                                    }
                                 }
                                 else
                                 {
                                     displayFormat += "PP: " + Math.Round(currentPpValue) + " / " + Math.Round(ifFcPpValue) + "pp\n";
                                 }
+                            }
+                            else if (currentGamemodeValue is 1 or 3 && pPLossModeToolStripMenuItem.Checked)
+                            {
+                                displayFormat += "PP: " + Math.Round(lossModePpValue) + "pp\n";
                             }
                             else
                             {
