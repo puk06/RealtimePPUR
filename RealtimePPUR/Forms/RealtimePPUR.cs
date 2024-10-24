@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.3-Release";
+        private const string CURRENT_VERSION = "v1.1.4-Release";
 #if DEBUG
         private const bool DEBUG_MODE = true;
 #else
@@ -52,6 +52,7 @@ namespace RealtimePPUR.Forms
         private double avgOffset;
         private double avgOffsethelp;
         private int urValue;
+        private int urCount;
         private const bool IS_NO_CLASSIC_MOD = true;
         private int currentBeatmapGamemode;
         private int currentOsuGamemode;
@@ -662,7 +663,6 @@ namespace RealtimePPUR.Forms
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     bool playing = isplaying;
                     bool resultScreen = isResultScreen;
-                    string currentMapString = baseAddresses.Beatmap.MapString;
                     string currentOsuFileName = baseAddresses.Beatmap.OsuFileName;
                     string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
                         currentOsuFileName ?? "");
@@ -675,6 +675,7 @@ namespace RealtimePPUR.Forms
                                 ? 0
                                 : CalculateUnstableRate(baseAddresses.Player.HitErrors);
                         double currentAvgOffset = CalculateAverage(baseAddresses.Player.HitErrors);
+                        urCount = baseAddresses.Player.HitErrors.Count;
                         if (!double.IsNaN(currentUr)) urValue = (int)Math.Round(currentUr);
                         if (!double.IsNaN(currentAvgOffset))
                             avgOffset = baseAddresses.Player.HitErrors == null ||
@@ -1562,8 +1563,13 @@ namespace RealtimePPUR.Forms
                                     break;
 
                                 case 1:
-                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss} ({hits.HitGeki})\n";
-                                    break;
+                                    {
+                                        int totalHits = hits.Hit300 + hits.Hit100 + hits.HitMiss;
+                                        //Unstable Rate count
+                                        displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss} (Missing: {urCount - totalHits})\n";
+                                        break;
+                                    }
+
 
                                 case 2:
                                     displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";
