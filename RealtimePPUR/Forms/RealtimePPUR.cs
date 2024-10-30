@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.4-Release";
+        private const string CURRENT_VERSION = "v1.1.5-Release";
 #if DEBUG
         private const bool DEBUG_MODE = true;
 #else
@@ -52,7 +52,6 @@ namespace RealtimePPUR.Forms
         private double avgOffset;
         private double avgOffsethelp;
         private int urValue;
-        private int urCount;
         private const bool IS_NO_CLASSIC_MOD = true;
         private int currentBeatmapGamemode;
         private int currentOsuGamemode;
@@ -675,7 +674,6 @@ namespace RealtimePPUR.Forms
                                 ? 0
                                 : CalculateUnstableRate(baseAddresses.Player.HitErrors);
                         double currentAvgOffset = CalculateAverage(baseAddresses.Player.HitErrors);
-                        urCount = baseAddresses.Player.HitErrors.Count;
                         if (!double.IsNaN(currentUr)) urValue = (int)Math.Round(currentUr);
                         if (!double.IsNaN(currentAvgOffset))
                             avgOffset = baseAddresses.Player.HitErrors == null ||
@@ -1564,9 +1562,7 @@ namespace RealtimePPUR.Forms
 
                                 case 1:
                                     {
-                                        int totalHits = hits.Hit300 + hits.Hit100 + hits.HitMiss;
-                                        //Unstable Rate count
-                                        displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss} (Missing: {urCount - totalHits})\n";
+                                        displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss}\n";
                                         break;
                                     }
 
