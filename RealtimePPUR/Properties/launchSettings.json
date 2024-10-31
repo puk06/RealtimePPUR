@@ -1,8 +1,7 @@
 {
   "profiles": {
     "RealtimePPUR": {
-      "commandName": "Project",
-      "workingDirectory": "\\bin\\build"
+      "commandName": "Project"
     }
   }
 }

@@ -13,7 +13,9 @@ const OSU_LIBRARY = [
     "AutoMapper.dll",
     "osuTK.dll",
     "Realm.dll",
-    "Newtonsoft.Json.dll"
+    "Newtonsoft.Json.dll",
+    "nunit.framework.dll",
+    "ppy.ManagedBass.dll"
 ];
 
 const SOFTWARE_LIBRARY = [
