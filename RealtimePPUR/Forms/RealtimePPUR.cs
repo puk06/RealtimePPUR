@@ -1792,7 +1792,7 @@ namespace RealtimePPUR.Forms
                     { "CURRENTBPM", ConfigValueToString(currentBPMToolStripMenuItem.Checked) },
                     { "CURRENTRANK", ConfigValueToString(currentRankToolStripMenuItem.Checked) },
                     { "PPLOSSMODE", ConfigValueToString(pPLossModeToolStripMenuItem.Checked) },
-                    { "CALCULATEFIRST", ConfigValueToString(calculateFirstToolStripMenuItem.Checked)},
+                    { "CALCULATEFIRST", ConfigValueToString(calculateFirstToolStripMenuItem.Checked) },
                     { "DISCORDRICHPRESENCE", ConfigValueToString(discordRichPresenceToolStripMenuItem.Checked) }
                 };
 
