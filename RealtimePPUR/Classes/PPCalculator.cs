@@ -50,8 +50,6 @@ namespace RealtimePPUR.Classes
                 Mods = mods
             };
 
-            //var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
-            //var difficultyAttributes = difficultyCalculator.Calculate(mods);
             var difficultyAttributes = GetCurrentMapDifficultyAttributes(args);
 
             var performanceCalculator = ruleset.CreatePerformanceCalculator();
