@@ -141,6 +141,8 @@ namespace RealtimePPUR.Forms
                 currentBPMToolStripMenuItem.Checked = false;
                 discordRichPresenceToolStripMenuItem.Checked = false;
                 pPLossModeToolStripMenuItem.Checked = false;
+                calculateFirstToolStripMenuItem.Checked = false;
+
                 ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17";
                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                 customSongsFolder = "";
@@ -223,6 +225,7 @@ namespace RealtimePPUR.Forms
                 currentRankToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTRANK");
 
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
+                calculateFirstToolStripMenuItem.Checked = CheckConfigDictionaryValue("CALCULATEFIRST");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
                 ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18");
                 if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
@@ -838,7 +841,8 @@ namespace RealtimePPUR.Forms
                         Score = hits.Score,
                         NoClassicMod = IS_NO_CLASSIC_MOD,
                         Mods = mods,
-                        Time = baseAddresses.GeneralData.AudioTime
+                        Time = baseAddresses.GeneralData.AudioTime,
+                        CalculateBeforePlaying = calculateFirstToolStripMenuItem.Checked
                     };
                     var result = calculator?.Calculate(calcArgs, playing,
                         resultScreen && !playing, hits);

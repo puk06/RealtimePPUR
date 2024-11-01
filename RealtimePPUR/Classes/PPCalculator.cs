@@ -104,11 +104,25 @@ namespace RealtimePPUR.Classes
 
             if (!playing) return data;
             {
-                //Beatmap beatmapCurrent = new();
-                //var hitObjects = workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
-                //beatmapCurrent.HitObjects.AddRange(hitObjects);
-                //beatmapCurrent.ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo;
-                //beatmapCurrent.BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo;
+                DifficultyAttributes difficultyAttributesCurrent;
+
+                if (args.CalculateBeforePlaying)
+                {
+                    difficultyAttributesCurrent = GetCurrentDifficultyAttributes(beatmap, args, args.Time);
+                }
+                else
+                {
+                    Beatmap beatmapCurrent = new();
+                    var hitObjects = workingBeatmap.Beatmap.HitObjects.Where(h => h.StartTime <= args.Time).ToList();
+                    beatmapCurrent.HitObjects.AddRange(hitObjects);
+                    beatmapCurrent.ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo;
+                    beatmapCurrent.BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo;
+
+                    var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
+                    var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
+                    difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
+                }
+
                 var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                 {
                     Accuracy = GetAccuracy(statisticsCurrent, mode),
@@ -117,11 +131,6 @@ namespace RealtimePPUR.Classes
                     Mods = mods,
                     TotalScore = args.Score
                 };
-
-                //var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
-                //var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
-                //var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(mods);
-                var difficultyAttributesCurrent = GetCurrentDifficultyAttributes(beatmap, args, args.Time);
 
                 var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
                 var performanceAttributesCurrent =
@@ -189,13 +198,34 @@ namespace RealtimePPUR.Classes
             }
         }
 
-        public List<TimedDifficultyAttributes> CalculateAllTimedDifficulties(IBeatmap beatmap, CalculateArgs args)
+        private DifficultyAttributes GetCurrentDifficultyAttributes(IBeatmap beatmap, CalculateArgs args, int? time)
+        {
+            time ??= 0;
+            currentDifficultyAttributes ??= CalculateAllTimedDifficulties(beatmap, args);
+            var difficultyAttributes = currentDifficultyAttributes.LastOrDefault(d => d.Time <= time);
+            return difficultyAttributes?.DifficultyAttributes;
+        }
+
+        private DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args)
+        {
+            if (currentMapDifficultyAttributes != null && !currentMapDifficultyAttributes.Mods.SequenceEqual(args.Mods))
+            {
+                DebugLogger("Mods changed, recalculating Map DifficultyAttributes...");
+                currentMapDifficultyAttributes = null;
+            }
+            currentMapDifficultyAttributes ??= CalculateMapDifficultyAttributes(args);
+            return currentMapDifficultyAttributes.DifficultyAttributes;
+        }
+
+        private List<TimedDifficultyAttributes> CalculateAllTimedDifficulties(IBeatmap beatmap, CalculateArgs args)
         {
             var allTimedDifficulties = new List<TimedDifficultyAttributes>();
             var hitObjects = beatmap.HitObjects.ToArray();
-            Beatmap beatmapCurrent = new();
-            beatmapCurrent.ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo;
-            beatmapCurrent.BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo;
+            Beatmap beatmapCurrent = new()
+            {
+                ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo,
+                BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo
+            };
 
             var mods = GetMods(ruleset, args);
 
@@ -222,24 +252,7 @@ namespace RealtimePPUR.Classes
             return allTimedDifficulties;
         }
 
-        public DifficultyAttributes GetCurrentDifficultyAttributes(IBeatmap beatmap, CalculateArgs args, int? time)
-        {
-            currentDifficultyAttributes ??= CalculateAllTimedDifficulties(beatmap, args);
-            var difficultyAttributes = currentDifficultyAttributes.LastOrDefault(d => d.Time <= time);
-            return difficultyAttributes?.DifficultyAttributes;
-        }
-
-        public DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args)
-        {
-            if (currentMapDifficultyAttributes != null && !currentMapDifficultyAttributes.Mods.SequenceEqual(args.Mods))
-            {
-                currentMapDifficultyAttributes = null;
-            }
-            currentMapDifficultyAttributes ??= CalculateMapDifficultyAttributes(args);
-            return currentMapDifficultyAttributes.DifficultyAttributes;
-        }
-
-        public MapDifficultyAttributes CalculateMapDifficultyAttributes(CalculateArgs args)
+        private MapDifficultyAttributes CalculateMapDifficultyAttributes(CalculateArgs args)
         {
             DebugLogger("Calculating Map DifficultyAttributes...");
             var mods = GetMods(ruleset, args);
