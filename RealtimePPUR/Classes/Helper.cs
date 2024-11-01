@@ -310,7 +310,7 @@ namespace RealtimePPUR.Classes
             if (sender is ToolStripMenuItem menuItem)
             {
                 menuItem.Checked = !menuItem.Checked;
-                DebugLogger($"{menuItem.Text} is now {menuItem.Checked}", false);
+                DebugLogger($"{menuItem.Text} is now {menuItem.Checked}");
             }
         }
 
