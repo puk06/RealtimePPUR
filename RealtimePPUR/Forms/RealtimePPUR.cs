@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.4-Release";
+        private const string CURRENT_VERSION = "v1.1.5-Release";
 #if DEBUG
         private const bool DEBUG_MODE = true;
 #else
@@ -1806,7 +1806,7 @@ namespace RealtimePPUR.Forms
             try
             {
                 if (error.Message == prevErrorMessage) return;
-                DebugLogger("Error: " + error.Message);
+                DebugLogger("Error: " + error.Message, true);
                 prevErrorMessage = error.Message;
                 const string filePath = "Error.log";
                 StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);

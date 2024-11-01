@@ -8,7 +8,6 @@ using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Taiko;
 using osu.Game.Rulesets.Taiko.Objects;
@@ -507,8 +506,7 @@ namespace RealtimePPUR.Classes
         {
             return mode switch
             {
-                0 => beatmap.HitObjects.Count +
-                     beatmap.HitObjects.OfType<Slider>().Sum(s => s.NestedHitObjects.Count - 1),
+                0 => beatmap.GetMaxCombo(),
                 1 => beatmap.HitObjects.OfType<Hit>().Count(),
                 2 => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>()
                     .SelectMany(j => j.NestedHitObjects)

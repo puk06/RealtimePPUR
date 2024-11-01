@@ -263,7 +263,7 @@ namespace RealtimePPUR.Classes
                 ProcessStartInfo args = new()
                 {
                     FileName = $"\"{updaterPath}\"",
-                    Arguments = $"\"{latestRelease}\" \"{author}\" \"{repository}\" \"{executableName}\"",
+                    Arguments = $"\"{latestRelease}\" \"{author}\" \"{repository}\" \"{executableName}\" \"Config.cfg\"",
                     UseShellExecute = true
                 };
 
@@ -310,7 +310,7 @@ namespace RealtimePPUR.Classes
             if (sender is ToolStripMenuItem menuItem)
             {
                 menuItem.Checked = !menuItem.Checked;
-                DebugLogger($"{menuItem.Text} is now {menuItem.Checked}");
+                DebugLogger($"{menuItem.Text} is now {menuItem.Checked}", false);
             }
         }
 
@@ -341,8 +341,16 @@ namespace RealtimePPUR.Classes
         public static void ShowInformationMessageBox(string message) =>
             MessageBox.Show(message, "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-        public static void DebugLogger(string message)
+        public static void DebugLogger(string message, bool error = false)
         {
+            if (error)
+            {
+                Debug.WriteLine("[" + DateTime.Now + "] " + message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[" + DateTime.Now + "] " + message);
+                Console.ResetColor();
+                return;
+            }
             Debug.WriteLine("[" + DateTime.Now + "] " + message);
             Console.WriteLine("[" + DateTime.Now + "] " + message);
         }
