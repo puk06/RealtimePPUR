@@ -452,7 +452,7 @@ namespace RealtimePPUR.Forms
             // 
             calculateFirstToolStripMenuItem.Name = "calculateFirstToolStripMenuItem";
             calculateFirstToolStripMenuItem.Size = new Size(190, 22);
-            calculateFirstToolStripMenuItem.Text = "CalculateFirst";
+            calculateFirstToolStripMenuItem.Text = "Calculate First";
             calculateFirstToolStripMenuItem.Click += ToggleChecked;
             // 
             // RealtimePpur
