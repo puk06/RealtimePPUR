@@ -213,21 +213,6 @@ namespace RealtimePPUR.Classes
             return string.IsNullOrEmpty(customSongsFolder) ? Path.Combine(osuFolderDirectory, "Songs") : customSongsFolder;
         }
 
-        public static bool CheckConfigValue(string osuDirectory, string parameter, string value)
-        {
-            string userName = Environment.UserName;
-            string file = Path.Combine(osuDirectory, $"osu!.{userName}.cfg");
-            if (!File.Exists(file)) throw new Exception("Configuration file not found.");
-            foreach (string readLine in File.ReadLines(file))
-            {
-                if (!readLine.StartsWith(parameter)) continue;
-                string configValue = readLine.Split('=')[1].Trim(' ');
-                return configValue == value;
-            }
-
-            throw new Exception("Parameter not found.");
-        }
-
         public static double CalculateUnstableRate(IReadOnlyCollection<int> hitErrors)
         {
             if (hitErrors == null || hitErrors.Count == 0) return 0;

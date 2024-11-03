@@ -892,27 +892,6 @@ namespace RealtimePPUR.Forms
                         continue;
                     }
 
-                    if (!string.IsNullOrEmpty(osuDirectory) && !configDialog &&
-                        discordRichPresenceToolStripMenuItem.Checked)
-                    {
-                        try
-                        {
-                            bool configChecked = CheckConfigValue(osuDirectory, "DiscordRichPresence", "1");
-                            if (configChecked)
-                            {
-                                MessageBox.Show(
-                                    "osu!の設定で、DiscordRichPresenceがオンになっています。\nこれにより、RealtimePPURのRichPresenceが上書きされる可能性があります。osu!の設定で無効化することができます。",
-                                    "RealtimePPUR", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            }
-
-                            configDialog = true;
-                        }
-                        catch (Exception e)
-                        {
-                            ErrorLogger(e);
-                        }
-                    }
-
                     if (!discordRichPresenceToolStripMenuItem.Checked)
                     {
                         _client.ClearPresence();
