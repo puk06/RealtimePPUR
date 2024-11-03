@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -201,7 +202,9 @@ namespace RealtimePPUR.Classes
             time ??= 0;
             currentDifficultyAttributes ??= CalculateAllTimedDifficulties(beatmap, args);
             var difficultyAttributes = currentDifficultyAttributes.LastOrDefault(d => d.Time <= time);
-            return difficultyAttributes?.DifficultyAttributes;
+            if (difficultyAttributes != null) return difficultyAttributes.DifficultyAttributes;
+            difficultyAttributes = currentDifficultyAttributes.First();
+            return difficultyAttributes.DifficultyAttributes;
         }
 
         private DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args)
@@ -227,9 +230,19 @@ namespace RealtimePPUR.Classes
 
             var mods = GetMods(ruleset, args);
 
-            DebugLogger("Calculating All DifficultyAttributes...");
+            var total = hitObjects.Length;
+            DebugLogger($"Calculating All DifficultyAttributes... Total: {total}");
+            var currentTime = DateTime.Now;
+
+            var currentProgress = 0;
             foreach (var hitObject in hitObjects)
             {
+                var progress = (int)(hitObject.StartTime / hitObjects[^1].StartTime * 100);
+                if (progress != currentProgress)
+                {
+                    currentProgress = progress;
+                    Console.Write($"\rCalculating Progress: {progress}%");
+                }
                 var o = hitObject;
                 var hitObjectsCurrent = hitObjects.Where(h => h.StartTime <= o.StartTime).ToList();
                 beatmapCurrent.HitObjects.Clear();
@@ -245,7 +258,9 @@ namespace RealtimePPUR.Classes
                 });
             }
 
-            DebugLogger("Calculated All DifficultyAttributes!");
+            var elapsed = DateTime.Now - currentTime;
+            Console.WriteLine();
+            DebugLogger($"Calculated All DifficultyAttributes! (Total Time: {elapsed.TotalSeconds} seconds)");
 
             return allTimedDifficulties;
         }

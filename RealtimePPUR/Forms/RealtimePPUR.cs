@@ -688,6 +688,7 @@ namespace RealtimePPUR.Forms
 
                     if (preMapPath != osuBeatmapPath)
                     {
+                        preMapPath = osuBeatmapPath;
                         DebugLogger("Map change detected.");
                         DebugLogger($"Current beatmap path: {osuBeatmapPath}");
 
@@ -735,8 +736,6 @@ namespace RealtimePPUR.Forms
                             calculator.SetMap(osuBeatmapPath, currentGamemode);
                             DebugLogger("Calculator updated.");
                         }
-
-                        preMapPath = osuBeatmapPath;
                     }
 
                     if (currentOsuGamemode != preOsuGamemode)
