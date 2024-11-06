@@ -24,7 +24,8 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.5-Release";
+        private const string CURRENT_VERSION = "v1.1.6-Release";
+        private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;
 #else
@@ -695,20 +696,20 @@ namespace RealtimePPUR.Forms
                         if (!File.Exists(osuBeatmapPath))
                         {
                             // Fix the beatmap path(idk why)
-                            DebugLogger("Beatmap file not found. Trying to fix the path...");
+                            DebugLogger("Beatmap file not found. Trying to fix the path... (Attempting 1)");
                             osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName ?? "");
                             DebugLogger($"Current beatmap path: {osuBeatmapPath}");
 
                             if (!File.Exists(osuBeatmapPath))
                             {
-                                DebugLogger("Beatmap file not found. Trying to fix the path again...");
+                                DebugLogger("Beatmap file not found. Trying to fix the path again... (Attempting 2)");
                                 osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", currentOsuFileName?.Trim() ?? "");
                                 DebugLogger($"Current beatmap path: {osuBeatmapPath}");
                             }
 
                             if (!File.Exists(osuBeatmapPath))
                             {
-                                DebugLogger("Beatmap file not found. Trying to fix the path again...");
+                                DebugLogger("Beatmap file not found. Trying to fix the path again... (Attempting 3)");
                                 osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName?.Trim() ?? "");
                                 DebugLogger($"Current beatmap path: {osuBeatmapPath}");
                             }
@@ -860,13 +861,13 @@ namespace RealtimePPUR.Forms
         private void UpdateDiscordRichPresence()
         {
             bool isConnectedToDiscord = false;
-            bool configDialog = false;
+            bool hasClearedPresence = false;
 
             while (!isConnectedToDiscord)
             {
                 try
                 {
-                    _client = new DiscordRpcClient("1237279508239749211");
+                    _client = new DiscordRpcClient(DISCORD_CLIENT_ID);
                     _client.Initialize();
                     isConnectedToDiscord = true;
                 }
@@ -885,12 +886,15 @@ namespace RealtimePPUR.Forms
                 {
                     Thread.Sleep(2000);
 
-                    if (Process.GetProcessesByName("osu!").Length == 0)
+                    if (Process.GetProcessesByName("osu!").Length == 0 && !hasClearedPresence)
                     {
                         DebugLogger("Discord Rich Presence Cleared");
                         _client.ClearPresence();
+                        hasClearedPresence = true;
                         continue;
                     }
+
+                    hasClearedPresence = false;
 
                     if (!discordRichPresenceToolStripMenuItem.Checked)
                     {
