@@ -8,6 +8,8 @@ using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
+using osu.Game.Rulesets.Osu.Mods;
+using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Taiko;
 using osu.Game.Rulesets.Taiko.Objects;
@@ -30,9 +32,10 @@ namespace RealtimePPUR.Classes
 
         public static Mod[] GetMods(Ruleset ruleset, CalculateArgs args)
         {
-            if (args.Mods.Length == 0) return Array.Empty<Mod>();
+            if (args.Mods.Length == 0) return ruleset.CreateAllMods().ToList().Where(m => m is OsuModClassic).ToArray();
             var availableMods = ruleset.CreateAllMods().ToList();
-            return args.Mods.Select(modString => availableMods.FirstOrDefault(m => string.Equals(m.Acronym, modString, StringComparison.CurrentCultureIgnoreCase))).Where(newMod => newMod != null).ToArray();
+            var mods = args.Mods.Select(modString => availableMods.FirstOrDefault(m => string.Equals(m.Acronym, modString, StringComparison.CurrentCultureIgnoreCase))).Where(newMod => newMod != null).ToArray();
+            return mods.Append(new OsuModClassic()).ToArray();
         }
 
         public static Dictionary<HitResult, int> GenerateHitResultsForSs(IBeatmap beatmap, int mode)

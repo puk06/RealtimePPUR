@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.6-Release";
+        private const string CURRENT_VERSION = "v1.1.7-Release";
         private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;
@@ -888,7 +888,7 @@ namespace RealtimePPUR.Forms
 
                     if (Process.GetProcessesByName("osu!").Length == 0 && !hasClearedPresence)
                     {
-                        DebugLogger("Discord Rich Presence Cleared");
+                        DebugLogger("Discord Rich Presence Cleared.");
                         _client.ClearPresence();
                         hasClearedPresence = true;
                         continue;
