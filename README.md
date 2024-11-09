@@ -66,3 +66,32 @@ InGameOverlayに表示するものは右クリックメニューのInGameOverlay
 
 # Special Thanks
 - **[Vanilla](https://twitter.com/Van1IIa) For Saggesting IngameOverlay Font!!!**
+
+# I want to build RealtimePPUR!!
+必要なモノ
+1. Node.js
+2. .NET8.0 SDK
+3. Git
+
+手順
+1. [RealtimePPUR-Build.bat](https://raw.githubusercontent.com/puk06/RealtimePPUR/refs/heads/master/RealtimePPUR-Build.bat)このリンクを右クリックして、リンク先を保存からダウンロードしてください。
+2. ダウンロードしたファイルを、RealtimePPURを作りたいフォルダに移動して、ダブルクリックで起動します。(RealtimePPUR-Build.batがあるフォルダと同じ場所にRealtimePPURというフォルダが作られます。)
+3. ビルドが終わると、自動でビルド先のエクスプローラーが開き、RealtimePPUR.exeを実行します。(ビルド先はRealtimePPUR/RealtimePPUR/bin/buildフォルダです)
+
+
+# I want to build RealtimePPUR with Local Rulesets for Rework!!
+必要なものは上と同じです。
+
+手順
+1. [RealtimePPUR-Build.bat](https://raw.githubusercontent.com/puk06/RealtimePPUR/refs/heads/master/RealtimePPUR-Build.bat)このリンクを右クリックして、リンク先を保存からダウンロードしてください。
+2. RealtimePPURを作りたいフォルダのパスをコピーし、コマンドプロンプトを開いて
+```php
+cd "コピーしたパス"
+```
+と入力し、〇〇>のところがコピーしたところになってればOKです。
+次にそのフォルダ内にRealtimePPUR-Build.batがあることを確認して、
+```php
+RealtimePPUR-Build.bat "リワークのリポジトリ" "コミット、ブランチ、タグなどあればここに"
+```
+と入力し、ビルドします。
+3. ビルドが終わると、自動でビルド先のエクスプローラーが開き、RealtimePPUR.exeを実行します。(ビルド先はRealtimePPUR/RealtimePPUR/bin/buildフォルダです)
