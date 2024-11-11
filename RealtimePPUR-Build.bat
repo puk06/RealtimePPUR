@@ -24,5 +24,5 @@ REM Change to the build output directory
 cd bin\build
 
 REM Run the executable
-"explorer.exe" bin\build
+"explorer.exe" .
 RealtimePPUR.exe
