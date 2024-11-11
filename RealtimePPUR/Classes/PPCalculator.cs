@@ -189,9 +189,7 @@ namespace RealtimePPUR.Classes
                 }
 
                 if (lastTimingPoint == null) return data;
-
-                var currentBpm = lastTimingPoint.BPM;
-                data.CurrentBpm = currentBpm;
+                data.CurrentBpm = lastTimingPoint.BPM;
 
                 return data;
             }
@@ -214,6 +212,7 @@ namespace RealtimePPUR.Classes
                 DebugLogger("Mods changed, recalculating Map DifficultyAttributes...");
                 currentMapDifficultyAttributes = null;
             }
+
             currentMapDifficultyAttributes ??= CalculateMapDifficultyAttributes(args);
             return currentMapDifficultyAttributes.DifficultyAttributes;
         }
@@ -243,6 +242,7 @@ namespace RealtimePPUR.Classes
                     currentProgress = progress;
                     Console.Write($"\rCalculating Progress: {progress}%");
                 }
+
                 var o = hitObject;
                 var hitObjectsCurrent = hitObjects.Where(h => h.StartTime <= o.StartTime).ToList();
                 beatmapCurrent.HitObjects.Clear();

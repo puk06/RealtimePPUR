@@ -466,7 +466,7 @@ namespace RealtimePPUR.Forms
                     double starRatingValue = IsNaNWithNum(Math.Round(calculatedObject.CurrentDifficultyAttributes.StarRating, 2));
                     double ssppValue = IsNaNWithNum(calculatedObject.PerformanceAttributes.Total);
                     double currentPpValue = IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes.Total);
-                    if (pPLossModeToolStripMenuItem.Checked && !isResultScreenBool) currentPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
+                    if (pPLossModeToolStripMenuItem.Checked && !isResultScreenBool && (currentGamemodeValue is 1 or 3)) currentPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
                     double ifFcPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesIffc.Total);
                     double lossPpValue = IsNaNWithNum(calculatedObject.PerformanceAttributesLossMode.Total);
 
@@ -886,8 +886,9 @@ namespace RealtimePPUR.Forms
                 {
                     Thread.Sleep(2000);
 
-                    if (Process.GetProcessesByName("osu!").Length == 0 && !hasClearedPresence)
+                    if (Process.GetProcessesByName("osu!").Length == 0)
                     {
+                        if (hasClearedPresence) continue;
                         DebugLogger("Discord Rich Presence Cleared.");
                         _client.ClearPresence();
                         hasClearedPresence = true;
