@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.7-Release";
+        private const string CURRENT_VERSION = "v1.1.8-Release";
         private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;
@@ -65,6 +65,7 @@ namespace RealtimePPUR.Forms
         private HitsResult previousHits = new();
         private string prevErrorMessage;
         private string[] prevModStrings;
+        public List<int> SharedValue { get; set; }
 
         private readonly Dictionary<string, string> configDictionary = new();
         private readonly StructuredOsuMemoryReader sreader = new();
@@ -648,6 +649,9 @@ namespace RealtimePPUR.Forms
                         OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Mode,
                         _ => baseAddresses.GeneralData.GameMode
                     };
+
+                    //Hit Error
+                    SharedValue = baseAddresses.Player.HitErrors;
                 }
                 catch (Exception e)
                 {
@@ -1824,6 +1828,12 @@ namespace RealtimePPUR.Forms
             gp.AddRectangle(new Rectangle(0, radius, radius, Height - diameter));
             gp.AddRectangle(new Rectangle(Width - radius, radius, radius, Height - diameter));
             Region = new Region(gp);
+        }
+
+        private void uRGraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UnstableRateGraph unstableRateGraph = new(this);
+            unstableRateGraph.Show();
         }
     }
 }

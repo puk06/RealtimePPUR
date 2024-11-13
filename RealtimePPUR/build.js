@@ -22,7 +22,10 @@ const SOFTWARE_LIBRARY = [
     "DiscordRPC.dll",
     "Octokit.dll",
     "OsuMemoryDataProvider.dll",
-    "ProcessMemoryDataFinder.dll"
+    "ProcessMemoryDataFinder.dll",
+    "OxyPlot.WindowsForms.dll",
+    "OxyPlot.dll",
+    "MathNet.Numerics.dll"
 ];
 
 const REALTIMEPPUR_FILES = [

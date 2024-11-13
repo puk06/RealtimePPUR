@@ -17,11 +17,13 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Octokit">
 			<Version>13.0.1</Version>
 		</PackageReference>
 		<PackageReference Include="OsuMemoryDataProvider" Version="0.10.3" />
+		<PackageReference Include="OxyPlot.WindowsForms" Version="2.2.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Catch\osu.Game.Rulesets.Catch.csproj" />
@@ -55,11 +57,8 @@
 	</PropertyGroup>
 
 	<Target Name="CopyAndRunBuildJs" AfterTargets="AfterBuild">
-		<!-- Copy build.js to the output directory -->
 		<Copy SourceFiles="build.js" DestinationFolder="$(OutDir)" />
-		<!-- Run node build.js with the output directory as the working directory -->
 		<Exec Command="node build.js" WorkingDirectory="$(OutDir)" />
-		<!-- Run RealtimePPUR.exe from the bin/build directory -->
-		<!-- <Exec Command="RealtimePPUR.exe" WorkingDirectory="bin\build" /> -->
+		<Exec Command="explorer.exe ." WorkingDirectory="bin\build" />
 	</Target>
 </Project>

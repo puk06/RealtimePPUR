@@ -70,6 +70,7 @@ namespace RealtimePPUR.Forms
             currentBPMToolStripMenuItem = new ToolStripMenuItem();
             currentRankToolStripMenuItem = new ToolStripMenuItem();
             pPLossModeToolStripMenuItem = new ToolStripMenuItem();
+            calculateFirstToolStripMenuItem = new ToolStripMenuItem();
             changePriorityToolStripMenuItem = new ToolStripMenuItem();
             changeFontToolStripMenuItem = new ToolStripMenuItem();
             loadFontToolStripMenuItem = new ToolStripMenuItem();
@@ -78,7 +79,7 @@ namespace RealtimePPUR.Forms
             saveConfigToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new Label();
-            calculateFirstToolStripMenuItem = new ToolStripMenuItem();
+            uRGraphToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -201,9 +202,9 @@ namespace RealtimePPUR.Forms
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, calculateFirstToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, calculateFirstToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, uRGraphToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(191, 268);
+            contextMenuStrip1.Size = new Size(191, 312);
             // 
             // modeToolStripMenuItem
             // 
@@ -389,6 +390,13 @@ namespace RealtimePPUR.Forms
             pPLossModeToolStripMenuItem.Text = "PPLossMode";
             pPLossModeToolStripMenuItem.Click += ToggleChecked;
             // 
+            // calculateFirstToolStripMenuItem
+            // 
+            calculateFirstToolStripMenuItem.Name = "calculateFirstToolStripMenuItem";
+            calculateFirstToolStripMenuItem.Size = new Size(190, 22);
+            calculateFirstToolStripMenuItem.Text = "Calculate First";
+            calculateFirstToolStripMenuItem.Click += ToggleChecked;
+            // 
             // changePriorityToolStripMenuItem
             // 
             changePriorityToolStripMenuItem.Name = "changePriorityToolStripMenuItem";
@@ -448,12 +456,12 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
-            // calculateFirstToolStripMenuItem
+            // uRGraphToolStripMenuItem
             // 
-            calculateFirstToolStripMenuItem.Name = "calculateFirstToolStripMenuItem";
-            calculateFirstToolStripMenuItem.Size = new Size(190, 22);
-            calculateFirstToolStripMenuItem.Text = "Calculate First";
-            calculateFirstToolStripMenuItem.Click += ToggleChecked;
+            uRGraphToolStripMenuItem.Name = "uRGraphToolStripMenuItem";
+            uRGraphToolStripMenuItem.Size = new Size(190, 22);
+            uRGraphToolStripMenuItem.Text = "UR Graph";
+            uRGraphToolStripMenuItem.Click += uRGraphToolStripMenuItem_Click;
             // 
             // RealtimePpur
             // 
@@ -537,6 +545,7 @@ namespace RealtimePPUR.Forms
         private System.Windows.Forms.ToolStripMenuItem currentBPMToolStripMenuItem;
         private ToolStripMenuItem currentRankToolStripMenuItem;
         private ToolStripMenuItem calculateFirstToolStripMenuItem;
+        private ToolStripMenuItem uRGraphToolStripMenuItem;
     }
 }
 
