@@ -16,8 +16,8 @@ namespace RealtimePPUR.Forms
 
         public UnstableRateGraph(RealtimePpur mainForm)
         {
-            InitializeComponent();
             this.mainForm = mainForm;
+            InitializeComponent();
 
             Timer timer = new Timer();
             timer.Interval = 15;
@@ -37,7 +37,8 @@ namespace RealtimePPUR.Forms
                 var data = mainForm.SharedValue;
                 if (data == null) return;
 
-                var total = data.Count;
+                var dataCount = data.Count;
+                if (dataCount == 0) return;
 
                 var dict = new Dictionary<int, int>();
                 foreach (var i in data)
@@ -60,7 +61,7 @@ namespace RealtimePPUR.Forms
 
                 var compressedDict = new Dictionary<int, int>();
                 compressedDict.Clear();
-                for (int i = 0; i < sortedDict.Count; i += 5)
+                for (int i = 0; i < sortedDict.Count; i += 2)
                 {
                     int xValue = sortedDict[i].Key;
                     var sum = sortedDict.Skip(i).Take(5).Sum(x => x.Value);
@@ -68,7 +69,7 @@ namespace RealtimePPUR.Forms
                 }
 
                 var xValues = compressedDict.Select(x => (double)x.Key).ToArray();
-                var yValues = compressedDict.Select(x => (double)x.Value / total).ToArray();
+                var yValues = compressedDict.Select(x => (double)x.Value / dataCount).ToArray();
                 var spline = CubicSpline.InterpolateNatural(xValues, yValues);
 
                 var lineSeries = new LineSeries { StrokeThickness = 2 };
@@ -103,13 +104,14 @@ namespace RealtimePPUR.Forms
                 model.Series.Add(lineSeries);
                 model.Series.Add(areaSeries);
 
-                plotView1.Model = model;
-                plotView1.InvalidatePlot(true);
+                unstableLateGraph.Model = model;
+                unstableLateGraph.InvalidatePlot(true);
 
-                ValueLabel.Text = $"平均: {averageX:F2} 合計: {total}";
+                ValueLabel.Text = $"Average: {averageX:F2} Total: {dataCount}";
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e);
             }
         }
     }

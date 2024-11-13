@@ -28,27 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            plotView1 = new OxyPlot.WindowsForms.PlotView();
+            unstableLateGraph = new OxyPlot.WindowsForms.PlotView();
             ValueLabel = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
-            // plotView1
+            // unstableLateGraph
             // 
-            plotView1.Location = new System.Drawing.Point(0, 25);
-            plotView1.Name = "plotView1";
-            plotView1.PanCursor = System.Windows.Forms.Cursors.Hand;
-            plotView1.Size = new System.Drawing.Size(801, 240);
-            plotView1.TabIndex = 0;
-            plotView1.Text = "plotView1";
-            plotView1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
-            plotView1.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
-            plotView1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            unstableLateGraph.Location = new System.Drawing.Point(0, 25);
+            unstableLateGraph.Name = "unstableLateGraph";
+            unstableLateGraph.PanCursor = System.Windows.Forms.Cursors.Hand;
+            unstableLateGraph.Size = new System.Drawing.Size(801, 240);
+            unstableLateGraph.TabIndex = 0;
+            unstableLateGraph.Text = "unstableLateGraph";
+            unstableLateGraph.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
+            unstableLateGraph.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
+            unstableLateGraph.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
             // 
             // ValueLabel
             // 
             ValueLabel.AutoSize = true;
-            ValueLabel.Font = new System.Drawing.Font("Yu Gothic UI", 15F);
-            ValueLabel.Location = new System.Drawing.Point(0, -6);
+            ValueLabel.Font = new System.Drawing.Font(this.mainForm.GuiFont, 15F);
+            ValueLabel.Location = new System.Drawing.Point(0, 0);
             ValueLabel.Name = "ValueLabel";
             ValueLabel.Size = new System.Drawing.Size(59, 28);
             ValueLabel.TabIndex = 1;
@@ -60,7 +60,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 265);
             Controls.Add(ValueLabel);
-            Controls.Add(plotView1);
+            Controls.Add(unstableLateGraph);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "UnstableRateGraph";
@@ -71,7 +71,7 @@
 
         #endregion
 
-        private OxyPlot.WindowsForms.PlotView plotView1;
+        private OxyPlot.WindowsForms.PlotView unstableLateGraph;
         private System.Windows.Forms.Label ValueLabel;
     }
 }
