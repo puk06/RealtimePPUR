@@ -65,7 +65,7 @@ namespace RealtimePPUR.Forms
         private HitsResult previousHits = new();
         private string prevErrorMessage;
         private string[] prevModStrings;
-        public List<int> SharedValue { get; set; }
+        public List<int> UnstableRateArray { get; set; }
 
         private readonly Dictionary<string, string> configDictionary = new();
         private readonly StructuredOsuMemoryReader sreader = new();
@@ -651,7 +651,7 @@ namespace RealtimePPUR.Forms
                     };
 
                     //Hit Error
-                    SharedValue = baseAddresses.Player.HitErrors;
+                    UnstableRateArray = baseAddresses.Player.HitErrors;
                 }
                 catch (Exception e)
                 {

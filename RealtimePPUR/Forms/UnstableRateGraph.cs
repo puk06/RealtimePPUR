@@ -34,7 +34,7 @@ namespace RealtimePPUR.Forms
         {
             try
             {
-                var data = mainForm.SharedValue;
+                var data = mainForm.UnstableRateArray;
                 if (data == null) return;
 
                 var dataCount = data.Count;
