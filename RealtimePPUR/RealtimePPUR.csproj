@@ -59,6 +59,5 @@
 	<Target Name="CopyAndRunBuildJs" AfterTargets="AfterBuild">
 		<Copy SourceFiles="build.js" DestinationFolder="$(OutDir)" />
 		<Exec Command="node build.js" WorkingDirectory="$(OutDir)" />
-		<Exec Command="explorer.exe ." WorkingDirectory="bin\build" />
 	</Target>
 </Project>

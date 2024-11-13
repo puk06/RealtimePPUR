@@ -78,6 +78,7 @@ namespace RealtimePPUR.Forms
                     Fill = OxyColors.LightBlue,
                     StrokeThickness = 2
                 };
+
                 const double step = 0.05;
                 for (double x = xValues.First(); x <= xValues.Last(); x += step)
                 {
