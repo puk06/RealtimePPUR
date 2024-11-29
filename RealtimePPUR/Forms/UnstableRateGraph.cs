@@ -64,7 +64,7 @@ namespace RealtimePPUR.Forms
                 for (int i = 0; i < sortedDict.Count; i += 2)
                 {
                     int xValue = sortedDict[i].Key;
-                    var sum = sortedDict.Skip(i).Take(5).Sum(x => x.Value);
+                    var sum = sortedDict.Skip(i).Take(2).Sum(x => x.Value);
                     compressedDict[xValue] = sum;
                 }
 
@@ -72,7 +72,11 @@ namespace RealtimePPUR.Forms
                 var yValues = compressedDict.Select(x => (double)x.Value / dataCount).ToArray();
                 var spline = CubicSpline.InterpolateNatural(xValues, yValues);
 
-                var lineSeries = new LineSeries { StrokeThickness = 2 };
+                var lineSeries = new LineSeries
+                {
+                    Color = OxyColors.Blue,
+                    StrokeThickness = 2
+                };
                 var areaSeries = new AreaSeries
                 {
                     Fill = OxyColors.LightBlue,

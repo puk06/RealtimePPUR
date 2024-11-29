@@ -55,7 +55,7 @@ namespace RealtimePPUR.Forms
             sortPriorityList.Font = new System.Drawing.Font("メイリオ", 15F);
             sortPriorityList.FormattingEnabled = true;
             sortPriorityList.ItemHeight = 30;
-            sortPriorityList.Items.AddRange(new object[] { "1: SR: 1.23", "2: SSPP: 300pp", "3: PP: 100 / 200pp", "4: ACC: 99.2 / 99.82%", "5: Hits: 1/2/3/4", "6: IFFCHits: 5/2/3/0", "7: UR: 100", "8: Offset: -2", "9: ManiaScore: 995000", "10: AvgOffset: 1.86", "11: Progress: 50%", "12: HP: 65.7%", "13: Position: #1", "14: HigherDiff: 123456", "15: HighestDiff: 1234567", "16: Score: 12345", "17: BPM: 200.6", "18: Rank: B / A" });
+            sortPriorityList.Items.AddRange(new object[] { "1: SR: 1.23", "2: SSPP: 300pp", "3: PP: 100 / 200pp", "4: ACC: 99.2 / 99.82%", "5: Hits: 1/2/3/4", "6: IFFCHits: 5/2/3/0", "7: UR: 100", "8: Offset: -2", "9: ManiaScore: 995000", "10: AvgOffset: 1.86", "11: Progress: 50%", "12: HP: 65.7%", "13: Position: #1", "14: HigherDiff: 123456", "15: HighestDiff: 1234567", "16: Score: 12345", "17: BPM: 200.6", "18: Rank: B / A", "19: Notes: 1020" });
             sortPriorityList.Location = new System.Drawing.Point(14, 81);
             sortPriorityList.Margin = new Padding(4);
             sortPriorityList.Name = "sortPriorityList";

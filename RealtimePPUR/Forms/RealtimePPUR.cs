@@ -141,11 +141,12 @@ namespace RealtimePPUR.Forms
                 highestScoreToolStripMenuItem.Checked = false;
                 userScoreToolStripMenuItem.Checked = false;
                 currentBPMToolStripMenuItem.Checked = false;
+                remainingNotesToolStripMenuItem.Checked = false;
                 discordRichPresenceToolStripMenuItem.Checked = false;
                 pPLossModeToolStripMenuItem.Checked = false;
                 calculateFirstToolStripMenuItem.Checked = false;
 
-                ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17";
+                ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19";
                 inGameValue.Font = new Font(InGameOverlayFont, 19F);
                 customSongsFolder = "";
             }
@@ -225,11 +226,12 @@ namespace RealtimePPUR.Forms
                 userScoreToolStripMenuItem.Checked = CheckConfigDictionaryValue("USERSCORE");
                 currentBPMToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTBPM");
                 currentRankToolStripMenuItem.Checked = CheckConfigDictionaryValue("CURRENTRANK");
+                remainingNotesToolStripMenuItem.Checked = CheckConfigDictionaryValue("REMAININGNOTES");
 
                 pPLossModeToolStripMenuItem.Checked = CheckConfigDictionaryValue("PPLOSSMODE");
                 calculateFirstToolStripMenuItem.Checked = CheckConfigDictionaryValue("CALCULATEFIRST");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
-                ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18");
+                ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19");
                 if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
                 {
                     customSongsFolder = customSongsFolderValue;
@@ -1680,7 +1682,7 @@ namespace RealtimePPUR.Forms
                         switch (highestScoreToolStripMenuItem.Checked)
                         {
                             case true when highestScore != 0 && currentPosition == 1:
-                                displayFormat += "HighestDiff: You're Top!!" + "\n";
+                                displayFormat += "HighestDiff: Top!" + "\n";
                                 break;
 
                             case true when highestScore != 0:
@@ -1726,6 +1728,24 @@ namespace RealtimePPUR.Forms
                             var currentRank = GetCurrentRank(calculatedData.HitResults, currentGamemodeValue, mods);
                             var currentRankLossMode = GetCurrentRank(calculatedData.HitResultLossMode, currentGamemodeValue, mods);
                             displayFormat += "Rank: " + currentRank + " / " + currentRankLossMode + "\n";
+                        }
+
+                        break;
+
+                    case 19:
+                        if (remainingNotesToolStripMenuItem.Checked && currentGamemodeValue is 1 or 3)
+                        {
+                            var totalNotes = calculatedData.IfFcHitResult.Values.Sum();
+
+                            int currentNotes = currentGamemodeValue switch
+                            {
+                                1 => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+                                3 => hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 +
+                                     hits.HitMiss
+                            };
+
+                            var remainingNotes = totalNotes - currentNotes;
+                            displayFormat += "Notes: " + remainingNotes + "\n";
                         }
 
                         break;
@@ -1803,7 +1823,8 @@ namespace RealtimePPUR.Forms
                 prevErrorMessage = error.Message;
                 const string filePath = "Error.log";
                 StreamWriter sw = File.Exists(filePath) ? File.AppendText(filePath) : File.CreateText(filePath);
-                sw.WriteLine("[" + DateTime.Now + "]");
+                var currentDateString = DebugDateGenerator();
+                sw.WriteLine("[" + currentDateString + "]");
                 sw.WriteLine(error);
                 sw.WriteLine();
                 sw.Close();

@@ -9,9 +9,10 @@ namespace RealtimePPUR.Classes
 {
     internal class SourceDownloader
     {
-        private const string SRC_VERSION = "v1.0.3";
+        private const string SRC_VERSION = "v1.0.4";
         private const string BASEURL = "https://github.com/puk06/RealtimePPUR-src/releases/download/";
 
+        [Obsolete("Obsolete")]
         public async Task DownloadFiles()
         {
             const string downloadUrl = $"{BASEURL}{SRC_VERSION}/RealtimePPUR-src.zip";
@@ -51,12 +52,15 @@ namespace RealtimePPUR.Classes
             var dirs = dir.GetDirectories();
 
             if (!dir.Exists) throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
-            if (!Directory.Exists(destDirName)) Directory.CreateDirectory(destDirName);
+            if (!Directory.Exists(destDirName))
+                if (destDirName != null)
+                    Directory.CreateDirectory(destDirName);
 
 
             var files = dir.GetFiles();
             foreach (var file in files)
             {
+                if (destDirName == null) continue;
                 var tempPath = Path.Combine(destDirName, file.Name);
                 file.CopyTo(tempPath, true);
             }
@@ -64,6 +68,7 @@ namespace RealtimePPUR.Classes
             if (!copySubDirs) return;
             foreach (var subdir in dirs)
             {
+                if (destDirName == null) continue;
                 var tempPath = Path.Combine(destDirName, subdir.Name);
                 DirectoryCopy(subdir.FullName, tempPath, true);
             }

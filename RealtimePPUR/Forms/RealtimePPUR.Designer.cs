@@ -77,9 +77,10 @@ namespace RealtimePPUR.Forms
             resetFontToolStripMenuItem = new ToolStripMenuItem();
             discordRichPresenceToolStripMenuItem = new ToolStripMenuItem();
             saveConfigToolStripMenuItem = new ToolStripMenuItem();
+            uRGraphToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new Label();
-            uRGraphToolStripMenuItem = new ToolStripMenuItem();
+            remainingNotesToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -245,7 +246,7 @@ namespace RealtimePPUR.Forms
             // 
             // inGameOverlayToolStripMenuItem
             // 
-            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem });
+            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem, remainingNotesToolStripMenuItem });
             inGameOverlayToolStripMenuItem.Name = "inGameOverlayToolStripMenuItem";
             inGameOverlayToolStripMenuItem.Size = new Size(190, 22);
             inGameOverlayToolStripMenuItem.Text = "InGameOverlay";
@@ -439,6 +440,13 @@ namespace RealtimePPUR.Forms
             saveConfigToolStripMenuItem.Text = "Save Config";
             saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
             // 
+            // uRGraphToolStripMenuItem
+            // 
+            uRGraphToolStripMenuItem.Name = "uRGraphToolStripMenuItem";
+            uRGraphToolStripMenuItem.Size = new Size(190, 22);
+            uRGraphToolStripMenuItem.Text = "UR Graph";
+            uRGraphToolStripMenuItem.Click += uRGraphToolStripMenuItem_Click;
+            // 
             // closeToolStripMenuItem
             // 
             closeToolStripMenuItem.Name = "closeToolStripMenuItem";
@@ -456,12 +464,12 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
-            // uRGraphToolStripMenuItem
+            // remainingNotesToolStripMenuItem
             // 
-            uRGraphToolStripMenuItem.Name = "uRGraphToolStripMenuItem";
-            uRGraphToolStripMenuItem.Size = new Size(190, 22);
-            uRGraphToolStripMenuItem.Text = "UR Graph";
-            uRGraphToolStripMenuItem.Click += uRGraphToolStripMenuItem_Click;
+            remainingNotesToolStripMenuItem.Name = "remainingNotesToolStripMenuItem";
+            remainingNotesToolStripMenuItem.Size = new Size(187, 22);
+            remainingNotesToolStripMenuItem.Text = "RemainingNotes";
+            remainingNotesToolStripMenuItem.Click += ToggleChecked;
             // 
             // RealtimePpur
             // 
@@ -546,6 +554,7 @@ namespace RealtimePPUR.Forms
         private ToolStripMenuItem currentRankToolStripMenuItem;
         private ToolStripMenuItem calculateFirstToolStripMenuItem;
         private ToolStripMenuItem uRGraphToolStripMenuItem;
+        private ToolStripMenuItem remainingNotesToolStripMenuItem;
     }
 }
 

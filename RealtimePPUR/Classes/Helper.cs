@@ -328,16 +328,19 @@ namespace RealtimePPUR.Classes
 
         public static void DebugLogger(string message, bool error = false)
         {
+            var currentDateString = DebugDateGenerator();
             if (error)
             {
-                Debug.WriteLine("[" + DateTime.Now + "] " + message);
+                Debug.WriteLine("[" + currentDateString + "] " + message);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[" + DateTime.Now + "] " + message);
+                Console.WriteLine("[" + currentDateString + "] " + message);
                 Console.ResetColor();
                 return;
             }
-            Debug.WriteLine("[" + DateTime.Now + "] " + message);
-            Console.WriteLine("[" + DateTime.Now + "] " + message);
+            Debug.WriteLine("[" + currentDateString + "] " + message);
+            Console.WriteLine("[" + currentDateString + "] " + message);
         }
+
+        public static string DebugDateGenerator() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
     }
 }

@@ -100,7 +100,7 @@ namespace RealtimePPUR.Classes
                     }
 
                 default:
-                    throw new ArgumentException("Invalid mode provided.");
+                    throw new ArgumentException("Invalid mode provided. Given mode: " + mode);
             }
         }
 
@@ -138,7 +138,7 @@ namespace RealtimePPUR.Classes
                     { HitResult.Meh, hits.Hit50 },
                     { HitResult.Miss, hits.HitMiss }
                 },
-                _ => throw new ArgumentException("Invalid mode provided.")
+                _ => throw new ArgumentException("Invalid mode provided. Given mode: " + mode)
             };
         }
 
@@ -178,7 +178,7 @@ namespace RealtimePPUR.Classes
                     [HitResult.Meh] = hits.Hit50,
                     [HitResult.Miss] = hits.HitMiss
                 },
-                _ => throw new ArgumentException("Invalid mode provided.")
+                _ => throw new ArgumentException("Invalid mode provided. Given mode: " + mode)
             };
         }
 
@@ -252,7 +252,7 @@ namespace RealtimePPUR.Classes
                     }
 
                 default:
-                    throw new ArgumentException("Invalid mode provided.");
+                    throw new ArgumentException("Invalid mode provided. Given mode: " + mode);
             }
         }
 
@@ -370,7 +370,7 @@ namespace RealtimePPUR.Classes
                     }
 
                 default:
-                    throw new ArgumentException("Invalid mode provided.");
+                    throw new ArgumentException("Invalid mode provided. Given mode: " + mode);
             }
         }
 
