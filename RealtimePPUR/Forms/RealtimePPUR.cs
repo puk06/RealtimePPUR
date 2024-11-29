@@ -1798,6 +1798,7 @@ namespace RealtimePPUR.Forms
                     { "USERSCORE", ConfigValueToString(userScoreToolStripMenuItem.Checked) },
                     { "CURRENTBPM", ConfigValueToString(currentBPMToolStripMenuItem.Checked) },
                     { "CURRENTRANK", ConfigValueToString(currentRankToolStripMenuItem.Checked) },
+                    { "REMAININGNOTES", ConfigValueToString(remainingNotesToolStripMenuItem.Checked) },
                     { "PPLOSSMODE", ConfigValueToString(pPLossModeToolStripMenuItem.Checked) },
                     { "CALCULATEFIRST", ConfigValueToString(calculateFirstToolStripMenuItem.Checked) },
                     { "DISCORDRICHPRESENCE", ConfigValueToString(discordRichPresenceToolStripMenuItem.Checked) }
