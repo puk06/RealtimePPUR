@@ -669,12 +669,18 @@ namespace RealtimePPUR.Forms
                 try
                 {
                     Thread.Sleep(15);
+
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
+                    if (!isDirectoryLoaded) continue;
+
                     bool playing = isplaying;
                     bool resultScreen = isResultScreen;
                     string currentOsuFileName = baseAddresses.Beatmap.OsuFileName;
                     string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
                         currentOsuFileName ?? "");
+
+                    if (osuBeatmapPath == songsPath) continue;
+
                     OsuMemoryStatus status = currentStatus;
 
                     if (status == OsuMemoryStatus.Playing)
@@ -901,13 +907,15 @@ namespace RealtimePPUR.Forms
                         continue;
                     }
 
-                    hasClearedPresence = false;
-
                     if (!discordRichPresenceToolStripMenuItem.Checked)
                     {
+                        if (hasClearedPresence) continue;
+                        hasClearedPresence = true;
                         _client.ClearPresence();
                         continue;
                     }
+
+                    hasClearedPresence = false;
 
                     HitsResult hits = new()
                     {
