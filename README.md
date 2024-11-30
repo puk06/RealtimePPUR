@@ -1,7 +1,10 @@
 ![](https://github.com/puk06/RealtimePPUR-old/assets/86549420/5a41b979-3176-443a-91f0-6150d9243cda)
 
 # RealtimePPUR ![License](https://img.shields.io/github/license/puk06/RealtimePPUR?style=flat-square) ![Release](https://img.shields.io/github/v/release/puk06/RealtimePPUR?style=flat-square) ![Language](https://img.shields.io/badge/language-c%23-green?style=flat-square) ![CodeFactor](https://www.codefactor.io/repository/github/puk06/RealtimePPUR/badge)
-このソフトウェアは、osuのゲーム内でリアルタイムPP、URと、オフセットがどれほどズレているか教えてくれるソフトです。
+This software will tell you how much the offset is off, with real-time PP, UR, in the osu game.
+
+> [!NOTE]
+> This software is currently in the development phase! If you have any bugs, please contact us on Discord!
 
 ## ☕ Support Me
 
@@ -11,58 +14,94 @@ If you enjoy my work and would like to support my efforts, you can buy me a coff
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/pukorufu)
 
-### サポートのお願い
+### サポートのお願い / Request for Support
 私のプロジェクトが役に立ったり、気に入っていただけた場合、サポートをいただけると今後の開発の励みになります。どうぞよろしくお願いします！
 
-# Functions
-- **リアルタイムで表示されるPPやUR、SR**
-  > * リアルタイムでSR、PP、URを計算してソフト上、InGameOverlayに表示します！
+If you find my project useful or like it, your support will encourage future development. Thank you in advance!
 
-- **PPやSR、Hitsなど、様々な情報を表示することができるInGameOverlay**
-  > * 様々なカスタマイズが可能なInGameOverlay(ゲーム内オーバーレイ)!
-  > * injectorを使わないので、osu!の規約に違反することはありません！
+# Features
+- **PP, UR and SR displayed in real time**
+  > * Calculate SR, PP and UR in real time and display them on the software and on the InGameOverlay!
 
-- **他人のリプレイ画面を開くとPPを見ることができる機能**
-  > * ランキングなどで他人のリザルトを開くと、IFFC、SSPP、SR、PPを計算して表示します！
+- **InGameOverlay that can display various information such as PP, SR, Hits, etc.**
+  > * InGameOverlay (in-game overlay) that can be customized in various ways!
+  > * Since it does not use injector, it does not violate the terms of osu!
 
-- **コンバート完全対応**
-  > * 全Modeのコンバートに完全対応しており、コンバート勢でも安心して使うことが出来ます！
+- **Function to open other people's replay screens to see their PP**!
+  > * Function to calculate and display IFFC, SSPP, SR, and PP when you open someone else's result in ranking, etc. **Function to see PP when you open someone else's result in ranking, etc!
 
-- **軽量！**
-  > * メモリの最適化が行われているので、従来のRealtimePPURよりずっと軽くなりました！
+- **Complete conversion support**
+  > * Complete support for conversion of all Modes, so even converters can use it with confidence!
 
-- **全Mode対応**
-  > * コンバートのところでも話しましたが、このソフトは全Modeに完全対応しています！！！
+- **Lightweight!**
+  > * Memory optimization has been done so that it is much lighter than the previous RealtimePPUR!
 
-# How to use
-青く、PPと書かれたアイコンのRealtimePPUR.exeを起動するだけです。
+- **All Modes supported**
+  > * This software is fully compatible with all Modes!
+
+# How to launch RealtimePPUR?
+Simply launch RealtimePPUR.exe, the icon with the blue, PP.
 
 # How to switch to Offset Helper and RealtimePP?
-ソフト上で右クリック→Modeから変更できます。
+You can change it by right-clicking on the software → Mode.
 
-# How to save Config?
-右クリックメニューからSave Configをクリックすることで設定を保存できます。
+# How to change the default software settings
+Change the Config.cfg file in the folder!
 
-# How to edit Config?
-フォルダ内にあるConfig.cfgを編集することで設定を変更できます。
+I have written a lot of explanations so it will be easy to understand!
 
-説明がたくさんあるので、わかりやすいと思います。
 
-# How to use InGameOverlay?
+# About IngameOverlay
 
-右クリックメニューからosu! modeをクリックすることでオンにできます。
-<br>
-オンになったらプレイ画面に移った時、自動的にオーバーレイが表示されます。
+### Values
+1: SR → SR: 〇〇 / 〇〇
 
-<br>
+2: SSPP → SSPP: 〇〇pp
 
-※**フルスクリーンの状態では動作しません！！** ボーダーレスかウィンドウの時のみ動作します！
+3: CurrentPP → PP: 〇〇pp
 
-<br>
+4: CurrentACC → ACC: 〇〇%
 
-InGameOverlayに表示するものは右クリックメニューのInGameOverlayから編集できます。
-<br>
-その他細かい設定(デフォルトでオンにしておく物や位置、フォントサイズなど)はフォルダ内のConfig.cfgを編集することで設定を変更できます。
+5: Hits → Hits: 〇〇/〇〇/〇〇/〇〇
+
+6: IFFCHits → IFFCHits: 〇〇/〇〇/〇〇/〇〇
+
+7: UR → UR: \(CurrentUR\)
+
+8: OffsetHelp → Offset: 〇〇
+
+9: ExpectedManiaScore  → ManiaScore: 〇〇〇〇〇〇
+
+10: AVGOFFSET → AvgOffset: 〇〇
+
+11: PROGRESS → Progress: 〇〇%
+
+12: HealthPercentage → HP: 〇〇%
+
+13: CurrentPosition → Position: #〇
+
+14: HigherScoreDiff → HigherDiff: 〇〇
+
+15: HighestScoreDiff → HighestDiff: 〇〇
+
+16: UserScore → Score: 〇〇
+
+17: CurrentBPM → BPM: 〇〇〇
+
+18: CurrentRank → Rank: 〇 / 〇
+
+19: Remaining Notes → Notes: 〇〇〇〇
+
+
+### How to save IngameOverlay Config?
+You can save the configuration by clicking Save Config from the right-click menu!
+
+
+### How to change IngameOverlay Priority?
+Click Change Priority from the right-click menu to change it on the UI.
+
+Or, change it by looking directly at the INGAMEOVERLAYPRIORITY value in Config.cfg!
+
 
 # Special Thanks
 - **[Vanilla](https://twitter.com/Van1IIa) For Saggesting IngameOverlay Font!!!**
