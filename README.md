@@ -129,7 +129,7 @@ Or, change it by looking directly at the INGAMEOVERLAYPRIORITY value in Config.c
 ```php
 cd "コピーしたパス"
 ```
-と入力し、〇〇>のところがコピーしたところになってればOKです。
+と入力し、"〇〇> (コマンド入力する所)"の左の〇〇ところがコピーしたところになってればOKです。
 次にそのフォルダ内にRealtimePPUR-Build.batがあることを確認して、
 ```php
 RealtimePPUR-Build.bat "リワークのリポジトリ" "コミット、ブランチ、タグなどあればここに"
