@@ -53,7 +53,6 @@ namespace RealtimePPUR.Forms
         private double avgOffset;
         private double avgOffsethelp;
         private int urValue;
-        private const bool IS_NO_CLASSIC_MOD = true;
         private int currentBeatmapGamemode;
         private int currentOsuGamemode;
         private int currentGamemode;
@@ -671,7 +670,7 @@ namespace RealtimePPUR.Forms
                     Thread.Sleep(15);
 
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
-                    if (!isDirectoryLoaded) continue;
+                    if (!isDirectoryLoaded) throw new Exception("Directory not loaded. Skipping...");
 
                     bool playing = isplaying;
                     bool resultScreen = isResultScreen;
@@ -851,7 +850,6 @@ namespace RealtimePPUR.Forms
                         Accuracy = acc,
                         Combo = hits.Combo,
                         Score = hits.Score,
-                        NoClassicMod = IS_NO_CLASSIC_MOD,
                         Mods = mods,
                         Time = baseAddresses.GeneralData.AudioTime,
                         CalculateBeforePlaying = calculateFirstToolStripMenuItem.Checked
