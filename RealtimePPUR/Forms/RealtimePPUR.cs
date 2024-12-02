@@ -1718,7 +1718,6 @@ namespace RealtimePPUR.Forms
                     case 19:
                         if (remainingNotesToolStripMenuItem.Checked)
                         {
-
                             var totalNotes = calculatedData.TotalHitObjectCount;
 
                             int currentNotes = currentGamemodeValue switch
