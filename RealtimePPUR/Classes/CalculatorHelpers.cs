@@ -182,6 +182,20 @@ namespace RealtimePPUR.Classes
             };
         }
 
+        public static int CountTotalHitObjects(IBeatmap beatmap, int mode)
+        {
+            return mode switch
+            {
+                0 => beatmap.HitObjects.Count,
+                1 => beatmap.HitObjects.OfType<Hit>().Count(),
+                2 => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>()
+                    .SelectMany(j => j.NestedHitObjects)
+                    .Count(h => h is not TinyDroplet),
+                3 => beatmap.HitObjects.Count,
+                _ => throw new ArgumentException("Invalid ruleset ID provided.")
+            };
+        }
+
         public static Dictionary<HitResult, int> CalcIfFc(IBeatmap beatmap, HitsResult hits, int mode)
         {
             switch (mode)

@@ -18,5 +18,6 @@ namespace RealtimePPUR.Classes
         public Dictionary<HitResult, int> HitResultLossMode { get; set; }
         public int ExpectedManiaScore { get; set; }
         public double CurrentBpm { get; set; }
+        public int TotalHitObjectCount { get; set; }
     }
 }

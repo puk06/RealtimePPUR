@@ -17,6 +17,7 @@ namespace RealtimePPUR.Classes
         private ProcessorWorkingBeatmap workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
         private List<TimedDifficultyAttributes> currentDifficultyAttributes;
         private MapDifficultyAttributes currentMapDifficultyAttributes;
+        private int totalHitObjectCount;
 
         public void SetMap(string file, int givenmode)
         {
@@ -37,7 +38,6 @@ namespace RealtimePPUR.Classes
 
         public BeatmapData Calculate(CalculateArgs args, bool playing, bool resultScreen, HitsResult hits)
         {
-            var data = new BeatmapData();
             var mods = GetMods(ruleset, args);
             var beatmap = workingBeatmap.GetPlayableBeatmap(ruleset.RulesetInfo, mods);
 
@@ -51,21 +51,25 @@ namespace RealtimePPUR.Classes
                 Mods = mods
             };
 
-            var difficultyAttributes = GetCurrentMapDifficultyAttributes(args);
+            var difficultyAttributes = GetCurrentMapDifficultyAttributes(args, beatmap);
 
             var performanceCalculator = ruleset.CreatePerformanceCalculator();
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
 
-            data.DifficultyAttributes = difficultyAttributes;
-            data.PerformanceAttributes = performanceAttributes;
-            data.CurrentDifficultyAttributes = difficultyAttributes;
-            data.CurrentPerformanceAttributes = performanceAttributes;
-            data.DifficultyAttributesIffc = difficultyAttributes;
-            data.PerformanceAttributesIffc = performanceAttributes;
-            data.PerformanceAttributesLossMode = performanceAttributes;
-            data.IfFcHitResult = staticsSs;
-            data.ExpectedManiaScore = 0;
-            data.CurrentBpm = 0;
+            var data = new BeatmapData()
+            {
+                DifficultyAttributes = difficultyAttributes,
+                PerformanceAttributes = performanceAttributes,
+                CurrentDifficultyAttributes = difficultyAttributes,
+                CurrentPerformanceAttributes = performanceAttributes,
+                DifficultyAttributesIffc = difficultyAttributes,
+                PerformanceAttributesIffc = performanceAttributes,
+                PerformanceAttributesLossMode = performanceAttributes,
+                IfFcHitResult = staticsSs,
+                ExpectedManiaScore = 0,
+                CurrentBpm = 0,
+                TotalHitObjectCount = totalHitObjectCount
+            };
 
             var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
             data.HitResults = statisticsCurrent;
@@ -97,6 +101,7 @@ namespace RealtimePPUR.Classes
                 };
                 var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
                 data.PerformanceAttributesIffc = performanceAttributesIffc;
+                data.IfFcHitResult = staticsForCalcIfFc;
 
                 return data;
             }
@@ -208,7 +213,7 @@ namespace RealtimePPUR.Classes
             return difficultyAttributes.DifficultyAttributes;
         }
 
-        private DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args)
+        private DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args, IBeatmap beatmap)
         {
             if (currentMapDifficultyAttributes != null && !currentMapDifficultyAttributes.Mods.SequenceEqual(args.Mods))
             {
@@ -216,7 +221,7 @@ namespace RealtimePPUR.Classes
                 currentMapDifficultyAttributes = null;
             }
 
-            currentMapDifficultyAttributes ??= CalculateMapDifficultyAttributes(args);
+            currentMapDifficultyAttributes ??= CalculateMapDifficultyAttributes(args, beatmap);
             return currentMapDifficultyAttributes.DifficultyAttributes;
         }
 
@@ -268,7 +273,7 @@ namespace RealtimePPUR.Classes
             return allTimedDifficulties;
         }
 
-        private MapDifficultyAttributes CalculateMapDifficultyAttributes(CalculateArgs args)
+        private MapDifficultyAttributes CalculateMapDifficultyAttributes(CalculateArgs args, IBeatmap beatmap)
         {
             DebugLogger("Calculating Map DifficultyAttributes...");
             var currentTime = DateTime.Now;
@@ -279,6 +284,10 @@ namespace RealtimePPUR.Classes
 
             var elapsed = DateTime.Now - currentTime;
             DebugLogger("Calculated Map DifficultyAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
+
+            totalHitObjectCount = CountTotalHitObjects(beatmap, mode);
+            DebugLogger("Total HitObject Count: " + totalHitObjectCount);
+
             return new MapDifficultyAttributes
             {
                 Mods = args.Mods,

@@ -1716,14 +1716,16 @@ namespace RealtimePPUR.Forms
                         break;
 
                     case 19:
-                        if (remainingNotesToolStripMenuItem.Checked && currentGamemodeValue is 0 or 1 or 3)
+                        if (remainingNotesToolStripMenuItem.Checked)
                         {
-                            var totalNotes = calculatedData.IfFcHitResult.Values.Sum();
+
+                            var totalNotes = calculatedData.TotalHitObjectCount;
 
                             int currentNotes = currentGamemodeValue switch
                             {
                                 0 => hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitMiss,
                                 1 => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+                                2 => hits.Hit300 + hits.Hit100 + hits.HitMiss,
                                 3 => hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 +
                                      hits.HitMiss,
                                 _ => throw new NotImplementedException()
