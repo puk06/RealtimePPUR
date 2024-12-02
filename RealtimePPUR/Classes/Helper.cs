@@ -70,7 +70,7 @@ namespace RealtimePPUR.Classes
                 OsuMemoryStatus.NotRunning => " is Not Running osu!",
                 OsuMemoryStatus.OsuDirect => " is Searching Maps",
                 OsuMemoryStatus.Playing => " is Playing Map",
-                OsuMemoryStatus.ResultsScreen => " in Results",
+                OsuMemoryStatus.ResultsScreen => " is in Results",
                 OsuMemoryStatus.SongSelect => " is Selecting Songs",
                 OsuMemoryStatus.Unknown => " is Unknown",
                 _ => " is Unknown"
