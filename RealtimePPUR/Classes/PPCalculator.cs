@@ -17,6 +17,7 @@ namespace RealtimePPUR.Classes
         private ProcessorWorkingBeatmap workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
         private List<TimedDifficultyAttributes> currentDifficultyAttributes;
         private MapDifficultyAttributes currentMapDifficultyAttributes;
+        private MapPerformanceAttributes currentMapPerformanceAttributes;
         private int totalHitObjectCount;
 
         public void SetMap(string file, int givenmode)
@@ -26,6 +27,7 @@ namespace RealtimePPUR.Classes
             workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
             currentDifficultyAttributes = null;
             currentMapDifficultyAttributes = null;
+            currentMapPerformanceAttributes = null;
         }
 
         public void SetMode(int givenmode)
@@ -34,6 +36,7 @@ namespace RealtimePPUR.Classes
             mode = givenmode;
             currentDifficultyAttributes = null;
             currentMapDifficultyAttributes = null;
+            currentMapPerformanceAttributes = null;
         }
 
         public BeatmapData Calculate(CalculateArgs args, bool playing, bool resultScreen, HitsResult hits)
@@ -43,28 +46,18 @@ namespace RealtimePPUR.Classes
 
             var staticsSs = GenerateHitResultsForSs(beatmap, mode);
 
-            var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
-            {
-                Accuracy = 1,
-                MaxCombo = GetMaxCombo(beatmap, mode),
-                Statistics = staticsSs,
-                Mods = mods
-            };
-
             var difficultyAttributes = GetCurrentMapDifficultyAttributes(args, beatmap);
-
-            var performanceCalculator = ruleset.CreatePerformanceCalculator();
-            var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
+            var performanceAttributes = GetCurrentMapPerformanceAttributes(args, beatmap, difficultyAttributes);
 
             var data = new BeatmapData()
             {
                 DifficultyAttributes = difficultyAttributes,
-                PerformanceAttributes = performanceAttributes,
+                PerformanceAttributes = performanceAttributes.PerformanceAttributes,
                 CurrentDifficultyAttributes = difficultyAttributes,
-                CurrentPerformanceAttributes = performanceAttributes,
+                CurrentPerformanceAttributes = performanceAttributes.PerformanceAttributes,
                 DifficultyAttributesIffc = difficultyAttributes,
-                PerformanceAttributesIffc = performanceAttributes,
-                PerformanceAttributesLossMode = performanceAttributes,
+                PerformanceAttributesIffc = performanceAttributes.PerformanceAttributes,
+                PerformanceAttributesLossMode = performanceAttributes.PerformanceAttributes,
                 IfFcHitResult = staticsSs,
                 ExpectedManiaScore = 0,
                 CurrentBpm = 0,
@@ -85,6 +78,7 @@ namespace RealtimePPUR.Classes
                     Mods = mods,
                     TotalScore = args.Score
                 };
+                var performanceCalculator = ruleset.CreatePerformanceCalculator();
                 var performanceAttributesResult =
                     performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
                 data.CurrentPerformanceAttributes = performanceAttributesResult;
@@ -108,6 +102,7 @@ namespace RealtimePPUR.Classes
 
             if (!playing) return data;
             {
+                var performanceCalculator = ruleset.CreatePerformanceCalculator();
                 DifficultyAttributes difficultyAttributesCurrent;
 
                 if (args.CalculateBeforePlaying)
@@ -292,6 +287,49 @@ namespace RealtimePPUR.Classes
             {
                 Mods = args.Mods,
                 DifficultyAttributes = difficultyAttributes
+            };
+        }
+
+        private MapPerformanceAttributes GetCurrentMapPerformanceAttributes(CalculateArgs args, IBeatmap beatmap,
+            DifficultyAttributes difficultyAttributes)
+        {
+            if (currentMapPerformanceAttributes != null &&
+                !currentMapPerformanceAttributes.Mods.SequenceEqual(args.Mods))
+            {
+                DebugLogger("Mods changed, recalculating Map PerformanceAttributes...");
+                currentMapPerformanceAttributes = null;
+            }
+
+            currentMapPerformanceAttributes ??= CalculateMapPerformanceAttributes(args, beatmap, difficultyAttributes);
+            return currentMapPerformanceAttributes;
+        }
+
+        private MapPerformanceAttributes CalculateMapPerformanceAttributes(CalculateArgs args, IBeatmap beatmap,
+            DifficultyAttributes difficultyAttributes)
+        {
+            DebugLogger("Calculating Map PerformanceAttributes...");
+            var currentTime = DateTime.Now;
+
+            var mods = GetMods(ruleset, args);
+            var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
+            {
+                Accuracy = 1,
+                MaxCombo = GetMaxCombo(beatmap, mode),
+                Statistics = GenerateHitResultsForSs(beatmap, mode),
+                Mods = mods
+            };
+
+            var performanceCalculator = ruleset.CreatePerformanceCalculator();
+            var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
+
+            var elapsed = DateTime.Now - currentTime;
+            DebugLogger("Calculated Map PerformanceAttributes! (Total Time: " + elapsed.Milliseconds +
+                        " milliseconds)");
+
+            return new MapPerformanceAttributes
+            {
+                Mods = args.Mods,
+                PerformanceAttributes = performanceAttributes
             };
         }
     }
