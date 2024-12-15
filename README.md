@@ -62,7 +62,7 @@ I have written a lot of explanations so it will be easy to understand!
 
 3: CurrentPP → PP: 〇〇pp
 
-4: CurrentACC → ACC: 〇〇%
+4: CurrentACC → ACC: 〇〇 / 〇〇%
 
 5: Hits → Hits: 〇〇/〇〇/〇〇/〇〇
 
