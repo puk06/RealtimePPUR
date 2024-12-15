@@ -30,7 +30,7 @@ If you find my project useful or like it, your support will encourage future dev
   > * Since it does not use injector, it does not violate the terms of osu!
 
 - **Function to open other people's replay screens to see their PP**!
-  > * Function to calculate and display IFFC, SSPP, SR, and PP when you open someone else's result in ranking, etc. **Function to see PP when you open someone else's result in ranking, etc!
+  > * Function to calculate and display IFFC, SSPP, SR, and PP when you open someone else's result in ranking, etc. **Function to see PP when you open someone else's result in ranking**, etc!
 
 - **Complete conversion support**
   > * Complete support for conversion of all Modes, so even converters can use it with confidence!
