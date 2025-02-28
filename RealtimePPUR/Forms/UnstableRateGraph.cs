@@ -45,8 +45,8 @@ namespace RealtimePPUR.Forms
                             dict[i] = 1;
                     }
 
-                    const int minX = -50;
-                    const int maxX = 50;
+                    const int minX = -100;
+                    const int maxX = 100;
 
                     for (int i = minX; i <= maxX; i++)
                     {

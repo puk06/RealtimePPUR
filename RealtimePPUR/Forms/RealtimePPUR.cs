@@ -1522,7 +1522,14 @@ namespace RealtimePPUR.Forms
                     case 4:
                         if (currentACCToolStripMenuItem.Checked)
                         {
-                            displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + " / " + Math.Round((GetAccuracy(calculatedData.HitResultLossMode, currentGamemode) * 100), 2) + "%\n";
+                            if (currentGamemode is 1 or 3)
+                            {
+                                displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + " / " + Math.Round((GetAccuracy(calculatedData.HitResultLossMode, currentGamemode) * 100), 2) + "%\n";
+                            }
+                            else
+                            {
+                                displayFormat += "ACC: " + Math.Round(baseAddresses.Player.Accuracy, 2) + "%\n";
+                            }
                         }
 
                         break;
