@@ -26,7 +26,7 @@ namespace RealtimePPUR
             }
             catch (Exception softwareError)
             {
-                MessageBox.Show($"ソフトの起動に失敗しました。\nエラー内容: {softwareError.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"ソフトの起動に失敗しました。\nエラー内容: {softwareError}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

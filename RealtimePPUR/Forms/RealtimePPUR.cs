@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.8-Release";
+        private const string CURRENT_VERSION = "v1.1.9-Release";
         private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;

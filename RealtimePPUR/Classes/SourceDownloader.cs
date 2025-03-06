@@ -56,7 +56,6 @@ namespace RealtimePPUR.Classes
                 if (destDirName != null)
                     Directory.CreateDirectory(destDirName);
 
-
             var files = dir.GetFiles();
             foreach (var file in files)
             {

@@ -25,7 +25,8 @@ const SOFTWARE_LIBRARY = [
     "ProcessMemoryDataFinder.dll",
     "OxyPlot.WindowsForms.dll",
     "OxyPlot.dll",
-    "MathNet.Numerics.dll"
+    "MathNet.Numerics.dll",
+    "System.Diagnostics.DiagnosticSource.dll"
 ];
 
 const REALTIMEPPUR_FILES = [
