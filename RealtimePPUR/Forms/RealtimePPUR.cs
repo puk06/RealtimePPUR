@@ -109,7 +109,9 @@ namespace RealtimePPUR.Forms
 
         public RealtimePpur()
         {
+#pragma warning disable CS0162 // 到達できないコードが検出されました
             if (DEBUG_MODE) AllocConsole();
+#pragma warning restore CS0162
 
             AddFontFile();
             InitializeComponent();

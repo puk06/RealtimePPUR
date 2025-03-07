@@ -35,7 +35,9 @@ namespace RealtimePPUR
             if (!Directory.Exists("Updater") || !File.Exists("config.cfg") || !Directory.Exists("src"))
             {
                 MessageBox.Show("起動に必要なファイルをダウンロードします。", "ダウンロード", MessageBoxButtons.OK, MessageBoxIcon.Information);
+#pragma warning disable CS0618 // 型またはメンバーが旧型式です
                 await new SourceDownloader().DownloadFiles();
+#pragma warning restore CS0618
                 MessageBox.Show("ダウンロードが完了しました！ソフトを起動します！", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
