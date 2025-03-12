@@ -67,7 +67,7 @@ namespace RealtimePPUR.Forms
         public List<int> UnstableRateArray { get; set; }
 
         private readonly Dictionary<string, string> configDictionary = new();
-        private readonly StructuredOsuMemoryReader sreader = new();
+        private readonly StructuredOsuMemoryReader sreader = StructuredOsuMemoryReader.GetInstance(new("osu!"));
         private readonly OsuBaseAddresses baseAddresses = new();
         private readonly string customSongsFolder;
         private readonly Dictionary<string, int> osuModeValue = new()
