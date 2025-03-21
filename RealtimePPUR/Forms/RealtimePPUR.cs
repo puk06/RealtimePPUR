@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.9-Release";
+        private const string CURRENT_VERSION = "v1.1.10-Release";
         private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;
@@ -64,6 +64,7 @@ namespace RealtimePPUR.Forms
         private HitsResult previousHits = new();
         private string prevErrorMessage;
         private string[] prevModStrings;
+        private readonly int calculateInterval = 15;
         public List<int> UnstableRateArray { get; set; }
 
         private readonly Dictionary<string, string> configDictionary = new();
@@ -233,6 +234,7 @@ namespace RealtimePPUR.Forms
                 calculateFirstToolStripMenuItem.Checked = CheckConfigDictionaryValue("CALCULATEFIRST");
                 discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionaryValue("DISCORDRICHPRESENCE");
                 ingameoverlayPriority = CheckConfigDictionaryString("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19");
+                calculateInterval = CheckConfigDictionaryInt("CALCULATEINTERVAL", 15);
                 if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
                 {
                     customSongsFolder = customSongsFolderValue;
@@ -391,7 +393,7 @@ namespace RealtimePPUR.Forms
         {
             while (true)
             {
-                await Task.Delay(15);
+                await Task.Delay(calculateInterval);
                 try
                 {
                     if (!TopMost) TopMost = true;
@@ -491,6 +493,10 @@ namespace RealtimePPUR.Forms
                         if (currentGamemodeValue is 1 or 3)
                         {
                             if (pPLossModeToolStripMenuItem.Checked)
+                            {
+                                iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
+                            }
+                            else if (isResultScreenBool)
                             {
                                 iffc.Text = Math.Round(ifFcPpValue) + " / " + Math.Round(ssppValue);
                             }
@@ -646,7 +652,7 @@ namespace RealtimePPUR.Forms
             {
                 try
                 {
-                    Thread.Sleep(15);
+                    Thread.Sleep(calculateInterval);
 
                     if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
                     if (!isDirectoryLoaded) throw new Exception("Directory not loaded. Skipping...");
@@ -1759,6 +1765,17 @@ namespace RealtimePPUR.Forms
         private string CheckConfigDictionaryString(string key, string value)
         {
             return configDictionary.TryGetValue(key, out string test) ? test : value;
+        }
+
+        private int CheckConfigDictionaryInt(string key, int value)
+        {
+            if (configDictionary.TryGetValue(key, out string test))
+            {
+                var result = int.TryParse(test, out int testInt);
+                return result ? testInt : value;
+            }
+
+            return value;
         }
 
         // Save Config
