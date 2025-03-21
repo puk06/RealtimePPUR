@@ -203,9 +203,9 @@ namespace RealtimePPUR.Classes
             time ??= 0;
             currentDifficultyAttributes ??= CalculateAllTimedDifficulties(beatmap, args);
             var difficultyAttributes = currentDifficultyAttributes.LastOrDefault(d => d.Time <= time);
-            if (difficultyAttributes != null) return difficultyAttributes.DifficultyAttributes;
+            if (difficultyAttributes != null) return difficultyAttributes.Attributes;
             difficultyAttributes = currentDifficultyAttributes.First();
-            return difficultyAttributes.DifficultyAttributes;
+            return difficultyAttributes.Attributes;
         }
 
         private DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args, IBeatmap beatmap)
@@ -214,6 +214,7 @@ namespace RealtimePPUR.Classes
             {
                 DebugLogger("Mods changed, recalculating Map DifficultyAttributes...");
                 currentMapDifficultyAttributes = null;
+                currentDifficultyAttributes = null;
             }
 
             currentMapDifficultyAttributes ??= CalculateMapDifficultyAttributes(args, beatmap);
@@ -222,50 +223,17 @@ namespace RealtimePPUR.Classes
 
         private List<TimedDifficultyAttributes> CalculateAllTimedDifficulties(IBeatmap beatmap, CalculateArgs args)
         {
-            var allTimedDifficulties = new List<TimedDifficultyAttributes>();
-            var hitObjects = beatmap.HitObjects.ToArray();
-            Beatmap beatmapCurrent = new()
-            {
-                ControlPointInfo = workingBeatmap.Beatmap.ControlPointInfo,
-                BeatmapInfo = workingBeatmap.Beatmap.BeatmapInfo
-            };
-
-            var mods = GetMods(ruleset, args);
-
-            var total = hitObjects.Length;
-            DebugLogger($"Calculating All DifficultyAttributes... Total: {total}");
+            DebugLogger($"Calculating All DifficultyAttributes...");
             var currentTime = DateTime.Now;
 
-            var currentProgress = 0;
-            foreach (var hitObject in hitObjects)
-            {
-                var progress = (int)(hitObject.StartTime / hitObjects[^1].StartTime * 100);
-                if (progress != currentProgress)
-                {
-                    currentProgress = progress;
-                    Console.Write($"\rCalculating Progress: {progress}%");
-                }
-
-                var o = hitObject;
-                var hitObjectsCurrent = hitObjects.Where(h => h.StartTime <= o.StartTime).ToList();
-                beatmapCurrent.HitObjects.Clear();
-                beatmapCurrent.HitObjects.AddRange(hitObjectsCurrent);
-
-                var difficultyCalculator =
-                    ruleset.CreateDifficultyCalculator(new ProcessorWorkingBeatmap(beatmapCurrent));
-                var difficultyAttributes = difficultyCalculator.Calculate(mods);
-                allTimedDifficulties.Add(new TimedDifficultyAttributes
-                {
-                    Time = hitObject.StartTime,
-                    DifficultyAttributes = difficultyAttributes
-                });
-            }
+            var mods = GetMods(ruleset, args);
+            var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
+            var difficultyAttributes = difficultyCalculator.CalculateTimed(mods);
 
             var elapsed = DateTime.Now - currentTime;
-            Console.WriteLine();
-            DebugLogger($"Calculated All DifficultyAttributes! (Total Time: {elapsed.TotalSeconds} seconds)");
+            DebugLogger($"Calculated All DifficultyAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
 
-            return allTimedDifficulties;
+            return difficultyAttributes;
         }
 
         private MapDifficultyAttributes CalculateMapDifficultyAttributes(CalculateArgs args, IBeatmap beatmap)
