@@ -64,7 +64,7 @@
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "UnstableRateGraph";
-            Text = "UnstableRateGraph";
+            Text = "UnstableRateGraph by RealtimePPUR";
             ResumeLayout(false);
             PerformLayout();
         }

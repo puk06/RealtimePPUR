@@ -156,7 +156,7 @@ namespace RealtimePPUR.Forms
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "StrainGraph";
-            Text = "StrainsGraph";
+            Text = "StrainGraph by RealtimePPUR";
             ResumeLayout(false);
             PerformLayout();
         }
