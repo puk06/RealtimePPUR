@@ -304,38 +304,50 @@ namespace RealtimePPUR.Classes
 
         public StrainList GetStrainLists()
         {
-            var difficultyCalculator = GetExtendedDifficultyCalculator(ruleset.RulesetInfo, workingBeatmap);
-            difficultyCalculator.Calculate();
-
-            if (difficultyCalculator is IExtendedDifficultyCalculator extendedDifficultyCalculator)
+            try
             {
-                var skills = extendedDifficultyCalculator.GetSkills();
+                var difficultyCalculator = GetExtendedDifficultyCalculator(ruleset.RulesetInfo, workingBeatmap);
+                difficultyCalculator.Calculate();
 
-                List<float[]> strainLists = new List<float[]>();
-
-                foreach (var skill in skills)
+                if (difficultyCalculator is IExtendedDifficultyCalculator extendedDifficultyCalculator)
                 {
-                    double[] strains = ((StrainSkill)skill).GetCurrentStrainPeaks().ToArray();
+                    var skills = extendedDifficultyCalculator.GetSkills();
 
-                    var skillStrainList = new List<float>();
+                    List<float[]> strainLists = new List<float[]>();
 
-                    for (int i = 0; i < strains.Length; i++)
+                    foreach (var skill in skills)
                     {
-                        double strain = strains[i];
-                        skillStrainList.Add(((float)strain));
+                        double[] strains = ((StrainSkill)skill).GetCurrentStrainPeaks().ToArray();
+
+                        var skillStrainList = new List<float>();
+
+                        for (int i = 0; i < strains.Length; i++)
+                        {
+                            double strain = strains[i];
+                            skillStrainList.Add(((float)strain));
+                        }
+
+                        strainLists.Add(skillStrainList.ToArray());
                     }
 
-                    strainLists.Add(skillStrainList.ToArray());
+                    return new StrainList
+                    {
+                        Strains = strainLists,
+                        SkillNames = skills.Select(skill => skill.GetType().Name).ToArray()
+                    };
                 }
-
-                return new StrainList
+                else
                 {
-                    Strains = strainLists,
-                    SkillNames = skills.Select(skill => skill.GetType().Name).ToArray()
-                };
+                    return new StrainList
+                    {
+                        Strains = new List<float[]>(),
+                        SkillNames = Array.Empty<string>()
+                    };
+                }
             }
-            else
+            catch (Exception e)
             {
+                DebugLogger("Error getting strain lists: " + e.Message, true);
                 return new StrainList
                 {
                     Strains = new List<float[]>(),

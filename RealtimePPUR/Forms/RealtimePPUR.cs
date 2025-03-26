@@ -760,6 +760,12 @@ namespace RealtimePPUR.Forms
                             calculator.SetMode(currentOsuGamemode);
                             currentGamemode = currentOsuGamemode;
                             DebugLogger($"Gamemode changed to {currentOsuGamemode}");
+
+                            if (strainGraph != null && !strainGraph.IsDisposed)
+                            {
+                                var strainsData = calculator.GetStrainLists();
+                                strainGraph.SetValues(strainsData.Strains, strainsData.SkillNames, calculator.GetFirstObjectTime());
+                            }
                         }
 
                         preOsuGamemode = currentOsuGamemode;
