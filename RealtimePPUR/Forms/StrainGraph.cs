@@ -21,6 +21,12 @@ namespace RealtimePPUR.Forms
         {
             InitializeComponent();
 
+            RhythmCheckBox.Text = GetLabelString(0);
+            ReadingCheckBox.Text = GetLabelString(1);
+            ColourCheckBox.Text = GetLabelString(2);
+            Stamina1CheckBox.Text = GetLabelString(3);
+            Stamina2CheckBox.Text = GetLabelString(4);
+
             RhythmCheckBox.ForeColor = Blue.ToColor();
             ReadingCheckBox.ForeColor = Green.ToColor();
             ColourCheckBox.ForeColor = Red.ToColor();
@@ -262,7 +268,7 @@ namespace RealtimePPUR.Forms
 
         private string GetLabelString(int index)
         {
-            return labelStrings.Length > index ? labelStrings[index] : "Unknown";
+            return labelStrings.Length > index ? labelStrings[index] : "-";
         }
 
         private float GetValue(int index, int time)
