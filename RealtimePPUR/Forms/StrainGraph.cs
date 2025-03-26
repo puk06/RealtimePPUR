@@ -252,7 +252,7 @@ namespace RealtimePPUR.Forms
         private int preTime = 0;
         public void UpdateSongProgress(int time)
         {
-            if (time - preTime > 300 || time < preTime)
+            if (Math.Abs(time - preTime) >= 500)
             {
                 preTime = time;
                 RenderGraph(true, time);
