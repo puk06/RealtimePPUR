@@ -5,6 +5,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Catch;
 using osu.Game.Rulesets.Catch.Objects;
+using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
@@ -25,6 +26,18 @@ namespace RealtimePPUR.Classes
                 1 => new TaikoRuleset(),
                 2 => new CatchRuleset(),
                 3 => new ManiaRuleset(),
+                _ => throw new ArgumentException("Invalid ruleset ID provided.")
+            };
+        }
+
+        public static DifficultyCalculator GetExtendedDifficultyCalculator(RulesetInfo ruleset, IWorkingBeatmap working)
+        {
+            return ruleset.OnlineID switch
+            {
+                0 => new ExtendedOsuDifficultyCalculator(ruleset, working),
+                1 => new ExtendedTaikoDifficultyCalculator(ruleset, working),
+                2 => new ExtendedCatchDifficultyCalculator(ruleset, working),
+                3 => new ExtendedManiaDifficultyCalculator(ruleset, working),
                 _ => throw new ArgumentException("Invalid ruleset ID provided.")
             };
         }

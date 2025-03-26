@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.10-Release";
+        private const string CURRENT_VERSION = "v1.1.11-Release";
         private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;
@@ -80,6 +80,9 @@ namespace RealtimePPUR.Forms
         public FontFamily GuiFont;
         public FontFamily InGameOverlayFont;
 
+        private StrainGraph strainGraph;
+        private UnstableRateGraph unstableRateGraph;
+
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -118,6 +121,8 @@ namespace RealtimePPUR.Forms
             InitializeComponent();
 
             DebugLogger("RealtimePPUR Initialized.");
+
+            DebugLogger("UnstableRateGraph Initialized.");
 
             if (File.Exists("Error.log")) File.Delete("Error.log");
 
@@ -727,11 +732,23 @@ namespace RealtimePPUR.Forms
                         {
                             calculator = new PpCalculator(osuBeatmapPath, currentGamemode);
                             DebugLogger("Calculator initialized.");
+
+                            if (strainGraph != null && !strainGraph.IsDisposed)
+                            {
+                                var strainsData = calculator.GetStrainLists();
+                                strainGraph.SetValues(strainsData.Strains, strainsData.SkillNames, calculator.GetFirstObjectTime());
+                            }
                         }
                         else
                         {
                             calculator.SetMap(osuBeatmapPath, currentGamemode);
                             DebugLogger("Calculator updated.");
+
+                            if (strainGraph != null && !strainGraph.IsDisposed)
+                            {
+                                var strainsData = calculator.GetStrainLists();
+                                strainGraph.SetValues(strainsData.Strains, strainsData.SkillNames, calculator.GetFirstObjectTime());
+                            }
                         }
                     }
 
@@ -813,6 +830,9 @@ namespace RealtimePPUR.Forms
                         hits.Combo = baseAddresses.Player.MaxCombo;
                         hits.Score = baseAddresses.Player.Score;
                     }
+
+                    if (strainGraph != null && !strainGraph.IsDisposed)
+                        strainGraph.UpdateSongProgress(baseAddresses.GeneralData.AudioTime);
 
                     if (hits.Equals(previousHits) && status is OsuMemoryStatus.Playing && !hits.IsEmpty()) continue;
                     if (status is OsuMemoryStatus.Playing) previousHits = hits.Clone();
@@ -1866,8 +1886,14 @@ namespace RealtimePPUR.Forms
 
         private void uRGraphToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UnstableRateGraph unstableRateGraph = new(this);
+            if (unstableRateGraph == null || unstableRateGraph.IsDisposed) unstableRateGraph = new UnstableRateGraph(this);
             unstableRateGraph.Show();
+        }
+
+        private void strainGraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (strainGraph == null || strainGraph.IsDisposed) strainGraph = new StrainGraph();
+            strainGraph.Show();
         }
     }
 }

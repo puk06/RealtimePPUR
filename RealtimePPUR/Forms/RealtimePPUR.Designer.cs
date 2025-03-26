@@ -69,6 +69,7 @@ namespace RealtimePPUR.Forms
             userScoreToolStripMenuItem = new ToolStripMenuItem();
             currentBPMToolStripMenuItem = new ToolStripMenuItem();
             currentRankToolStripMenuItem = new ToolStripMenuItem();
+            remainingNotesToolStripMenuItem = new ToolStripMenuItem();
             pPLossModeToolStripMenuItem = new ToolStripMenuItem();
             calculateFirstToolStripMenuItem = new ToolStripMenuItem();
             changePriorityToolStripMenuItem = new ToolStripMenuItem();
@@ -80,7 +81,7 @@ namespace RealtimePPUR.Forms
             uRGraphToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new Label();
-            remainingNotesToolStripMenuItem = new ToolStripMenuItem();
+            strainGraphToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -203,9 +204,9 @@ namespace RealtimePPUR.Forms
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, calculateFirstToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, uRGraphToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, pPLossModeToolStripMenuItem, calculateFirstToolStripMenuItem, changePriorityToolStripMenuItem, changeFontToolStripMenuItem, loadFontToolStripMenuItem, resetFontToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, uRGraphToolStripMenuItem, strainGraphToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(191, 312);
+            contextMenuStrip1.Size = new Size(191, 334);
             // 
             // modeToolStripMenuItem
             // 
@@ -384,6 +385,13 @@ namespace RealtimePPUR.Forms
             currentRankToolStripMenuItem.Text = "CurrentRank";
             currentRankToolStripMenuItem.Click += ToggleChecked;
             // 
+            // remainingNotesToolStripMenuItem
+            // 
+            remainingNotesToolStripMenuItem.Name = "remainingNotesToolStripMenuItem";
+            remainingNotesToolStripMenuItem.Size = new Size(187, 22);
+            remainingNotesToolStripMenuItem.Text = "RemainingNotes";
+            remainingNotesToolStripMenuItem.Click += ToggleChecked;
+            // 
             // pPLossModeToolStripMenuItem
             // 
             pPLossModeToolStripMenuItem.Name = "pPLossModeToolStripMenuItem";
@@ -464,12 +472,12 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.Visible = false;
             // 
-            // remainingNotesToolStripMenuItem
+            // strainGraphToolStripMenuItem
             // 
-            remainingNotesToolStripMenuItem.Name = "remainingNotesToolStripMenuItem";
-            remainingNotesToolStripMenuItem.Size = new Size(187, 22);
-            remainingNotesToolStripMenuItem.Text = "RemainingNotes";
-            remainingNotesToolStripMenuItem.Click += ToggleChecked;
+            strainGraphToolStripMenuItem.Name = "strainGraphToolStripMenuItem";
+            strainGraphToolStripMenuItem.Size = new Size(190, 22);
+            strainGraphToolStripMenuItem.Text = "Strain Graph";
+            strainGraphToolStripMenuItem.Click += strainGraphToolStripMenuItem_Click;
             // 
             // RealtimePpur
             // 
@@ -555,6 +563,7 @@ namespace RealtimePPUR.Forms
         private ToolStripMenuItem calculateFirstToolStripMenuItem;
         private ToolStripMenuItem uRGraphToolStripMenuItem;
         private ToolStripMenuItem remainingNotesToolStripMenuItem;
+        private ToolStripMenuItem strainGraphToolStripMenuItem;
     }
 }
 

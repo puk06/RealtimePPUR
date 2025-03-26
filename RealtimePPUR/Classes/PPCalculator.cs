@@ -1,11 +1,12 @@
-using System;
-using System.Collections.Generic;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets;
-using osu.Game.Scoring;
-using System.Linq;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Difficulty.Skills;
+using osu.Game.Scoring;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using static RealtimePPUR.Classes.CalculatorHelpers;
 using static RealtimePPUR.Classes.Helper;
 
@@ -299,6 +300,60 @@ namespace RealtimePPUR.Classes
                 Mods = args.Mods,
                 PerformanceAttributes = performanceAttributes
             };
+        }
+
+        public StrainList GetStrainLists()
+        {
+            var difficultyCalculator = GetExtendedDifficultyCalculator(ruleset.RulesetInfo, workingBeatmap);
+            difficultyCalculator.Calculate();
+
+            if (difficultyCalculator is IExtendedDifficultyCalculator extendedDifficultyCalculator)
+            {
+                var skills = extendedDifficultyCalculator.GetSkills();
+
+                List<float[]> strainLists = new List<float[]>();
+
+                foreach (var skill in skills)
+                {
+                    double[] strains = ((StrainSkill)skill).GetCurrentStrainPeaks().ToArray();
+
+                    var skillStrainList = new List<float>();
+
+                    for (int i = 0; i < strains.Length; i++)
+                    {
+                        double strain = strains[i];
+                        skillStrainList.Add(((float)strain));
+                    }
+
+                    strainLists.Add(skillStrainList.ToArray());
+                }
+
+                return new StrainList
+                {
+                    Strains = strainLists,
+                    SkillNames = skills.Select(skill => skill.GetType().Name).ToArray()
+                };
+            }
+            else
+            {
+                return new StrainList
+                {
+                    Strains = new List<float[]>(),
+                    SkillNames = Array.Empty<string>()
+                };
+            }
+        }
+
+        public int GetFirstObjectTime()
+        {
+            var firstObject = workingBeatmap.Beatmap.HitObjects.Count > 1 ? workingBeatmap.Beatmap.HitObjects[1] : null;
+            return (int)(firstObject?.StartTime ?? 0);
+        }
+
+        public class StrainList
+        {
+            public List<float[]> Strains { get; set; }
+            public string[] SkillNames { get; set; }
         }
     }
 }
