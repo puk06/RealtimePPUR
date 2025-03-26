@@ -17,6 +17,9 @@ namespace RealtimePPUR.Forms
         private readonly OxyColor Yellow = OxyColor.Parse("#ffcc22");
         private readonly OxyColor Pink = OxyColor.Parse("#f000ec");
 
+        private int preTime = 0;
+        private bool rendering = false;
+
         public StrainGraph()
         {
             InitializeComponent();
@@ -60,6 +63,8 @@ namespace RealtimePPUR.Forms
         {
             try
             {
+                if (rendering) return;
+                rendering = true;
                 StrainGraphPlot.Model = null;
 
                 var rhythmLineSeries = new LineSeries
@@ -218,9 +223,12 @@ namespace RealtimePPUR.Forms
 
                 StrainGraphPlot.Model = plotModel;
                 plotModel.InvalidatePlot(true);
+
+                rendering = false;
             }
             catch
             {
+                rendering = false;
                 // ignored
             }
         }
@@ -255,10 +263,9 @@ namespace RealtimePPUR.Forms
             return timeText;
         }
 
-        private int preTime = 0;
         public void UpdateSongProgress(int time)
         {
-            if (Math.Abs(time - preTime) >= 500)
+            if (Math.Abs(time - preTime) >= 1000)
             {
                 preTime = time;
                 RenderGraph(true, time);
