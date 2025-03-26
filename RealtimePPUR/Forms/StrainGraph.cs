@@ -1,4 +1,4 @@
-﻿using OxyPlot;
+using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
@@ -159,7 +159,7 @@ namespace RealtimePPUR.Forms
                     int index = count;
                     for (int i = 0; i < count; i++)
                     {
-                        var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + lastStrainTime * i / globalValues[0].Length);
+                        var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + (lastStrainTime * i / globalValues[0].Length));
                         if (strainTime > TimeSpan.FromMilliseconds(time))
                         {
                             index = i;
@@ -243,7 +243,7 @@ namespace RealtimePPUR.Forms
             if (globalValues.Count == 0) return "0:00.00";
             double lastStrainTime = globalValues.Max(l => l.Length) * 400;
 
-            var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + lastStrainTime * x / globalValues[0].Length);
+            var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + (lastStrainTime * x / globalValues[0].Length));
             string timeText = $"~{strainTime:mm\\:ss\\.ff}";
 
             return timeText;
