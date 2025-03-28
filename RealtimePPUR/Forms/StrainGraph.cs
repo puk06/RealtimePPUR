@@ -142,7 +142,6 @@ namespace RealtimePPUR.Forms
                     Title = "Progress"
                 };
 
-
                 var maxValue = 0f;
                 for (int i = 0; i < totalCount; i++)
                 {
@@ -244,13 +243,20 @@ namespace RealtimePPUR.Forms
 
         public void UpdateSongProgress(int time)
         {
-            if (globalValues.Count == 0) return;
-            if (!isGraphBoundsSet) isGraphBoundsSet = UpdateGraphBounds();
+            try
+            {
+                if (globalValues.Count == 0) return;
+                if (!isGraphBoundsSet) isGraphBoundsSet = UpdateGraphBounds();
 
-            var progress = (time - firstObjectTime) / (double)(lastStrainTime - firstObjectTime);
-            var progressValue = Math.Max(0, Math.Min(1, progress));
+                var progress = (time - firstObjectTime) / (double)(lastStrainTime - firstObjectTime);
+                var progressValue = Math.Max(0, Math.Min(1, progress));
 
-            progressLine.Location = new Point((int)(graphLeft + ((graphRight - graphLeft) * progressValue) - (progressLine.Width / 2)), progressLine.Location.Y);
+                progressLine.Location = new Point((int)(graphLeft + ((graphRight - graphLeft) * progressValue) - (progressLine.Width / 2)), progressLine.Location.Y);
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         private string GetLabelString(int index)
