@@ -4,6 +4,7 @@ using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -16,9 +17,6 @@ namespace RealtimePPUR.Forms
         private readonly OxyColor Red = OxyColor.Parse("#ed1121");
         private readonly OxyColor Yellow = OxyColor.Parse("#ffcc22");
         private readonly OxyColor Pink = OxyColor.Parse("#f000ec");
-
-        private int preTime = 0;
-        private bool rendering = false;
 
         public StrainGraph()
         {
@@ -40,6 +38,11 @@ namespace RealtimePPUR.Forms
         private List<float[]> globalValues = new();
         private string[] labelStrings = Array.Empty<string>();
         private int firstObjectTime = 0;
+        private int lastStrainTime = 0;
+        private int totalCount = 0;
+        private double graphRight = 0;
+        private double graphLeft = 0;
+        private bool isGraphBoundsSet = false;
 
         public void SetValues(List<float[]> values, string[] labels, int firstTime)
         {
@@ -55,16 +58,17 @@ namespace RealtimePPUR.Forms
             Stamina2CheckBox.Text = GetLabelString(4);
 
             firstObjectTime = firstTime;
+            lastStrainTime = globalValues.Max(l => l.Length) * 400;
+            totalCount = globalValues.Count > 0 ? globalValues.Max(l => l.Length) : 0;
+            isGraphBoundsSet = false;
 
-            RenderGraph(false, 0);
+            RenderGraph();
         }
 
-        private void RenderGraph(bool timeProgress, int time)
+        private void RenderGraph()
         {
             try
             {
-                if (rendering) return;
-                rendering = true;
                 StrainGraphPlot.Model = null;
 
                 var rhythmLineSeries = new LineSeries
@@ -138,10 +142,9 @@ namespace RealtimePPUR.Forms
                     Title = "Progress"
                 };
 
-                var count = globalValues.Count > 0 ? globalValues.Max(l => l.Length) : 0;
 
                 var maxValue = 0f;
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < totalCount; i++)
                 {
                     rhythmLineSeries.Points.Add(new DataPoint(i, GetValue(i, 0)));
                     rhythmAreaSeries.Points.Add(new DataPoint(i, GetValue(i, 0)));
@@ -162,26 +165,6 @@ namespace RealtimePPUR.Forms
                 }
 
                 var plotModel = new PlotModel();
-
-                if (timeProgress)
-                {
-                    double lastStrainTime = count * 400;
-
-                    int index = count;
-                    for (int i = 0; i < count; i++)
-                    {
-                        var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + (lastStrainTime * i / globalValues[0].Length));
-                        if (strainTime > TimeSpan.FromMilliseconds(time))
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-
-                    progressAreaSeries.Points.Add(new DataPoint(0, maxValue));
-                    progressAreaSeries.Points.Add(new DataPoint(index, maxValue));
-                    plotModel.Series.Add(progressAreaSeries);
-                }
 
                 if (Stamina2CheckBox.Checked)
                 {
@@ -223,17 +206,14 @@ namespace RealtimePPUR.Forms
 
                 StrainGraphPlot.Model = plotModel;
                 plotModel.InvalidatePlot(true);
-
-                rendering = false;
             }
             catch
             {
-                rendering = false;
                 // ignored
             }
         }
 
-        private void CheckChanged(object sender, EventArgs e) => RenderGraph(false, 0);
+        private void CheckChanged(object sender, EventArgs e) => RenderGraph();
 
         private void plotView1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -242,7 +222,7 @@ namespace RealtimePPUR.Forms
                 if (globalValues.Count == 0 || StrainGraphPlot.Model?.DefaultXAxis == null) return;
                 var pos = StrainGraphPlot.Model.DefaultXAxis.InverseTransform(e.X, e.Y, StrainGraphPlot.Model.DefaultYAxis);
 
-                if (pos.X < 0 || pos.X >= globalValues[0].Length) return;
+                if (pos.X < 0 || pos.X >= totalCount) return;
 
                 label1.Text = $"Time: {GetTimeFromX(pos.X)}";
             }
@@ -255,9 +235,8 @@ namespace RealtimePPUR.Forms
         private string GetTimeFromX(double x)
         {
             if (globalValues.Count == 0) return "0:00.00";
-            double lastStrainTime = globalValues.Max(l => l.Length) * 400;
 
-            var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + (lastStrainTime * x / globalValues[0].Length));
+            var strainTime = TimeSpan.FromMilliseconds(firstObjectTime + (lastStrainTime * x / totalCount));
             string timeText = $"~{strainTime:mm\\:ss\\.ff}";
 
             return timeText;
@@ -265,12 +244,13 @@ namespace RealtimePPUR.Forms
 
         public void UpdateSongProgress(int time)
         {
-            if (Math.Abs(time - preTime) >= 1000)
-            {
-                preTime = time;
-                RenderGraph(true, time);
-                return;
-            }
+            if (globalValues.Count == 0) return;
+            if (!isGraphBoundsSet) isGraphBoundsSet = UpdateGraphBounds();
+
+            var progress = (time - firstObjectTime) / (double)(lastStrainTime - firstObjectTime);
+            var progressValue = Math.Max(0, Math.Min(1, progress));
+
+            progressLine.Location = new Point((int)(graphLeft + ((graphRight - graphLeft) * progressValue) - (progressLine.Width / 2)), progressLine.Location.Y);
         }
 
         private string GetLabelString(int index)
@@ -282,6 +262,17 @@ namespace RealtimePPUR.Forms
         {
             if (globalValues.Count <= time) return 0;
             return globalValues[time].Length > index ? globalValues[time][index] : 0;
+        }
+
+        private bool UpdateGraphBounds()
+        {
+            if (globalValues.Count == 0) return false;
+            if (StrainGraphPlot.Model?.DefaultXAxis == null) return false;
+            if (StrainGraphPlot.Model?.DefaultYAxis == null) return false;
+            graphLeft = StrainGraphPlot.Model.DefaultXAxis.Transform(0, 0, StrainGraphPlot.Model.DefaultYAxis).X;
+            graphRight = StrainGraphPlot.Model.DefaultXAxis.Transform(globalValues[0].Length, 0, StrainGraphPlot.Model.DefaultYAxis).X;
+
+            return true;
         }
     }
 }

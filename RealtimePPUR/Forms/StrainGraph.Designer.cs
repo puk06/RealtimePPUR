@@ -38,14 +38,16 @@ namespace RealtimePPUR.Forms
             Stamina1CheckBox = new CheckBox();
             Stamina2CheckBox = new CheckBox();
             label1 = new Label();
+            progressLine = new Label();
             SuspendLayout();
             // 
             // StrainGraphPlot
             // 
+            StrainGraphPlot.BackColor = SystemColors.Control;
             StrainGraphPlot.Location = new Point(0, 0);
             StrainGraphPlot.Name = "StrainGraphPlot";
             StrainGraphPlot.PanCursor = Cursors.Hand;
-            StrainGraphPlot.Size = new Size(951, 254);
+            StrainGraphPlot.Size = new Size(951, 279);
             StrainGraphPlot.TabIndex = 0;
             StrainGraphPlot.Text = "plotView1";
             StrainGraphPlot.ZoomHorizontalCursor = Cursors.SizeWE;
@@ -61,7 +63,7 @@ namespace RealtimePPUR.Forms
             RhythmCheckBox.CheckState = CheckState.Checked;
             RhythmCheckBox.Font = new Font("Yu Gothic UI", 16F);
             RhythmCheckBox.ForeColor = SystemColors.ControlText;
-            RhythmCheckBox.Location = new Point(12, 264);
+            RhythmCheckBox.Location = new Point(12, 285);
             RhythmCheckBox.Name = "RhythmCheckBox";
             RhythmCheckBox.Size = new Size(123, 34);
             RhythmCheckBox.TabIndex = 1;
@@ -77,7 +79,7 @@ namespace RealtimePPUR.Forms
             ReadingCheckBox.CheckState = CheckState.Checked;
             ReadingCheckBox.Font = new Font("Yu Gothic UI", 16F);
             ReadingCheckBox.ForeColor = SystemColors.ControlText;
-            ReadingCheckBox.Location = new Point(159, 264);
+            ReadingCheckBox.Location = new Point(159, 285);
             ReadingCheckBox.Name = "ReadingCheckBox";
             ReadingCheckBox.Size = new Size(123, 34);
             ReadingCheckBox.TabIndex = 2;
@@ -92,7 +94,7 @@ namespace RealtimePPUR.Forms
             ColourCheckBox.Checked = true;
             ColourCheckBox.CheckState = CheckState.Checked;
             ColourCheckBox.Font = new Font("Yu Gothic UI", 16F);
-            ColourCheckBox.Location = new Point(306, 264);
+            ColourCheckBox.Location = new Point(306, 285);
             ColourCheckBox.Name = "ColourCheckBox";
             ColourCheckBox.Size = new Size(123, 34);
             ColourCheckBox.TabIndex = 3;
@@ -107,7 +109,7 @@ namespace RealtimePPUR.Forms
             Stamina1CheckBox.Checked = true;
             Stamina1CheckBox.CheckState = CheckState.Checked;
             Stamina1CheckBox.Font = new Font("Yu Gothic UI", 16F);
-            Stamina1CheckBox.Location = new Point(453, 264);
+            Stamina1CheckBox.Location = new Point(453, 285);
             Stamina1CheckBox.Name = "Stamina1CheckBox";
             Stamina1CheckBox.Size = new Size(123, 34);
             Stamina1CheckBox.TabIndex = 4;
@@ -122,7 +124,7 @@ namespace RealtimePPUR.Forms
             Stamina2CheckBox.Checked = true;
             Stamina2CheckBox.CheckState = CheckState.Checked;
             Stamina2CheckBox.Font = new Font("Yu Gothic UI", 16F);
-            Stamina2CheckBox.Location = new Point(600, 264);
+            Stamina2CheckBox.Location = new Point(600, 285);
             Stamina2CheckBox.Name = "Stamina2CheckBox";
             Stamina2CheckBox.Size = new Size(123, 34);
             Stamina2CheckBox.TabIndex = 5;
@@ -134,18 +136,28 @@ namespace RealtimePPUR.Forms
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Yu Gothic UI", 16F);
-            label1.Location = new Point(751, 265);
+            label1.Location = new Point(751, 286);
             label1.Name = "label1";
             label1.Size = new Size(111, 30);
             label1.TabIndex = 6;
             label1.Text = "Time: N/A";
+            // 
+            // progressLine
+            // 
+            progressLine.BorderStyle = BorderStyle.FixedSingle;
+            progressLine.ForeColor = SystemColors.Control;
+            progressLine.Location = new Point(13, 17);
+            progressLine.Name = "progressLine";
+            progressLine.Size = new Size(5, 225);
+            progressLine.TabIndex = 9;
             // 
             // StrainGraph
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(950, 305);
+            ClientSize = new Size(950, 321);
+            Controls.Add(progressLine);
             Controls.Add(label1);
             Controls.Add(Stamina2CheckBox);
             Controls.Add(Stamina1CheckBox);
@@ -170,5 +182,6 @@ namespace RealtimePPUR.Forms
         private CheckBox Stamina1CheckBox;
         private CheckBox Stamina2CheckBox;
         private Label label1;
+        private Label progressLine;
     }
 }
