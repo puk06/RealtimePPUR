@@ -248,10 +248,10 @@ namespace RealtimePPUR.Forms
                 if (globalValues.Count == 0) return;
                 if (!isGraphBoundsSet) isGraphBoundsSet = UpdateGraphBounds();
 
-                var progress = (time - firstObjectTime) / (double)(lastStrainTime - firstObjectTime);
+                var progress = (time - firstObjectTime) / (double)lastStrainTime;
                 var progressValue = Math.Max(0, Math.Min(1, progress));
 
-                progressLine.Location = new Point((int)(graphLeft + ((graphRight - graphLeft) * progressValue) - (progressLine.Width / 2)), progressLine.Location.Y);
+                progressLine.Location = new Point((int)((graphRight - graphLeft) * progressValue + graphLeft) - (progressLine.Width / 2), progressLine.Location.Y);
             }
             catch
             {
@@ -276,7 +276,7 @@ namespace RealtimePPUR.Forms
             if (StrainGraphPlot.Model?.DefaultXAxis == null) return false;
             if (StrainGraphPlot.Model?.DefaultYAxis == null) return false;
             graphLeft = StrainGraphPlot.Model.DefaultXAxis.Transform(0, 0, StrainGraphPlot.Model.DefaultYAxis).X;
-            graphRight = StrainGraphPlot.Model.DefaultXAxis.Transform(globalValues[0].Length, 0, StrainGraphPlot.Model.DefaultYAxis).X;
+            graphRight = StrainGraphPlot.Model.DefaultXAxis.Transform(totalCount, 0, StrainGraphPlot.Model.DefaultYAxis).X;
 
             return true;
         }
