@@ -64,6 +64,8 @@ namespace RealtimePPUR.Forms
         private HitsResult previousHits = new();
         private string prevErrorMessage;
         private string[] prevModStrings;
+        private int retryCount = 0;
+        private int preObjectCount = 0;
         private readonly int calculateInterval = 15;
         public List<int> UnstableRateArray { get; set; }
 
@@ -664,6 +666,7 @@ namespace RealtimePPUR.Forms
 
                     bool playing = isplaying;
                     bool resultScreen = isResultScreen;
+                    bool isReplay = baseAddresses.Player.IsReplay;
                     string currentOsuFileName = baseAddresses.Beatmap.OsuFileName;
                     string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "",
                         currentOsuFileName ?? "");
@@ -733,6 +736,11 @@ namespace RealtimePPUR.Forms
                             calculator = new PpCalculator(osuBeatmapPath, currentGamemode);
                             DebugLogger("Calculator initialized.");
 
+                            var retryReset = retryCount > 0;
+                            retryCount = 0;
+                            preObjectCount = 0;
+                            if (retryReset) DebugLogger("Retry count reset.");
+
                             if (strainGraph != null && !strainGraph.IsDisposed)
                             {
                                 var strainsData = calculator.GetStrainLists();
@@ -742,7 +750,13 @@ namespace RealtimePPUR.Forms
                         else
                         {
                             calculator.SetMap(osuBeatmapPath, currentGamemode);
+
                             DebugLogger("Calculator updated.");
+
+                            var retryReset = retryCount > 0;
+                            retryCount = 0;
+                            preObjectCount = 0;
+                            if (retryReset) DebugLogger("Retry count reset.");
 
                             if (strainGraph != null && !strainGraph.IsDisposed)
                             {
@@ -760,6 +774,11 @@ namespace RealtimePPUR.Forms
                             calculator.SetMode(currentOsuGamemode);
                             currentGamemode = currentOsuGamemode;
                             DebugLogger($"Gamemode changed to {currentOsuGamemode}");
+
+                            var retryReset = retryCount > 0;
+                            retryCount = 0;
+                            preObjectCount = 0;
+                            if (retryReset) DebugLogger("Retry count reset.");
 
                             if (strainGraph != null && !strainGraph.IsDisposed)
                             {
@@ -835,6 +854,24 @@ namespace RealtimePPUR.Forms
                         hits.HitMiss = baseAddresses.Player.HitMiss;
                         hits.Combo = baseAddresses.Player.MaxCombo;
                         hits.Score = baseAddresses.Player.Score;
+
+                        int currentNotes = currentGamemode switch
+                        {
+                            0 => hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitMiss,
+                            1 => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+                            2 => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+                            3 => hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 +
+                                 hits.HitMiss,
+                            _ => throw new NotImplementedException()
+                        };
+
+                        if (currentNotes < preObjectCount && !isReplay)
+                        {
+                            retryCount++;
+                            DebugLogger($"Retry Detected on {preObjectCount}! (Retry Count: {retryCount})");
+                        }
+
+                        if (!isReplay) preObjectCount = currentNotes;
                     }
 
                     if (strainGraph != null && !strainGraph.IsDisposed)
@@ -1578,11 +1615,8 @@ namespace RealtimePPUR.Forms
                                     break;
 
                                 case 1:
-                                    {
-                                        displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss}\n";
-                                        break;
-                                    }
-
+                                    displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.HitMiss}\n";
+                                    break;
 
                                 case 2:
                                     displayFormat += $"Hits: {hits.Hit300}/{hits.Hit100}/{hits.Hit50}/{hits.HitMiss}\n";

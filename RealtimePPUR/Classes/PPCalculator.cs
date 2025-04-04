@@ -23,9 +23,11 @@ namespace RealtimePPUR.Classes
 
         public void SetMap(string file, int givenmode)
         {
-            mode = givenmode;
             ruleset = SetRuleset(givenmode);
+            mode = givenmode;
+
             workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
+
             currentDifficultyAttributes = null;
             currentMapDifficultyAttributes = null;
             currentMapPerformanceAttributes = null;
@@ -35,6 +37,7 @@ namespace RealtimePPUR.Classes
         {
             ruleset = SetRuleset(givenmode);
             mode = givenmode;
+
             currentDifficultyAttributes = null;
             currentMapDifficultyAttributes = null;
             currentMapPerformanceAttributes = null;
@@ -360,12 +363,6 @@ namespace RealtimePPUR.Classes
         {
             var firstObject = workingBeatmap.Beatmap.HitObjects.Count > 1 ? workingBeatmap.Beatmap.HitObjects[1] : null;
             return (int)(firstObject?.StartTime ?? 0);
-        }
-
-        public class StrainList
-        {
-            public List<float[]> Strains { get; set; }
-            public string[] SkillNames { get; set; }
         }
     }
 }
