@@ -251,7 +251,7 @@ namespace RealtimePPUR.Forms
                 var progress = (time - firstObjectTime) / (double)lastStrainTime;
                 var progressValue = Math.Max(0, Math.Min(1, progress));
 
-                progressLine.Location = new Point((int)((graphRight - graphLeft) * progressValue + graphLeft) - (progressLine.Width / 2), progressLine.Location.Y);
+                progressLine.Location = new Point((int)(((graphRight - graphLeft) * progressValue) + graphLeft) - (progressLine.Width / 2), progressLine.Location.Y);
             }
             catch
             {
