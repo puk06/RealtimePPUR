@@ -32,7 +32,7 @@ namespace RealtimePPUR
 
         private static async Task CheckFiles()
         {
-            if (!Directory.Exists("Updater") || !File.Exists("config.cfg") || !Directory.Exists("src"))
+            if (!Directory.Exists("Updater") || !File.Exists("config.cfg") || !Directory.Exists("src") || !File.Exists("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf") || !File.Exists("./src/Fonts/IBMPlexSans-Light.ttf"))
             {
                 MessageBox.Show("起動に必要なファイルをダウンロードします。", "ダウンロード", MessageBoxButtons.OK, MessageBoxIcon.Information);
 #pragma warning disable CS0618 // 型またはメンバーが旧型式です

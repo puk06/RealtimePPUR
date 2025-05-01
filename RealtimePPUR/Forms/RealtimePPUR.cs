@@ -378,7 +378,7 @@ namespace RealtimePPUR.Forms
         {
             DebugLogger("Loading fonts...");
             fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
-            fontCollection.AddFontFile("./src/Fonts/Nexa Light.otf");
+            fontCollection.AddFontFile("./src/Fonts/IBMPlexSans-Light.ttf");
 
             foreach (FontFamily font in fontCollection.Families)
             {
@@ -387,7 +387,7 @@ namespace RealtimePPUR.Forms
                     case "Rounded Mplus 1c ExtraBold":
                         GuiFont = font;
                         break;
-                    case "Nexa Light":
+                    case "IBM Plex Sans Light":
                         InGameOverlayFont = font;
                         break;
                 }
