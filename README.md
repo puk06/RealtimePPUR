@@ -136,3 +136,19 @@ RealtimePPUR-Build.bat "リワークのリポジトリ" "コミット、ブラ�
 ```
 と入力し、ビルドします。
 3. ビルドが終わると、自動でビルド先のエクスプローラーが開き、RealtimePPUR.exeを実行します。(ビルド先はRealtimePPUR/RealtimePPUR/bin/buildフォルダです)
+
+# Licence
+このプロジェクトでは、M+ FONTS PROJECT によって提供されている「M+ Rounded」フォントを使用しています。
+
+フォントのライセンスは「M+ FONT LICENSE」に基づいており、個人・商用利用、改変および再配布が許可されています。
+
+Copyright (c) M+ FONTS PROJECT
+https://mplus-fonts.osdn.jp/
+
+ライセンス全文：
+https://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html#license
+
+本ソフトウェアで使用されている「IBM Plex Sans」フォントは、Google によって提供され、SIL Open Font License 1.1 のもとでライセンスされています。
+
+ライセンス名: SIL Open Font License 1.1
+ライセンスの全文: https://scripts.sil.org/OFL
