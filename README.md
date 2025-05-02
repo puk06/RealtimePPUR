@@ -156,21 +156,36 @@ https://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html#license
 This software uses the following third-party libraries:
 
 - OxyPlot (https://oxyplot.github.io/)
+
   Licensed under the MIT License.
+
   Copyright (c) OxyPlot contributors
+
   https://github.com/oxyplot/oxyplot/blob/develop/LICENSE
 
+
 - DiscordRichPresence (https://github.com/Lachee/discord-rpc-csharp)
+
   Licensed under the MIT License.
+
   Copyright (c) Lachee
+
   https://github.com/Lachee/discord-rpc-csharp/blob/master/LICENSE
 
+
 - Microsoft.CSharp (https://github.com/dotnet/corefx)
+
   Licensed under the MIT License.
+
   Copyright (c) .NET Foundation and Contributors
+
   https://github.com/dotnet/runtime/blob/main/LICENSE.TXT
 
+
 - Octokit (https://github.com/octokit/octokit.net)
+
   Licensed under the MIT License.
+
   Copyright (c) GitHub, Inc.
+
   https://github.com/octokit/octokit.net/blob/main/LICENSE
