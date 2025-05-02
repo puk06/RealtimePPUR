@@ -1,0 +1,36 @@
+このプロジェクトでは、M+ FONTS PROJECT によって提供されている「M+ Rounded」フォントを使用しています。
+
+フォントのライセンスは「M+ FONT LICENSE」に基づいており、個人・商用利用、改変および再配布が許可されています。
+
+Copyright (c) M+ FONTS PROJECT
+https://mplus-fonts.osdn.jp/
+
+ライセンス全文：
+https://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html#license
+
+本ソフトウェアで使用されている「IBM Plex Sans」フォントは、Google によって提供され、SIL Open Font License 1.1 のもとでライセンスされています。
+
+ライセンス名: SIL Open Font License 1.1
+ライセンスの全文: https://scripts.sil.org/OFL
+This software uses the following third-party libraries:
+
+- OxyPlot (https://oxyplot.github.io/)
+  Licensed under the MIT License.
+  Copyright (c) OxyPlot contributors
+  https://github.com/oxyplot/oxyplot/blob/develop/LICENSE
+
+- DiscordRichPresence (https://github.com/Lachee/discord-rpc-csharp)
+  Licensed under the MIT License.
+  Copyright (c) Lachee
+  https://github.com/Lachee/discord-rpc-csharp/blob/master/LICENSE
+
+- Microsoft.CSharp (https://github.com/dotnet/corefx)
+  Licensed under the MIT License.
+  Copyright (c) .NET Foundation and Contributors
+  https://github.com/dotnet/runtime/blob/main/LICENSE.TXT
+
+
+- Octokit (https://github.com/octokit/octokit.net)
+  Licensed under the MIT License.
+  Copyright (c) GitHub, Inc.
+  https://github.com/octokit/octokit.net/blob/main/LICENSE
