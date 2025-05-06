@@ -24,7 +24,7 @@ namespace RealtimePPUR.Forms
 {
     public sealed partial class RealtimePpur : Form
     {
-        private const string CURRENT_VERSION = "v1.1.12-Release";
+        private const string CURRENT_VERSION = "v1.1.13-Release";
         private const string DISCORD_CLIENT_ID = "1237279508239749211";
 #if DEBUG
         private const bool DEBUG_MODE = true;
@@ -1281,7 +1281,25 @@ namespace RealtimePPUR.Forms
 
         private void RenderIngameOverlay(HitsResult hits, BeatmapData calculatedData, int currentGamemodeValue)
         {
-            inGameValue.Text = SetIngameValue(calculatedData, hits, currentGamemodeValue);
+            var inGameValueText = SetIngameValue(calculatedData, hits, currentGamemodeValue);
+
+            using (Bitmap tempBitmap = new(1, 1))
+            using (Graphics g = Graphics.FromImage(tempBitmap))
+            {
+                var size = g.MeasureString(inGameValueText, inGameValue.Font);
+                inGameValue.Size = new Size((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height));
+            }
+
+            Bitmap canvas = new(inGameValue.Width, inGameValue.Height);
+
+            using (Graphics g = Graphics.FromImage(canvas))
+            {
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.DrawString(inGameValueText, inGameValue.Font, Brushes.White, 0, 0);
+            }
+
+            inGameValue.Image = canvas;
+
             CheckOsuMode();
         }
 

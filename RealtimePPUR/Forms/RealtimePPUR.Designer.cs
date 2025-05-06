@@ -80,7 +80,7 @@ namespace RealtimePPUR.Forms
             saveConfigToolStripMenuItem = new ToolStripMenuItem();
             uRGraphToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
-            inGameValue = new Label();
+            inGameValue = new PictureBox();
             strainGraphToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
@@ -533,7 +533,7 @@ namespace RealtimePPUR.Forms
         private System.Windows.Forms.ToolStripMenuItem realtimePPURToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem osuModeToolStripMenuItem;
-        private System.Windows.Forms.Label inGameValue;
+        private System.Windows.Forms.PictureBox inGameValue;
         private System.Windows.Forms.ToolStripMenuItem inGameOverlayToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sRToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem currentPPToolStripMenuItem;
