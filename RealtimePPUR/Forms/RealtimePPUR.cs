@@ -784,12 +784,19 @@ public sealed partial class RealtimePpur : Form
         {
             try
             {
-                _client.Initialize();
-                hasConnectedToDiscord = true;
+                var result = _client.Initialize();
+
+                if (result)
+                {
+                    hasConnectedToDiscord = true;
+                }
+                else
+                {
+                    Thread.Sleep(5000);
+                }
             }
             catch (Exception e)
             {
-                Thread.Sleep(5000);
                 ErrorLogger(e);
             }
         }
