@@ -55,6 +55,7 @@ namespace RealtimePPUR.Forms
             sRToolStripMenuItem = new ToolStripMenuItem();
             sSPPToolStripMenuItem = new ToolStripMenuItem();
             currentPPToolStripMenuItem = new ToolStripMenuItem();
+            ifFCPPToolStripMenuItem = new ToolStripMenuItem();
             currentACCToolStripMenuItem = new ToolStripMenuItem();
             hitsToolStripMenuItem = new ToolStripMenuItem();
             ifFCHitsToolStripMenuItem = new ToolStripMenuItem();
@@ -63,7 +64,6 @@ namespace RealtimePPUR.Forms
             expectedManiaScoreToolStripMenuItem = new ToolStripMenuItem();
             avgOffsetToolStripMenuItem = new ToolStripMenuItem();
             progressToolStripMenuItem = new ToolStripMenuItem();
-            ifFCPPToolStripMenuItem = new ToolStripMenuItem();
             healthPercentageToolStripMenuItem = new ToolStripMenuItem();
             currentPositionToolStripMenuItem = new ToolStripMenuItem();
             higherScoreToolStripMenuItem = new ToolStripMenuItem();
@@ -264,6 +264,7 @@ namespace RealtimePPUR.Forms
             // 
             // toolStripMenuItem2
             // 
+            toolStripMenuItem2.Enabled = false;
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.Size = new Size(199, 22);
             toolStripMenuItem2.Text = "----------------------";
@@ -299,6 +300,12 @@ namespace RealtimePPUR.Forms
             currentPPToolStripMenuItem.Name = "currentPPToolStripMenuItem";
             currentPPToolStripMenuItem.Size = new Size(187, 22);
             currentPPToolStripMenuItem.Text = "CurrentPP";
+            // 
+            // ifFCPPToolStripMenuItem
+            // 
+            ifFCPPToolStripMenuItem.Name = "ifFCPPToolStripMenuItem";
+            ifFCPPToolStripMenuItem.Size = new Size(187, 22);
+            ifFCPPToolStripMenuItem.Text = "IFFCPP | LossModePP";
             // 
             // currentACCToolStripMenuItem
             // 
@@ -347,12 +354,6 @@ namespace RealtimePPUR.Forms
             progressToolStripMenuItem.Name = "progressToolStripMenuItem";
             progressToolStripMenuItem.Size = new Size(187, 22);
             progressToolStripMenuItem.Text = "Progress";
-            // 
-            // ifFCPPToolStripMenuItem
-            // 
-            ifFCPPToolStripMenuItem.Name = "ifFCPPToolStripMenuItem";
-            ifFCPPToolStripMenuItem.Size = new Size(187, 22);
-            ifFCPPToolStripMenuItem.Text = "IFFCPP | LossModePP";
             // 
             // healthPercentageToolStripMenuItem
             // 
@@ -439,6 +440,7 @@ namespace RealtimePPUR.Forms
             // 
             // toolStripMenuItem3
             // 
+            toolStripMenuItem3.Enabled = false;
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.Size = new Size(199, 22);
             toolStripMenuItem3.Text = "----------------------";
@@ -479,6 +481,7 @@ namespace RealtimePPUR.Forms
             // 
             // toolStripMenuItem4
             // 
+            toolStripMenuItem4.Enabled = false;
             toolStripMenuItem4.Name = "toolStripMenuItem4";
             toolStripMenuItem4.Size = new Size(199, 22);
             toolStripMenuItem4.Text = "----------------------";
