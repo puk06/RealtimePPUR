@@ -96,7 +96,7 @@ public sealed partial class RealtimePpur : Form
     }
 
     private bool _isOsuRunning = false;
-    private bool _isoObsRunning = false;
+    private bool _isObsRunning = false;
     private Process? _osuProcess = null;
 
     public RealtimePpur()
@@ -414,10 +414,10 @@ public sealed partial class RealtimePpur : Form
 
                 if (!_isOsuRunning) throw new Exception("osu! is not running.");
 
-                if (!obsNoticed && _isoObsRunning)
+                if (!obsNoticed && _isObsRunning)
                 {
-                    MessageBox.Show("RealtimePPURを録画する際、OBSのウィンドウキャプチャでキャプチャ方法をWindows10 (1903以降)を有効にすると四隅の白い部分が削除されます。\n\nウィンドウキャプチャの[詳細]を開き、[キャプチャ方法]を[Windows10 (1903以降)]に設定してください。", "OBSを検知しました！", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     obsNoticed = true;
+                    MessageBox.Show("RealtimePPURを録画する際、OBSのウィンドウキャプチャでキャプチャ方法をWindows10 (1903以降)を有効にすると四隅の白い部分が削除されます。\n\nウィンドウキャプチャの[詳細]を開き、[キャプチャ方法]を[Windows10 (1903以降)]に設定してください。", "OBSを検知しました！", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 if (!TopMost) TopMost = true;
@@ -762,7 +762,7 @@ public sealed partial class RealtimePpur : Form
                 _isOsuRunning = osuProcesses.Length != 0;
                 _osuProcess = osuProcesses.FirstOrDefault();
 
-                _isoObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
+                _isObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
             }
             catch
             {
