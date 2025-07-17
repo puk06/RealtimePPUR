@@ -136,3 +136,7 @@ RealtimePPUR-Build.bat "リワークのリポジトリ" "コミット、ブラ�
 ```
 と入力し、ビルドします。
 3. ビルドが終わると、自動でビルド先のエクスプローラーが開き、RealtimePPUR.exeを実行します。(ビルド先はRealtimePPUR/RealtimePPUR/bin/buildフォルダです)
+
+# Credit
+
+Joystick icons created by Us and Up - Flaticon

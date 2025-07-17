@@ -772,7 +772,7 @@ public sealed partial class RealtimePpur : Form
             {
                 Thread.Sleep(2000);
 
-                if (Process.GetProcessesByName("osu!").Length == 0)
+                if (ProcessUtils.GetProcesses("osu!").Length == 0)
                 {
                     if (hasClearedPresence) continue;
                     LogUtils.DebugLogger("Discord Rich Presence Cleared.");
@@ -811,6 +811,10 @@ public sealed partial class RealtimePpur : Form
                     if (!baseAddresses.Player.IsReplay)
                     {
                         richPresence.Details = DiscordRichPresenceUtils.CheckString(baseAddresses.BanchoUser.Username + OsuUtils.ConvertStatus(baseAddresses.GeneralData.OsuStatus));
+                        richPresence.Timestamps = new Timestamps()
+                        {
+                            Start = DateTime.UtcNow - stopwatch.Elapsed
+                        };
                     }
                     else
                     {
@@ -818,7 +822,7 @@ public sealed partial class RealtimePpur : Form
                     }
 
                     richPresence.Assets.SmallImageKey = "osu_playing";
-                    richPresence.Assets.SmallImageText = 
+                    richPresence.Assets.SmallImageText =
                         $"{Math.Round(MathUtils.IsNaNWithNum(calculatedObject?.CurrentPerformanceAttributes?.Total), 2)}pp  " +
                         $"+{string.Join("", OsuUtils.ParseMods(baseAddresses.Player.Mods.Value).Display)}  " +
                         $"{baseAddresses.Player.Combo}x  " +
@@ -828,6 +832,8 @@ public sealed partial class RealtimePpur : Form
                 {
                     richPresence.Details = DiscordRichPresenceUtils.CheckString(baseAddresses.BanchoUser.Username + OsuUtils.ConvertStatus(baseAddresses.GeneralData.OsuStatus));
                 }
+
+                _client.SetPresence(richPresence);
             }
             catch (Exception e)
             {
@@ -1091,6 +1097,9 @@ public sealed partial class RealtimePpur : Form
 
     private void RenderIngameOverlay(HitsResult hits, BeatmapData? calculatedData, int currentGamemodeValue)
     {
+        CheckOsuMode();
+        if (!overlayEnabled) return;
+
         var inGameValueText = SetIngameValue(calculatedData, hits, currentGamemodeValue);
 
         using (Bitmap tempBitmap = new(1, 1))
@@ -1109,8 +1118,6 @@ public sealed partial class RealtimePpur : Form
         }
 
         inGameValue.Image = canvas;
-
-        CheckOsuMode();
     }
 
     private void CheckOsuMode()
