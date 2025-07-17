@@ -265,7 +265,6 @@ namespace RealtimePPUR.Forms
             calculateFirstToolStripMenuItem.Name = "calculateFirstToolStripMenuItem";
             calculateFirstToolStripMenuItem.Size = new Size(180, 22);
             calculateFirstToolStripMenuItem.Text = "Calculate First";
-            calculateFirstToolStripMenuItem.Click += ChangeFontToolStripMenuItem_Click;
             // 
             // inGameOverlayToolStripMenuItem
             // 
