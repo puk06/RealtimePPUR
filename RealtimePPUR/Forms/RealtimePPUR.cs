@@ -495,7 +495,7 @@ public sealed partial class RealtimePpur : Form
                 miss.Width = TextRenderer.MeasureText(miss.Text, miss.Font).Width;
                 miss.Left = ((ClientSize.Width - miss.Width) / 2) - 3;
 
-                //RenderIngameOverlay(hits, calculatedObject, currentGamemode);
+                RenderIngameOverlay(hits, calculatedObject, currentGamemode);
             }
             catch (Exception e)
             {
@@ -756,12 +756,22 @@ public sealed partial class RealtimePpur : Form
     {
         while (true)
         {
-            var osuProcesses = ProcessUtils.GetProcesses("osu!");
-            _isOsuRunning = osuProcesses.Length != 0;
-            _osuProcess = osuProcesses.FirstOrDefault();
+            try
+            {
+                var osuProcesses = ProcessUtils.GetProcesses("osu!");
+                _isOsuRunning = osuProcesses.Length != 0;
+                _osuProcess = osuProcesses.FirstOrDefault();
 
-            _isoObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
-            Thread.Sleep(3000);
+                _isoObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
+            }
+            catch
+            {
+                // ignored
+            }
+            finally
+            {
+                Thread.Sleep(3000);
+            }
         }
     }
 
