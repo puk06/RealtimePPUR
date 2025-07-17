@@ -46,10 +46,11 @@ namespace RealtimePPUR.Forms
             realtimePPURToolStripMenuItem = new ToolStripMenuItem();
             offsetHelperToolStripMenuItem = new ToolStripMenuItem();
             realtimePPToolStripMenuItem = new ToolStripMenuItem();
-            osuModeToolStripMenuItem = new ToolStripMenuItem();
             calculationOptionToolStripMenuItem = new ToolStripMenuItem();
             pPLossModeToolStripMenuItem = new ToolStripMenuItem();
             calculateFirstToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            osuModeToolStripMenuItem = new ToolStripMenuItem();
             inGameOverlayToolStripMenuItem = new ToolStripMenuItem();
             sRToolStripMenuItem = new ToolStripMenuItem();
             sSPPToolStripMenuItem = new ToolStripMenuItem();
@@ -76,16 +77,15 @@ namespace RealtimePPUR.Forms
             changeFontToolStripMenuItem1 = new ToolStripMenuItem();
             loadFontToolStripMenuItem1 = new ToolStripMenuItem();
             resetFontToolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripMenuItem();
             graphToolStripMenuItem = new ToolStripMenuItem();
             uRGraphToolStripMenuItem1 = new ToolStripMenuItem();
             strainGraphToolStripMenuItem1 = new ToolStripMenuItem();
             discordRichPresenceToolStripMenuItem = new ToolStripMenuItem();
             saveConfigToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem4 = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new PictureBox();
-            toolStripMenuItem2 = new ToolStripMenuItem();
-            toolStripMenuItem3 = new ToolStripMenuItem();
-            toolStripMenuItem4 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inGameValue).BeginInit();
             SuspendLayout();
@@ -211,7 +211,7 @@ namespace RealtimePPUR.Forms
             // 
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, calculationOptionToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem4, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(200, 290);
+            contextMenuStrip1.Size = new Size(200, 268);
             // 
             // modeToolStripMenuItem
             // 
@@ -243,13 +243,6 @@ namespace RealtimePPUR.Forms
             realtimePPToolStripMenuItem.Text = "RealtimePP";
             realtimePPToolStripMenuItem.Click += RealtimePPToolStripMenuItem_Click;
             // 
-            // osuModeToolStripMenuItem
-            // 
-            osuModeToolStripMenuItem.Name = "osuModeToolStripMenuItem";
-            osuModeToolStripMenuItem.Size = new Size(199, 22);
-            osuModeToolStripMenuItem.Text = "Enable InGameOverlay";
-            osuModeToolStripMenuItem.Click += OsuModeToolStripMenuItem_Click;
-            // 
             // calculationOptionToolStripMenuItem
             // 
             calculationOptionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { pPLossModeToolStripMenuItem, calculateFirstToolStripMenuItem });
@@ -260,18 +253,31 @@ namespace RealtimePPUR.Forms
             // pPLossModeToolStripMenuItem
             // 
             pPLossModeToolStripMenuItem.Name = "pPLossModeToolStripMenuItem";
-            pPLossModeToolStripMenuItem.Size = new Size(180, 22);
+            pPLossModeToolStripMenuItem.Size = new Size(147, 22);
             pPLossModeToolStripMenuItem.Text = "PPLossMode";
             // 
             // calculateFirstToolStripMenuItem
             // 
             calculateFirstToolStripMenuItem.Name = "calculateFirstToolStripMenuItem";
-            calculateFirstToolStripMenuItem.Size = new Size(180, 22);
+            calculateFirstToolStripMenuItem.Size = new Size(147, 22);
             calculateFirstToolStripMenuItem.Text = "Calculate First";
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(199, 22);
+            toolStripMenuItem2.Text = "----------------------";
+            // 
+            // osuModeToolStripMenuItem
+            // 
+            osuModeToolStripMenuItem.Name = "osuModeToolStripMenuItem";
+            osuModeToolStripMenuItem.Size = new Size(199, 22);
+            osuModeToolStripMenuItem.Text = "Enable InGameOverlay";
+            osuModeToolStripMenuItem.Click += OsuModeToolStripMenuItem_Click;
             // 
             // inGameOverlayToolStripMenuItem
             // 
-            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, ifFCPPToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem, remainingNotesToolStripMenuItem });
+            inGameOverlayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sRToolStripMenuItem, sSPPToolStripMenuItem, currentPPToolStripMenuItem, ifFCPPToolStripMenuItem, currentACCToolStripMenuItem, hitsToolStripMenuItem, ifFCHitsToolStripMenuItem, uRToolStripMenuItem, offsetHelpToolStripMenuItem, expectedManiaScoreToolStripMenuItem, avgOffsetToolStripMenuItem, progressToolStripMenuItem, healthPercentageToolStripMenuItem, currentPositionToolStripMenuItem, higherScoreToolStripMenuItem, highestScoreToolStripMenuItem, userScoreToolStripMenuItem, currentBPMToolStripMenuItem, currentRankToolStripMenuItem, remainingNotesToolStripMenuItem });
             inGameOverlayToolStripMenuItem.Name = "inGameOverlayToolStripMenuItem";
             inGameOverlayToolStripMenuItem.Size = new Size(199, 22);
             inGameOverlayToolStripMenuItem.Text = "InGameOverlay";
@@ -406,30 +412,36 @@ namespace RealtimePPUR.Forms
             // changePriorityToolStripMenuItem1
             // 
             changePriorityToolStripMenuItem1.Name = "changePriorityToolStripMenuItem1";
-            changePriorityToolStripMenuItem1.Size = new Size(180, 22);
+            changePriorityToolStripMenuItem1.Size = new Size(155, 22);
             changePriorityToolStripMenuItem1.Text = "Change Priority";
             changePriorityToolStripMenuItem1.Click += ChangePriorityToolStripMenuItem_Click;
             // 
             // changeFontToolStripMenuItem1
             // 
             changeFontToolStripMenuItem1.Name = "changeFontToolStripMenuItem1";
-            changeFontToolStripMenuItem1.Size = new Size(180, 22);
+            changeFontToolStripMenuItem1.Size = new Size(155, 22);
             changeFontToolStripMenuItem1.Text = "Change Font";
             changeFontToolStripMenuItem1.Click += ChangeFontToolStripMenuItem_Click;
             // 
             // loadFontToolStripMenuItem1
             // 
             loadFontToolStripMenuItem1.Name = "loadFontToolStripMenuItem1";
-            loadFontToolStripMenuItem1.Size = new Size(180, 22);
+            loadFontToolStripMenuItem1.Size = new Size(155, 22);
             loadFontToolStripMenuItem1.Text = "LoadFont";
             loadFontToolStripMenuItem1.Click += LoadFontToolStripMenuItem_Click;
             // 
             // resetFontToolStripMenuItem1
             // 
             resetFontToolStripMenuItem1.Name = "resetFontToolStripMenuItem1";
-            resetFontToolStripMenuItem1.Size = new Size(180, 22);
+            resetFontToolStripMenuItem1.Size = new Size(155, 22);
             resetFontToolStripMenuItem1.Text = "ResetFont";
             resetFontToolStripMenuItem1.Click += ResetFontToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(199, 22);
+            toolStripMenuItem3.Text = "----------------------";
             // 
             // graphToolStripMenuItem
             // 
@@ -465,6 +477,12 @@ namespace RealtimePPUR.Forms
             saveConfigToolStripMenuItem.Text = "Save Config";
             saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
             // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new Size(199, 22);
+            toolStripMenuItem4.Text = "----------------------";
+            // 
             // closeToolStripMenuItem
             // 
             closeToolStripMenuItem.Name = "closeToolStripMenuItem";
@@ -481,24 +499,6 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.TabStop = false;
             inGameValue.Visible = false;
-            // 
-            // toolStripMenuItem2
-            // 
-            toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(199, 22);
-            toolStripMenuItem2.Text = "----------------------";
-            // 
-            // toolStripMenuItem3
-            // 
-            toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(199, 22);
-            toolStripMenuItem3.Text = "----------------------";
-            // 
-            // toolStripMenuItem4
-            // 
-            toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(199, 22);
-            toolStripMenuItem4.Text = "----------------------";
             // 
             // RealtimePpur
             // 
