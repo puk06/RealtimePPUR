@@ -1128,7 +1128,7 @@ public sealed partial class RealtimePpur : Form
     private void RenderIngameOverlay(HitsResult hits, BeatmapData? calculatedData, int currentGamemodeValue)
     {
         CheckOsuMode();
-        if (!IsOsuMode) return;
+        if (!overlayEnabled) return;
 
         var inGameValueText = SetIngameValue(calculatedData, hits, currentGamemodeValue);
 
