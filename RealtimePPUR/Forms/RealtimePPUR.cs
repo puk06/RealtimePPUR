@@ -762,7 +762,10 @@ public sealed partial class RealtimePpur : Form
                 _isOsuRunning = osuProcesses.Length != 0;
                 _osuProcess = osuProcesses.FirstOrDefault();
 
-                _isObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
+                if (!obsNoticed)
+                {
+                    _isObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
+                }
             }
             catch
             {
