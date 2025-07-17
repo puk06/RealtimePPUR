@@ -526,7 +526,7 @@ public sealed partial class RealtimePpur : Form
         {
             try
             {
-                Thread.Sleep(15);
+                Thread.Sleep(calculateInterval);
 
                 if (!_isOsuRunning) throw new Exception("osu! is not running.");
 
