@@ -526,7 +526,6 @@ namespace RealtimePPUR.Forms
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "RealtimePpur";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "RealtimePPUR";
             TransparencyKey = SystemColors.Control;
             Closed += RealtimePPUR_Closed;
