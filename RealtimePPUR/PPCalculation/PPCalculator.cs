@@ -4,26 +4,23 @@ using osu.Game.Rulesets;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Scoring;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using static RealtimePPUR.Classes.CalculatorHelpers;
-using static RealtimePPUR.Classes.Helper;
+using RealtimePPUR.Models;
+using RealtimePPUR.Utils;
 
-namespace RealtimePPUR.Classes
+namespace RealtimePPUR.PPCalculation
 {
-    public class PpCalculator(string file, int mode)
+    internal class PpCalculator(string file, int mode)
     {
-        private Ruleset ruleset = SetRuleset(mode);
+        private Ruleset ruleset = CalculatorUtils.GetRuleset(mode);
         private ProcessorWorkingBeatmap workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
-        private List<TimedDifficultyAttributes> currentDifficultyAttributes;
-        private MapDifficultyAttributes currentMapDifficultyAttributes;
-        private MapPerformanceAttributes currentMapPerformanceAttributes;
+        private List<TimedDifficultyAttributes>? currentDifficultyAttributes = null;
+        private MapDifficultyAttributes? currentMapDifficultyAttributes = null;
+        private MapPerformanceAttributes? currentMapPerformanceAttributes = null;
         private int totalHitObjectCount;
 
-        public void SetMap(string file, int givenmode)
+        internal void SetMap(string file, int givenmode)
         {
-            ruleset = SetRuleset(givenmode);
+            ruleset = CalculatorUtils.GetRuleset(givenmode);
             mode = givenmode;
 
             workingBeatmap = ProcessorWorkingBeatmap.FromFile(file);
@@ -33,9 +30,9 @@ namespace RealtimePPUR.Classes
             currentMapPerformanceAttributes = null;
         }
 
-        public void SetMode(int givenmode)
+        internal void SetMode(int givenmode)
         {
-            ruleset = SetRuleset(givenmode);
+            ruleset = CalculatorUtils.GetRuleset(givenmode);
             mode = givenmode;
 
             currentDifficultyAttributes = null;
@@ -43,12 +40,12 @@ namespace RealtimePPUR.Classes
             currentMapPerformanceAttributes = null;
         }
 
-        public BeatmapData Calculate(CalculateArgs args, bool playing, bool resultScreen, HitsResult hits)
+        internal BeatmapData Calculate(CalculateArgs args, bool playing, bool resultScreen, HitsResult hits)
         {
-            var mods = GetMods(ruleset, args);
+            var mods = CalculatorUtils.GetMods(ruleset, args);
             var beatmap = workingBeatmap.GetPlayableBeatmap(ruleset.RulesetInfo, mods);
 
-            var staticsSs = GenerateHitResultsForSs(beatmap, mode);
+            var staticsSs = CalculatorUtils.GenerateHitResultsForSs(beatmap, mode);
 
             var difficultyAttributes = GetCurrentMapDifficultyAttributes(args, beatmap);
             var performanceAttributes = GetCurrentMapPerformanceAttributes(args, beatmap, difficultyAttributes);
@@ -68,7 +65,7 @@ namespace RealtimePPUR.Classes
                 TotalHitObjectCount = totalHitObjectCount
             };
 
-            var statisticsCurrent = GenerateHitResultsForCurrent(hits, mode);
+            var statisticsCurrent = CalculatorUtils.GenerateHitResultsForCurrent(hits, mode);
             data.HitResults = statisticsCurrent;
             data.HitResultLossMode = statisticsCurrent;
 
@@ -83,16 +80,14 @@ namespace RealtimePPUR.Classes
                     TotalScore = args.Score
                 };
                 var performanceCalculator = ruleset.CreatePerformanceCalculator();
-                var performanceAttributesResult =
-                    performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
+                var performanceAttributesResult = performanceCalculator?.Calculate(resultScoreInfo, difficultyAttributes);
                 data.CurrentPerformanceAttributes = performanceAttributesResult;
 
-                if (mode == 3) return data;
-                var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
+                var staticsForCalcIfFc = CalculatorUtils.CalcIfFc(beatmap, hits, mode);
                 var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                 {
-                    Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
-                    MaxCombo = GetMaxCombo(beatmap, mode),
+                    Accuracy = CalculatorUtils.GetAccuracy(staticsForCalcIfFc, mode),
+                    MaxCombo = CalculatorUtils.GetMaxCombo(beatmap, mode),
                     Statistics = staticsForCalcIfFc,
                     Mods = mods,
                     TotalScore = args.Score
@@ -111,7 +106,7 @@ namespace RealtimePPUR.Classes
 
                 if (args.CalculateBeforePlaying)
                 {
-                    difficultyAttributesCurrent = GetCurrentDifficultyAttributes(beatmap, args, args.Time);
+                    difficultyAttributesCurrent = GetCurrentDifficultyAttributes(args, args.Time);
                 }
                 else
                 {
@@ -128,7 +123,7 @@ namespace RealtimePPUR.Classes
 
                 var currentScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                 {
-                    Accuracy = GetAccuracy(statisticsCurrent, mode),
+                    Accuracy = CalculatorUtils.GetAccuracy(statisticsCurrent, mode),
                     MaxCombo = args.Combo,
                     Statistics = statisticsCurrent,
                     Mods = mods,
@@ -136,21 +131,25 @@ namespace RealtimePPUR.Classes
                 };
 
                 var performanceCalculatorCurrent = ruleset.CreatePerformanceCalculator();
-                var performanceAttributesCurrent =
-                    performanceCalculatorCurrent?.Calculate(currentScoreInfo, difficultyAttributesCurrent);
+                if (performanceCalculatorCurrent == null)
+                {
+                    LogUtils.DebugLogger("PerformanceCalculator is null, returning empty BeatmapData.");
+                    return data;
+                }
+                var performanceAttributesCurrent = performanceCalculatorCurrent.Calculate(currentScoreInfo, difficultyAttributesCurrent);
 
                 data.CurrentDifficultyAttributes = difficultyAttributesCurrent;
                 data.CurrentPerformanceAttributes = performanceAttributesCurrent;
 
-                // Calculate Loss Mode PP
+                // Calculation Loss Mode PP
                 if (mode is 1 or 3)
                 {
-                    var staticsLoss = GenerateHitResultsForLossMode(staticsSs, hits, mode);
+                    var staticsLoss = CalculatorUtils.GenerateHitResultsForLossMode(staticsSs, hits, mode);
                     data.HitResultLossMode = staticsLoss;
 
                     var lossScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                     {
-                        Accuracy = GetAccuracy(staticsLoss, mode),
+                        Accuracy = CalculatorUtils.GetAccuracy(staticsLoss, mode),
                         MaxCombo = args.Combo,
                         Statistics = staticsLoss,
                         Mods = mods,
@@ -160,32 +159,27 @@ namespace RealtimePPUR.Classes
                     var performanceAttributesLossMode =
                         performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
                     data.PerformanceAttributesLossMode = performanceAttributesLossMode;
-                    if (mode == 3) data.ExpectedManiaScore = ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
+                    if (mode == 3) data.ExpectedManiaScore = CalculatorUtils.ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
                 }
 
-                // Calculate IFFC
-                if (mode is not 3)
+                var staticsForCalcIfFc = CalculatorUtils.CalcIfFc(beatmap, hits, mode);
+                data.IfFcHitResult = staticsForCalcIfFc;
+
+                var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
                 {
-                    var staticsForCalcIfFc = CalcIfFc(beatmap, hits, mode);
-                    data.IfFcHitResult = staticsForCalcIfFc;
+                    Accuracy = CalculatorUtils.GetAccuracy(staticsForCalcIfFc, mode),
+                    MaxCombo = CalculatorUtils.GetMaxCombo(beatmap, mode),
+                    Statistics = staticsForCalcIfFc,
+                    Mods = mods,
+                    TotalScore = args.Score
+                };
 
-                    var iffcScoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
-                    {
-                        Accuracy = GetAccuracy(staticsForCalcIfFc, mode),
-                        MaxCombo = GetMaxCombo(beatmap, mode),
-                        Statistics = staticsForCalcIfFc,
-                        Mods = mods,
-                        TotalScore = args.Score
-                    };
-
-                    var performanceAttributesIffc =
-                        performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
-                    data.PerformanceAttributesIffc = performanceAttributesIffc;
-                }
+                var performanceAttributesIffc = performanceCalculator?.Calculate(iffcScoreInfo, difficultyAttributes);
+                data.PerformanceAttributesIffc = performanceAttributesIffc;
 
                 // Get Current BPM
                 var timingPoints = beatmap.ControlPointInfo.TimingPoints;
-                TimingControlPoint lastTimingPoint = null;
+                TimingControlPoint? lastTimingPoint = null;
 
                 foreach (var tp in timingPoints)
                 {
@@ -202,21 +196,21 @@ namespace RealtimePPUR.Classes
             }
         }
 
-        private DifficultyAttributes GetCurrentDifficultyAttributes(IBeatmap beatmap, CalculateArgs args, int? time)
+        private DifficultyAttributes GetCurrentDifficultyAttributes(CalculateArgs args, int? time)
         {
             time ??= 0;
-            currentDifficultyAttributes ??= CalculateAllTimedDifficulties(beatmap, args);
+            currentDifficultyAttributes ??= CalculateAllTimedDifficulties(args);
             var difficultyAttributes = currentDifficultyAttributes.LastOrDefault(d => d.Time <= time);
             if (difficultyAttributes != null) return difficultyAttributes.Attributes;
-            difficultyAttributes = currentDifficultyAttributes.First();
-            return difficultyAttributes.Attributes;
+            difficultyAttributes = currentDifficultyAttributes.FirstOrDefault();
+            return difficultyAttributes?.Attributes ?? new DifficultyAttributes();
         }
 
         private DifficultyAttributes GetCurrentMapDifficultyAttributes(CalculateArgs args, IBeatmap beatmap)
         {
             if (currentMapDifficultyAttributes != null && !currentMapDifficultyAttributes.Mods.SequenceEqual(args.Mods))
             {
-                DebugLogger("Mods changed, recalculating Map DifficultyAttributes...");
+                LogUtils.DebugLogger("Mods changed, recalculating Map DifficultyAttributes...");
                 currentMapDifficultyAttributes = null;
                 currentDifficultyAttributes = null;
             }
@@ -225,35 +219,35 @@ namespace RealtimePPUR.Classes
             return currentMapDifficultyAttributes.DifficultyAttributes;
         }
 
-        private List<TimedDifficultyAttributes> CalculateAllTimedDifficulties(IBeatmap beatmap, CalculateArgs args)
+        private List<TimedDifficultyAttributes> CalculateAllTimedDifficulties(CalculateArgs args)
         {
-            DebugLogger($"Calculating All DifficultyAttributes...");
+            LogUtils.DebugLogger($"Calculating All DifficultyAttributes...");
             var currentTime = DateTime.Now;
 
-            var mods = GetMods(ruleset, args);
+            var mods = CalculatorUtils.GetMods(ruleset, args);
             var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
             var difficultyAttributes = difficultyCalculator.CalculateTimed(mods);
 
             var elapsed = DateTime.Now - currentTime;
-            DebugLogger($"Calculated All DifficultyAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
+            LogUtils.DebugLogger($"Calculated All DifficultyAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
 
             return difficultyAttributes;
         }
 
         private MapDifficultyAttributes CalculateMapDifficultyAttributes(CalculateArgs args, IBeatmap beatmap)
         {
-            DebugLogger("Calculating Map DifficultyAttributes...");
+            LogUtils.DebugLogger("Calculating Map DifficultyAttributes...");
             var currentTime = DateTime.Now;
 
-            var mods = GetMods(ruleset, args);
+            var mods = CalculatorUtils.GetMods(ruleset, args);
             var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(mods);
 
             var elapsed = DateTime.Now - currentTime;
-            DebugLogger("Calculated Map DifficultyAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
+            LogUtils.DebugLogger("Calculated Map DifficultyAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
 
-            totalHitObjectCount = CountTotalHitObjects(beatmap, mode);
-            DebugLogger("Total HitObject Count: " + totalHitObjectCount);
+            totalHitObjectCount = CalculatorUtils.CountTotalHitObjects(beatmap, mode);
+            LogUtils.DebugLogger("Total HitObject Count: " + totalHitObjectCount);
 
             return new MapDifficultyAttributes
             {
@@ -262,13 +256,11 @@ namespace RealtimePPUR.Classes
             };
         }
 
-        private MapPerformanceAttributes GetCurrentMapPerformanceAttributes(CalculateArgs args, IBeatmap beatmap,
-            DifficultyAttributes difficultyAttributes)
+        private MapPerformanceAttributes GetCurrentMapPerformanceAttributes(CalculateArgs args, IBeatmap beatmap, DifficultyAttributes difficultyAttributes)
         {
-            if (currentMapPerformanceAttributes != null &&
-                !currentMapPerformanceAttributes.Mods.SequenceEqual(args.Mods))
+            if (currentMapPerformanceAttributes != null && !currentMapPerformanceAttributes.Mods.SequenceEqual(args.Mods))
             {
-                DebugLogger("Mods changed, recalculating Map PerformanceAttributes...");
+                LogUtils.DebugLogger("Mods changed, recalculating Map PerformanceAttributes...");
                 currentMapPerformanceAttributes = null;
             }
 
@@ -276,18 +268,17 @@ namespace RealtimePPUR.Classes
             return currentMapPerformanceAttributes;
         }
 
-        private MapPerformanceAttributes CalculateMapPerformanceAttributes(CalculateArgs args, IBeatmap beatmap,
-            DifficultyAttributes difficultyAttributes)
+        private MapPerformanceAttributes CalculateMapPerformanceAttributes(CalculateArgs args, IBeatmap beatmap, DifficultyAttributes difficultyAttributes)
         {
-            DebugLogger("Calculating Map PerformanceAttributes...");
+            LogUtils.DebugLogger("Calculating Map PerformanceAttributes...");
             var currentTime = DateTime.Now;
 
-            var mods = GetMods(ruleset, args);
+            var mods = CalculatorUtils.GetMods(ruleset, args);
             var scoreInfo = new ScoreInfo(beatmap.BeatmapInfo, ruleset.RulesetInfo)
             {
                 Accuracy = 1,
-                MaxCombo = GetMaxCombo(beatmap, mode),
-                Statistics = GenerateHitResultsForSs(beatmap, mode),
+                MaxCombo = CalculatorUtils.GetMaxCombo(beatmap, mode),
+                Statistics = CalculatorUtils.GenerateHitResultsForSs(beatmap, mode),
                 Mods = mods
             };
 
@@ -295,8 +286,7 @@ namespace RealtimePPUR.Classes
             var performanceAttributes = performanceCalculator?.Calculate(scoreInfo, difficultyAttributes);
 
             var elapsed = DateTime.Now - currentTime;
-            DebugLogger("Calculated Map PerformanceAttributes! (Total Time: " + elapsed.Milliseconds +
-                        " milliseconds)");
+            LogUtils.DebugLogger("Calculated Map PerformanceAttributes! (Total Time: " + elapsed.Milliseconds + " milliseconds)");
 
             return new MapPerformanceAttributes
             {
@@ -305,61 +295,56 @@ namespace RealtimePPUR.Classes
             };
         }
 
-        public StrainList GetStrainLists()
+        // Copyright(c) 2019 ppy Pty Ltd <contact@ppy.sh>.
+        // This code is borrowed from osu-tools(https://github.com/ppy/osu-tools)
+        // osu-tools is licensed under the MIT License. https://github.com/ppy/osu-tools/blob/master/LICENCE
+        internal StrainList GetStrainLists()
         {
             try
             {
-                var difficultyCalculator = GetExtendedDifficultyCalculator(ruleset.RulesetInfo, workingBeatmap);
+                var difficultyCalculator = CalculatorUtils.GetExtendedDifficultyCalculator(ruleset.RulesetInfo, workingBeatmap);
                 difficultyCalculator.Calculate();
 
                 if (difficultyCalculator is IExtendedDifficultyCalculator extendedDifficultyCalculator)
                 {
                     var skills = extendedDifficultyCalculator.GetSkills();
 
-                    List<float[]> strainLists = new List<float[]>();
+                    List<float[]> strainLists = [];
 
                     foreach (var skill in skills)
                     {
-                        double[] strains = ((StrainSkill)skill).GetCurrentStrainPeaks().ToArray();
+                        double[] strains = [.. ((StrainSkill)skill).GetCurrentStrainPeaks()];
 
                         var skillStrainList = new List<float>();
 
                         for (int i = 0; i < strains.Length; i++)
                         {
                             double strain = strains[i];
-                            skillStrainList.Add(((float)strain));
+                            skillStrainList.Add((float)strain);
                         }
 
-                        strainLists.Add(skillStrainList.ToArray());
+                        strainLists.Add([.. skillStrainList]);
                     }
 
                     return new StrainList
                     {
                         Strains = strainLists,
-                        SkillNames = skills.Select(skill => skill.GetType().Name).ToArray()
+                        SkillNames = [.. skills.Select(skill => skill.GetType().Name)]
                     };
                 }
                 else
                 {
-                    return new StrainList
-                    {
-                        Strains = new List<float[]>(),
-                        SkillNames = Array.Empty<string>()
-                    };
+                    return new StrainList();
                 }
             }
             catch (Exception e)
             {
-                DebugLogger("Error getting strain lists: " + e.Message, true);
-                return new StrainList
-                {
-                    Strains = new List<float[]>(),
-                    SkillNames = Array.Empty<string>()
-                };
+                LogUtils.DebugLogger("Error getting strain lists: " + e.Message, true);
+                return new StrainList();
             }
         }
 
-        public int GetFirstObjectTime()
+        internal int GetFirstObjectTime()
         {
             var firstObject = workingBeatmap.Beatmap.HitObjects.Count > 1 ? workingBeatmap.Beatmap.HitObjects[1] : null;
             return (int)(firstObject?.StartTime ?? 0);

@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-namespace RealtimePPUR.Forms
+﻿namespace RealtimePPUR.Forms
 {
     partial class ChangePriorityForm
     {

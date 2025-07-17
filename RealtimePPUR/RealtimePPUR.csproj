@@ -5,26 +5,29 @@
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>none</DebugType>
 	</PropertyGroup>
-	<PropertyGroup>
-		<ApplicationIcon>icon.ico</ApplicationIcon>
-	</PropertyGroup>
+	
 	<ItemGroup>
 		<Content Include="icon.ico" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
 		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Octokit">
-			<Version>14.0.0</Version>
-		</PackageReference>
+		<PackageReference Include="Octokit" Version="14.0.0" />
 		<PackageReference Include="OsuMemoryDataProvider" Version="0.11.0" />
 		<PackageReference Include="OxyPlot.WindowsForms" Version="2.2.0" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Catch\osu.Game.Rulesets.Catch.csproj" />
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Mania\osu.Game.Rulesets.Mania.csproj" />
@@ -32,6 +35,7 @@
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Taiko\osu.Game.Rulesets.Taiko.csproj" />
 		<ProjectReference Include="..\osu\osu.Game\osu.Game.csproj" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<Compile Update="Properties\Settings.Designer.cs">
 			<DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -39,6 +43,7 @@
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
 	</ItemGroup>
+	
 	<ItemGroup>
 		<None Update="Properties\Settings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>

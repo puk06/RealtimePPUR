@@ -2,11 +2,6 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace RealtimePPUR.Forms
 {
@@ -35,8 +30,8 @@ namespace RealtimePPUR.Forms
             Stamina2CheckBox.ForeColor = Pink.ToColor();
         }
 
-        private List<float[]> globalValues = new();
-        private string[] labelStrings = Array.Empty<string>();
+        private List<float[]> globalValues = [];
+        private string[] labelStrings = [];
         private int firstObjectTime = 0;
         private int lastStrainTime = 0;
         private int totalCount = 0;

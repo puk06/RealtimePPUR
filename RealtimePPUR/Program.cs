@@ -1,11 +1,6 @@
-﻿using System;
-using System.Windows.Forms;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
-using RealtimePPUR.Classes;
+﻿using RealtimePPUR.Classes;
 using RealtimePPUR.Forms;
-using File = System.IO.File;
+using System.Globalization;
 
 namespace RealtimePPUR
 {
@@ -36,7 +31,7 @@ namespace RealtimePPUR
             {
                 MessageBox.Show("起動に必要なファイルをダウンロードします。", "ダウンロード", MessageBoxButtons.OK, MessageBoxIcon.Information);
 #pragma warning disable CS0618 // 型またはメンバーが旧型式です
-                await new SourceDownloader().DownloadFiles();
+                await SourceDownloader.DownloadFiles();
 #pragma warning restore CS0618
                 MessageBox.Show("ダウンロードが完了しました！ソフトを起動します！", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

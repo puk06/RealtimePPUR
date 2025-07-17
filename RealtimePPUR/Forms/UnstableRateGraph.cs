@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using MathNet.Numerics.Interpolation;
+﻿using MathNet.Numerics.Interpolation;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
