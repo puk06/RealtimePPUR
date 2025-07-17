@@ -454,15 +454,16 @@ namespace RealtimePPUR.Forms
             // 
             // uRGraphToolStripMenuItem1
             // 
+            uRGraphToolStripMenuItem1.Enabled = false;
             uRGraphToolStripMenuItem1.Name = "uRGraphToolStripMenuItem1";
-            uRGraphToolStripMenuItem1.Size = new Size(139, 22);
+            uRGraphToolStripMenuItem1.Size = new Size(180, 22);
             uRGraphToolStripMenuItem1.Text = "UR Graph";
             uRGraphToolStripMenuItem1.Click += URGraphToolStripMenuItem_Click;
             // 
             // strainGraphToolStripMenuItem1
             // 
             strainGraphToolStripMenuItem1.Name = "strainGraphToolStripMenuItem1";
-            strainGraphToolStripMenuItem1.Size = new Size(139, 22);
+            strainGraphToolStripMenuItem1.Size = new Size(180, 22);
             strainGraphToolStripMenuItem1.Text = "Strain Graph";
             strainGraphToolStripMenuItem1.Click += StrainGraphToolStripMenuItem_Click;
             // 
