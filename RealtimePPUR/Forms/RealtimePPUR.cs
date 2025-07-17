@@ -99,24 +99,6 @@ public sealed partial class RealtimePpur : Form
     private bool _isoObsRunning = false;
     private Process? _osuProcess = null;
 
-    // Initialize
-    private void RealtimePpur_Shown(object sender, EventArgs e)
-    {
-        TopMost = true;
-
-        Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
-        Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
-        Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
-        Thread updateProcessStatusThread = new(UpdateProcessStatus) { IsBackground = true };
-
-        updateMemoryThread.Start();
-        updatePpDataThread.Start();
-        updateDiscordRichPresenceThread.Start();
-        updateProcessStatusThread.Start();
-
-        UpdateLoop();
-    }
-
     public RealtimePpur()
     {
 #if DEBUG
@@ -341,6 +323,23 @@ public sealed partial class RealtimePpur : Form
     }
 
     #region Initialize
+    private void RealtimePpur_Shown(object sender, EventArgs e)
+    {
+        TopMost = true;
+
+        Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
+        Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
+        Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
+        Thread updateProcessStatusThread = new(UpdateProcessStatus) { IsBackground = true };
+
+        updateMemoryThread.Start();
+        updatePpDataThread.Start();
+        updateDiscordRichPresenceThread.Start();
+        updateProcessStatusThread.Start();
+
+        UpdateLoop();
+    }
+
     private void AdditionalInitialize()
     {
             sRToolStripMenuItem.Click += FormUtils.ToggleChecked;
