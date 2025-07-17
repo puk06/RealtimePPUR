@@ -234,7 +234,7 @@ internal static class CalculatorUtils
                     var passedObjects = hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitMiss;
                     var n300 = hits.Hit300 + Math.Max(0, objects - passedObjects);
                     var countHits = objects - hits.HitMiss;
-                    var ratio = 1.0 - (double)n300 / countHits;
+                    var ratio = 1.0 - ((double)n300 / countHits);
                     var new100S = (int)Math.Ceiling(ratio * hits.HitMiss);
                     n300 += Math.Max(0, hits.HitMiss - new100S);
                     var n100 = hits.Hit100 + new100S;
@@ -255,7 +255,7 @@ internal static class CalculatorUtils
                     var passedObjects = hits.Hit300 + hits.Hit100 + hits.HitMiss;
                     var n300 = hits.Hit300 + Math.Max(0, objects - passedObjects);
                     var countHits = objects - hits.HitMiss;
-                    var ratio = 1.0 - (double)n300 / countHits;
+                    var ratio = 1.0 - ((double)n300 / countHits);
                     var new100S = (int)Math.Ceiling(ratio * hits.HitMiss);
                     n300 += Math.Max(0, hits.HitMiss - new100S);
                     var n100 = hits.Hit100 + new100S;
@@ -365,7 +365,7 @@ internal static class CalculatorUtils
         }
         else if (totalNotes != hits.HitMiss)
         {
-            score = Math.Max((int)(maxScore * modMultiplier - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
+            score = Math.Max((int)((maxScore * modMultiplier) - Math.Round((Math.Round(baseScore + bonusScore) - currentScore) / ratio)), 0);
         }
 
         if (double.IsNaN(score)) score = 0;
@@ -385,7 +385,7 @@ internal static class CalculatorUtils
                     var countMiss = statistics[HitResult.Miss];
                     var total = countGreat + countGood + countMeh + countMiss;
 
-                    return (double)(6 * countGreat + 2 * countGood + countMeh) / (6 * total);
+                    return (double)((6 * countGreat) + (2 * countGood) + countMeh) / (6 * total);
                 }
 
             case 1:
@@ -395,7 +395,7 @@ internal static class CalculatorUtils
                     var countMiss = statistics[HitResult.Miss];
                     var total = countGreat + countGood + countMiss;
 
-                    return (double)(2 * countGreat + countGood) / (2 * total);
+                    return (double)((2 * countGreat) + countGood) / (2 * total);
                 }
 
             case 2:
@@ -409,10 +409,10 @@ internal static class CalculatorUtils
             case 3:
                 {
                     double hits = 
-                        6 * statistics[HitResult.Perfect] +
-                        6 * statistics[HitResult.Great] +
-                        4 * statistics[HitResult.Good] + 
-                        2 * statistics[HitResult.Ok] +
+                        (6 * statistics[HitResult.Perfect]) +
+                        (6 * statistics[HitResult.Great]) +
+                        (4 * statistics[HitResult.Good]) + 
+                        (2 * statistics[HitResult.Ok]) +
                          statistics[HitResult.Meh];
                     double total = 6 * (statistics[HitResult.Meh] + statistics[HitResult.Ok] +
                                         statistics[HitResult.Great] + statistics[HitResult.Miss] +
@@ -538,7 +538,7 @@ internal static class CalculatorUtils
                     var katu = statistics[HitResult.Meh];
                     var h0 = statistics[HitResult.Miss];
                     int total = h300 + h100 + h50 + h0 + geki + katu;
-                    double acc = total > 0 ? (h50 * 50 + h100 * 100 + katu * 200 + (h300 + geki) * 300) / (total * 300.0) : 1;
+                    double acc = total > 0 ? ((h50 * 50) + (h100 * 100) + (katu * 200) + ((h300 + geki) * 300)) / (total * 300.0) : 1;
 
                     rank = acc switch
                     {
