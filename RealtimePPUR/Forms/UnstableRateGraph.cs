@@ -34,8 +34,8 @@ namespace RealtimePPUR.Forms
                     var dict = new Dictionary<int, int>();
                     foreach (var i in data)
                     {
-                        if (dict.ContainsKey(i))
-                            dict[i]++;
+                        if (dict.TryGetValue(i, out int value))
+                            dict[i] = ++value;
                         else
                             dict[i] = 1;
                     }

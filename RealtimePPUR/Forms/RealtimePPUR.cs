@@ -126,7 +126,7 @@ public sealed partial class RealtimePpur : Form
         AddFontFile();
 
         InitializeComponent();
-        InitializeSelf();
+        AdditionalInitialize();
 
         LogUtils.DebugLogger("RealtimePPUR Initialized.");
 
@@ -340,7 +340,8 @@ public sealed partial class RealtimePpur : Form
         }
     }
 
-    private void InitializeSelf()
+    #region Initialize
+    private void AdditionalInitialize()
     {
             sRToolStripMenuItem.Click += FormUtils.ToggleChecked;
             sSPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
@@ -402,8 +403,9 @@ public sealed partial class RealtimePpur : Form
 
         LogUtils.DebugLogger("Fonts loaded.");
     }
+    #endregion
 
-    // Loop
+    #region Loop
     private async void UpdateLoop()
     {
         while (true)
@@ -871,8 +873,9 @@ public sealed partial class RealtimePpur : Form
             }
         }
     }
+    #endregion
 
-    // Mode
+    #region Software Mode
     private void RealtimePPURToolStripMenuItem_Click(object sender, EventArgs e)
     {
         if (softwareMode == 0) return;
@@ -945,7 +948,32 @@ public sealed partial class RealtimePpur : Form
         ChangeSoftwareMode(softwareMode);
     }
 
-    // Font
+    private void ChangeSoftwareMode(int softwareMode)
+    {
+        switch (softwareMode)
+        {
+            case 0:
+                realtimePPURToolStripMenuItem.Checked = true;
+                realtimePPToolStripMenuItem.Checked = false;
+                offsetHelperToolStripMenuItem.Checked = false;
+                break;
+
+            case 1:
+                realtimePPURToolStripMenuItem.Checked = false;
+                realtimePPToolStripMenuItem.Checked = true;
+                offsetHelperToolStripMenuItem.Checked = false;
+                break;
+
+            case 2:
+                realtimePPURToolStripMenuItem.Checked = false;
+                realtimePPToolStripMenuItem.Checked = false;
+                offsetHelperToolStripMenuItem.Checked = true;
+                break;
+        }
+    }
+    #endregion
+
+    #region Font
     private void ChangeFontToolStripMenuItem_Click(object sender, EventArgs e)
     {
         try
@@ -1066,8 +1094,9 @@ public sealed partial class RealtimePpur : Form
 
         LogUtils.DebugLogger("Font reset.");
     }
+    #endregion
 
-    // Move Window
+    #region Move Window
     private void RealtimePPUR_MouseDown(object sender, MouseEventArgs e)
     {
         if ((e.Button & MouseButtons.Left) == MouseButtons.Left) mousePoint = new Point(e.X, e.Y);
@@ -1079,13 +1108,17 @@ public sealed partial class RealtimePpur : Form
         Left += e.X - mousePoint.X;
         Top += e.Y - mousePoint.Y;
     }
+    #endregion
 
-    // Close
-    private void CloseToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+    #region Close
+    private void CloseToolStripMenuItem_Click(object sender, EventArgs e)
+        => Close();
 
-    private void RealtimePPUR_Closed(object sender, EventArgs e) => Application.Exit();
+    private void RealtimePPUR_Closed(object sender, EventArgs e)
+        => Application.Exit();
+    #endregion
 
-    // osu! Mode
+    #region IngameOverlay
     private void OsuModeToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var lefttest = configDictionary.TryGetValue("LEFT", out string? leftvalue);
@@ -1111,7 +1144,8 @@ public sealed partial class RealtimePpur : Form
         osuModeToolStripMenuItem.Checked = !IsOsuMode;
     }
     
-    private bool IsOsuMode => osuModeToolStripMenuItem.Checked;
+    private bool IsOsuMode
+        => osuModeToolStripMenuItem.Checked;
 
     private void ChangePriorityToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -1256,30 +1290,6 @@ public sealed partial class RealtimePpur : Form
         else if (overlayEnabled)
         {
             DisableOverlay();
-        }
-    }
-
-    private void ChangeSoftwareMode(int softwareMode)
-    {
-        switch (softwareMode)
-        {
-            case 0:
-                realtimePPURToolStripMenuItem.Checked = true;
-                realtimePPToolStripMenuItem.Checked = false;
-                offsetHelperToolStripMenuItem.Checked = false;
-                break;
-
-            case 1:
-                realtimePPURToolStripMenuItem.Checked = false;
-                realtimePPToolStripMenuItem.Checked = true;
-                offsetHelperToolStripMenuItem.Checked = false;
-                break;
-
-            case 2:
-                realtimePPURToolStripMenuItem.Checked = false;
-                realtimePPToolStripMenuItem.Checked = false;
-                offsetHelperToolStripMenuItem.Checked = true;
-                break;
         }
     }
 
@@ -1575,7 +1585,9 @@ public sealed partial class RealtimePpur : Form
 
         return displayFormat;
     }
+    #endregion
 
+    #region Config
     private bool CheckConfigDictionary(string key)
         => configDictionary.TryGetValue(key, out string? test) && test == "true";
 
@@ -1640,8 +1652,9 @@ public sealed partial class RealtimePpur : Form
             FormUtils.ShowErrorMessageBox("Config.cfgの保存に失敗しました。");
         }
     }
+    #endregion
 
-    // Error Logger
+    #region Error Logger
     private void ErrorLogger(Exception error)
     {
         try
@@ -1656,11 +1669,14 @@ public sealed partial class RealtimePpur : Form
             LogUtils.DebugLogger("Error Logger Failed");
         }
     }
+    #endregion
 
-    // Round Corners
+    #region Form Methods
     private void RoundCorners()
         => Region = FormUtils.RoundCorners(Width, Height);
+    #endregion
 
+    #region Event Handler
     private void URGraphToolStripMenuItem_Click(object sender, EventArgs e)
     {
         FormUtils.ShowErrorMessageBox("現在、この機能は無効化されています。アップデートで機能の修正が終わり次第、有効化されます。");
@@ -1673,4 +1689,5 @@ public sealed partial class RealtimePpur : Form
         if (strainGraph == null || strainGraph.IsDisposed) strainGraph = new StrainGraph();
         strainGraph.Show();
     }
+    #endregion
 }
