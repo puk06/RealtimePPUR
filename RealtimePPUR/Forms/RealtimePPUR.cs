@@ -95,6 +95,10 @@ public sealed partial class RealtimePpur : Form
         public int Left, Top, Right, Bottom;
     }
 
+    private bool _isOsuRunning = false;
+    private bool _isoObsRunning = false;
+    private Process? _osuProcess = null;
+
     // Initialize
     private void RealtimePpur_Shown(object sender, EventArgs e)
     {
@@ -103,10 +107,12 @@ public sealed partial class RealtimePpur : Form
         Thread updateMemoryThread = new(UpdateMemoryData) { IsBackground = true };
         Thread updatePpDataThread = new(UpdatePpData) { IsBackground = true };
         Thread updateDiscordRichPresenceThread = new(UpdateDiscordRichPresence) { IsBackground = true };
+        Thread updateProcessStatusThread = new(UpdateProcessStatus) { IsBackground = true };
 
         updateMemoryThread.Start();
         updatePpDataThread.Start();
         updateDiscordRichPresenceThread.Start();
+        updateProcessStatusThread.Start();
 
         UpdateLoop();
     }
@@ -406,14 +412,15 @@ public sealed partial class RealtimePpur : Form
             {
                 await Task.Delay(calculateInterval);
 
-                if (!TopMost) TopMost = true;
-                if (ProcessUtils.GetProcesses("osu!").Length == 0) throw new Exception("osu! is not running.");
+                if (!_isOsuRunning) throw new Exception("osu! is not running.");
 
-                if (!obsNoticed && ProcessUtils.GetProcesses("obs64").Length > 0)
+                if (!obsNoticed && _isoObsRunning)
                 {
                     MessageBox.Show("RealtimePPURを録画する際、OBSのウィンドウキャプチャでキャプチャ方法をWindows10 (1903以降)を有効にすると四隅の白い部分が削除されます。\n\nウィンドウキャプチャの[詳細]を開き、[キャプチャ方法]を[Windows10 (1903以降)]に設定してください。", "OBSを検知しました！", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     obsNoticed = true;
                 }
+
+                if (!TopMost) TopMost = true;
 
                 HitsResult hits = new();
                 hits.SetValueFromMemory(currentStatus, baseAddresses, isPlaying);
@@ -488,7 +495,7 @@ public sealed partial class RealtimePpur : Form
                 miss.Width = TextRenderer.MeasureText(miss.Text, miss.Font).Width;
                 miss.Left = ((ClientSize.Width - miss.Width) / 2) - 3;
 
-                RenderIngameOverlay(hits, calculatedObject, currentGamemode);
+                //RenderIngameOverlay(hits, calculatedObject, currentGamemode);
             }
             catch (Exception e)
             {
@@ -521,13 +528,13 @@ public sealed partial class RealtimePpur : Form
             {
                 Thread.Sleep(15);
 
-                var (running, path) = ProcessUtils.GetOsuProcess();
-
-                if (!running) throw new Exception("osu! is not running.");
+                if (!_isOsuRunning) throw new Exception("osu! is not running.");
 
                 if (!isDirectoryLoaded)
                 {
+                    var (running, path) = ProcessUtils.GetOsuProcess();
                     string tempOsuDirectory = path;
+
                     LogUtils.DebugLogger($"osu! directory: {tempOsuDirectory}");
                     if (!string.IsNullOrEmpty(tempOsuDirectory) && Directory.Exists(tempOsuDirectory))
                     {
@@ -745,6 +752,19 @@ public sealed partial class RealtimePpur : Form
         }
     }
 
+    private void UpdateProcessStatus()
+    {
+        while (true)
+        {
+            var osuProcesses = ProcessUtils.GetProcesses("osu!");
+            _isOsuRunning = osuProcesses.Length != 0;
+            _osuProcess = osuProcesses.FirstOrDefault();
+
+            _isoObsRunning = !obsNoticed && ProcessUtils.GetProcesses("obs64").Length != 0;
+            Thread.Sleep(3000);
+        }
+    }
+
     private void UpdateDiscordRichPresence()
     {
         bool hasConnectedToDiscord = false;
@@ -772,7 +792,7 @@ public sealed partial class RealtimePpur : Form
             {
                 Thread.Sleep(2000);
 
-                if (ProcessUtils.GetProcesses("osu!").Length == 0)
+                if (!_isOsuRunning)
                 {
                     if (hasClearedPresence) continue;
                     LogUtils.DebugLogger("Discord Rich Presence Cleared.");
@@ -1098,7 +1118,7 @@ public sealed partial class RealtimePpur : Form
     private void RenderIngameOverlay(HitsResult hits, BeatmapData? calculatedData, int currentGamemodeValue)
     {
         CheckOsuMode();
-        if (!overlayEnabled) return;
+        if (!IsOsuMode) return;
 
         var inGameValueText = SetIngameValue(calculatedData, hits, currentGamemodeValue);
 
@@ -1202,12 +1222,9 @@ public sealed partial class RealtimePpur : Form
 
         if (IsOsuMode)
         {
-            var processes = ProcessUtils.GetProcesses("osu!");
-            Process? osuProcess = processes.FirstOrDefault();
-
-            if (osuProcess != null && processes.Length > 0 && osuProcess != null)
+            if (_osuProcess != null)
             {
-                IntPtr osuMainWindowHandle = osuProcess.MainWindowHandle;
+                IntPtr osuMainWindowHandle = _osuProcess.MainWindowHandle;
 
                 bool windowRect = GetWindowRect(osuMainWindowHandle, out Rect rect);
                 bool isPlaying = baseAddresses.GeneralData.OsuStatus == OsuMemoryStatus.Playing;
