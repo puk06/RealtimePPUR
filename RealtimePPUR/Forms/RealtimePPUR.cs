@@ -790,14 +790,14 @@ public sealed partial class RealtimePpur : Form
                 {
                     hasConnectedToDiscord = true;
                 }
-                else
-                {
-                    Thread.Sleep(5000);
-                }
             }
             catch (Exception e)
             {
                 ErrorLogger(e);
+            }
+            finally
+            {
+                Thread.Sleep(5000);
             }
         }
 
