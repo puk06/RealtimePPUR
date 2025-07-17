@@ -376,7 +376,6 @@ public sealed partial class RealtimePpur : Form
             sr.Font = new Font(GuiFont, 13F, FontStyle.Bold);
             currentPp.Font = new Font(GuiFont, 20F, FontStyle.Bold);
             RoundCorners();
-
     }
 
     private void AddFontFile()

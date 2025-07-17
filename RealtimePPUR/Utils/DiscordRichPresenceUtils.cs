@@ -1,8 +1,7 @@
-﻿namespace RealtimePPUR.Utils;
+namespace RealtimePPUR.Utils;
 
 internal static class DiscordRichPresenceUtils
 {
-
     internal static string CheckString(string value)
     {
         if (value == null) return "Unknown";
