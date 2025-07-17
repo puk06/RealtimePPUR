@@ -156,8 +156,7 @@ namespace RealtimePPUR.PPCalculation
                         TotalScore = args.Score
                     };
 
-                    var performanceAttributesLossMode =
-                        performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
+                    var performanceAttributesLossMode = performanceCalculator?.Calculate(lossScoreInfo, difficultyAttributes);
                     data.PerformanceAttributesLossMode = performanceAttributesLossMode;
                     if (mode == 3) data.ExpectedManiaScore = CalculatorUtils.ManiaScoreCalculator(beatmap, hits, args.Mods, args.Score);
                 }
