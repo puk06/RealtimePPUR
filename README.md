@@ -8,19 +8,6 @@ Support Discord Server: https://discord.gg/AGNDPsZPya
 > [!NOTE]
 > This software is currently in the development phase! If you have any bugs, please contact us on Discord!
 
-## ☕ Support Me
-
-もし私の活動を応援していただけるなら、Ko-fiでコーヒーをおごっていただけると嬉しいです！
-
-If you enjoy my work and would like to support my efforts, you can buy me a coffee on Ko-fi!
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/pukorufu)
-
-### サポートのお願い / Request for Support
-私のプロジェクトが役に立ったり、気に入っていただけた場合、サポートをいただけると今後の開発の励みになります。どうぞよろしくお願いします！
-
-If you find my project useful or like it, your support will encourage future development. Thank you in advance!
-
 # Features
 - **PP, UR and SR displayed in real time**
   > * Calculate SR, PP and UR in real time and display them on the software and on the InGameOverlay!
@@ -44,14 +31,10 @@ If you find my project useful or like it, your support will encourage future dev
 # How to launch RealtimePPUR?
 Simply launch RealtimePPUR.exe, the icon with the blue, PP.
 
-# How to switch to Offset Helper and RealtimePP?
-You can change it by right-clicking on the software → Mode.
-
 # How to change the default software settings
 Change the Config.cfg file in the folder!
 
 I have written a lot of explanations so it will be easy to understand!
-
 
 # About IngameOverlay
 
@@ -93,20 +76,6 @@ I have written a lot of explanations so it will be easy to understand!
 18: CurrentRank → Rank: 〇 / 〇
 
 19: Remaining Notes → Notes: 〇〇〇〇
-
-
-### How to save IngameOverlay Config?
-You can save the configuration by clicking Save Config from the right-click menu!
-
-
-### How to change IngameOverlay Priority?
-Click Change Priority from the right-click menu to change it on the UI.
-
-Or, change it by looking directly at the INGAMEOVERLAYPRIORITY value in Config.cfg!
-
-
-# Special Thanks
-- **[Vanilla](https://twitter.com/Van1IIa) For Saggesting IngameOverlay Font!!!**
 
 # I want to build RealtimePPUR!!
 必要なモノ
