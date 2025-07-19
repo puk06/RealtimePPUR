@@ -15,7 +15,7 @@ namespace RealtimePPUR.Forms;
 
 public sealed partial class RealtimePpur : Form
 {
-    private const string CURRENT_VERSION = "v1.2.0-Release";
+    private const string CURRENT_VERSION = "v1.2.1-Release";
     private const string DISCORD_CLIENT_ID = "1237279508239749211";
 
     private readonly PrivateFontCollection fontCollection = new();
@@ -856,7 +856,7 @@ public sealed partial class RealtimePpur : Form
                     }
                     else
                     {
-                        richPresence.Details = DiscordRichPresenceUtils.CheckString($"{baseAddresses.BanchoUser.Username} is Watching {baseAddresses.Player.Username}'s play");
+                        richPresence.Details = DiscordRichPresenceUtils.CheckString($"{baseAddresses.BanchoUser.Username} is watching {baseAddresses.Player.Username} play");
                     }
 
                     richPresence.Assets.SmallImageKey = "osu_playing";
@@ -1170,7 +1170,7 @@ public sealed partial class RealtimePpur : Form
         CheckOsuMode();
         if (!overlayEnabled) return;
 
-        var inGameValueText = SetIngameValue(calculatedData, hits, currentGamemodeValue);
+        var inGameValueText = GetIngameValue(calculatedData, hits, currentGamemodeValue);
 
         using (Bitmap tempBitmap = new(1, 1))
         using (Graphics g = Graphics.FromImage(tempBitmap))
@@ -1299,7 +1299,7 @@ public sealed partial class RealtimePpur : Form
         }
     }
 
-    private string SetIngameValue(BeatmapData? calculatedData, HitsResult hits, int currentGamemodeValue)
+    private string GetIngameValue(BeatmapData? calculatedData, HitsResult hits, int currentGamemodeValue)
     {
         if (calculatedData == null || hits == null) return string.Empty;
 

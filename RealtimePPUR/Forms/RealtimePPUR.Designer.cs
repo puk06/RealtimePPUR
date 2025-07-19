@@ -83,9 +83,10 @@ namespace RealtimePPUR.Forms
             strainGraphToolStripMenuItem1 = new ToolStripMenuItem();
             discordRichPresenceToolStripMenuItem = new ToolStripMenuItem();
             saveConfigToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem4 = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new PictureBox();
+            toolStripMenuItem5 = new ToolStripMenuItem();
+            closeSoftwareToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inGameValue).BeginInit();
             SuspendLayout();
@@ -209,9 +210,9 @@ namespace RealtimePPUR.Forms
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { modeToolStripMenuItem, calculationOptionToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem4, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem5, modeToolStripMenuItem, calculationOptionToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeSoftwareToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(200, 268);
+            contextMenuStrip1.Size = new Size(200, 312);
             // 
             // modeToolStripMenuItem
             // 
@@ -225,21 +226,21 @@ namespace RealtimePPUR.Forms
             realtimePPURToolStripMenuItem.Checked = true;
             realtimePPURToolStripMenuItem.CheckState = CheckState.Checked;
             realtimePPURToolStripMenuItem.Name = "realtimePPURToolStripMenuItem";
-            realtimePPURToolStripMenuItem.Size = new Size(148, 22);
+            realtimePPURToolStripMenuItem.Size = new Size(180, 22);
             realtimePPURToolStripMenuItem.Text = "RealtimePPUR";
             realtimePPURToolStripMenuItem.Click += RealtimePPURToolStripMenuItem_Click;
             // 
             // offsetHelperToolStripMenuItem
             // 
             offsetHelperToolStripMenuItem.Name = "offsetHelperToolStripMenuItem";
-            offsetHelperToolStripMenuItem.Size = new Size(148, 22);
+            offsetHelperToolStripMenuItem.Size = new Size(180, 22);
             offsetHelperToolStripMenuItem.Text = "Offset Helper";
             offsetHelperToolStripMenuItem.Click += OffsetHelperToolStripMenuItem_Click;
             // 
             // realtimePPToolStripMenuItem
             // 
             realtimePPToolStripMenuItem.Name = "realtimePPToolStripMenuItem";
-            realtimePPToolStripMenuItem.Size = new Size(148, 22);
+            realtimePPToolStripMenuItem.Size = new Size(180, 22);
             realtimePPToolStripMenuItem.Text = "RealtimePP";
             realtimePPToolStripMenuItem.Click += RealtimePPToolStripMenuItem_Click;
             // 
@@ -267,7 +268,7 @@ namespace RealtimePPUR.Forms
             toolStripMenuItem2.Enabled = false;
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.Size = new Size(199, 22);
-            toolStripMenuItem2.Text = "----------------------";
+            toolStripMenuItem2.Text = "---- Overlay Settings";
             // 
             // osuModeToolStripMenuItem
             // 
@@ -443,7 +444,7 @@ namespace RealtimePPUR.Forms
             toolStripMenuItem3.Enabled = false;
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.Size = new Size(199, 22);
-            toolStripMenuItem3.Text = "----------------------";
+            toolStripMenuItem3.Text = "---- Featrures";
             // 
             // graphToolStripMenuItem
             // 
@@ -456,14 +457,14 @@ namespace RealtimePPUR.Forms
             // 
             uRGraphToolStripMenuItem1.Enabled = false;
             uRGraphToolStripMenuItem1.Name = "uRGraphToolStripMenuItem1";
-            uRGraphToolStripMenuItem1.Size = new Size(180, 22);
+            uRGraphToolStripMenuItem1.Size = new Size(139, 22);
             uRGraphToolStripMenuItem1.Text = "UR Graph";
             uRGraphToolStripMenuItem1.Click += URGraphToolStripMenuItem_Click;
             // 
             // strainGraphToolStripMenuItem1
             // 
             strainGraphToolStripMenuItem1.Name = "strainGraphToolStripMenuItem1";
-            strainGraphToolStripMenuItem1.Size = new Size(180, 22);
+            strainGraphToolStripMenuItem1.Size = new Size(139, 22);
             strainGraphToolStripMenuItem1.Text = "Strain Graph";
             strainGraphToolStripMenuItem1.Click += StrainGraphToolStripMenuItem_Click;
             // 
@@ -479,13 +480,6 @@ namespace RealtimePPUR.Forms
             saveConfigToolStripMenuItem.Size = new Size(199, 22);
             saveConfigToolStripMenuItem.Text = "Save Config";
             saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
-            // 
-            // toolStripMenuItem4
-            // 
-            toolStripMenuItem4.Enabled = false;
-            toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(199, 22);
-            toolStripMenuItem4.Text = "----------------------";
             // 
             // closeToolStripMenuItem
             // 
@@ -503,6 +497,20 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.TabStop = false;
             inGameValue.Visible = false;
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Enabled = false;
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new Size(199, 22);
+            toolStripMenuItem5.Text = "---- Software Settings";
+            // 
+            // closeSoftwareToolStripMenuItem
+            // 
+            closeSoftwareToolStripMenuItem.Enabled = false;
+            closeSoftwareToolStripMenuItem.Name = "closeSoftwareToolStripMenuItem";
+            closeSoftwareToolStripMenuItem.Size = new Size(199, 22);
+            closeSoftwareToolStripMenuItem.Text = "---- Close Software";
             // 
             // RealtimePpur
             // 
@@ -594,7 +602,8 @@ namespace RealtimePPUR.Forms
         private ToolStripMenuItem strainGraphToolStripMenuItem1;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripMenuItem toolStripMenuItem3;
-        private ToolStripMenuItem toolStripMenuItem4;
+        private ToolStripMenuItem toolStripMenuItem5;
+        private ToolStripMenuItem closeSoftwareToolStripMenuItem;
     }
 }
 

@@ -191,20 +191,20 @@ internal class OsuUtils
     {
         return status switch
         {
-            OsuMemoryStatus.EditingMap => " is Editing Map",
-            OsuMemoryStatus.GameShutdownAnimation => " is Shutting Down osu!",
-            OsuMemoryStatus.GameStartupAnimation => " is Starting Up osu!",
-            OsuMemoryStatus.MainMenu => " is in Main Menu",
-            OsuMemoryStatus.MultiplayerRoom => " is in Multiplayer Room",
-            OsuMemoryStatus.MultiplayerResultsscreen => " is in Multiplayer Results",
-            OsuMemoryStatus.MultiplayerSongSelect => " is in Multiplayer Song Select",
-            OsuMemoryStatus.NotRunning => " is Not Running osu!",
-            OsuMemoryStatus.OsuDirect => " is Searching Maps",
-            OsuMemoryStatus.Playing => " is Playing Map",
-            OsuMemoryStatus.ResultsScreen => " is in Results",
-            OsuMemoryStatus.SongSelect => " is Selecting Songs",
-            OsuMemoryStatus.Unknown => " is Unknown",
-            _ => " is Unknown"
+            OsuMemoryStatus.EditingMap => " is editing a beatmap",
+            OsuMemoryStatus.GameShutdownAnimation => " is closing osu!",
+            OsuMemoryStatus.GameStartupAnimation => " is launching osu!",
+            OsuMemoryStatus.MainMenu => " is at the main menu",
+            OsuMemoryStatus.MultiplayerRoom => " is in a multiplayer room",
+            OsuMemoryStatus.MultiplayerResultsscreen => " is viewing multiplayer results",
+            OsuMemoryStatus.MultiplayerSongSelect => " is selecting a song in multiplayer",
+            OsuMemoryStatus.NotRunning => " is not running osu!",
+            OsuMemoryStatus.OsuDirect => " is browsing osu!direct",
+            OsuMemoryStatus.Playing => " is playing a map",
+            OsuMemoryStatus.ResultsScreen => " is viewing results",
+            OsuMemoryStatus.SongSelect => " is selecting a song",
+            OsuMemoryStatus.Unknown => " has an unknown status",
+            _ => " has an unknown status"
         };
     }
 }
