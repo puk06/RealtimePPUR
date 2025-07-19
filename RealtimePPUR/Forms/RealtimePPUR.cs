@@ -935,11 +935,11 @@ public sealed partial class RealtimePpur : Form
     {
         if (File.Exists("Font"))
         {
-            var fontDictionaryLoad = ConfigUtils.ReadConfigFile("Font");
+            var fontDictionary = ConfigUtils.ReadConfigFile("Font");
 
-            fontDictionaryLoad.TryGetValue("FONTNAME", out string? fontNameValue);
-            fontDictionaryLoad.TryGetValue("FONTSIZE", out string? fontSizeValue);
-            fontDictionaryLoad.TryGetValue("FONTSTYLE", out string? fontStyleValue);
+            fontDictionary.TryGetValue("FONTNAME", out string? fontNameValue);
+            fontDictionary.TryGetValue("FONTSIZE", out string? fontSizeValue);
+            fontDictionary.TryGetValue("FONTSTYLE", out string? fontStyleValue);
 
             fontNameValue ??= string.Empty;
             fontSizeValue ??= string.Empty;
