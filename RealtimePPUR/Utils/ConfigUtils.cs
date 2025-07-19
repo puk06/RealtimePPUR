@@ -57,8 +57,8 @@ internal class ConfigUtils
                 return;
             }
 
-            if (showDialog) WriteConfigFile(filePath, parameters);
-            FormUtils.ShowInformationMessageBox("Config.cfgの保存が完了しました！");
+            WriteConfigFile(filePath, parameters);
+            if (showDialog) FormUtils.ShowInformationMessageBox("Config.cfgの保存が完了しました！");
         }
         catch
         {
