@@ -45,4 +45,23 @@ internal class ConfigUtils
 
     internal static string ConfigValueToString(bool value) 
         => value ? "true" : "false";
+    internal static void SaveConfigFile(Dictionary<string, string> parameters)
+    {
+        try
+        {
+            const string filePath = "Config.cfg";
+            if (!File.Exists(filePath))
+            {
+                FormUtils.ShowErrorMessageBox("Config.cfgが見つかりませんでした。RealtimePPURをダウンロードし直してください。");
+                return;
+            }
+
+            ConfigUtils.WriteConfigFile(filePath, parameters);
+            FormUtils.ShowInformationMessageBox("Config.cfgの保存が完了しました！");
+        }
+        catch
+        {
+            FormUtils.ShowErrorMessageBox("Config.cfgの保存に失敗しました。");
+        }
+    }
 }

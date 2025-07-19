@@ -67,7 +67,7 @@ public sealed partial class RealtimePpur : Form
     private readonly StructuredOsuMemoryReader sreader = StructuredOsuMemoryReader.GetInstance(new("osu!"));
     private readonly OsuBaseAddresses baseAddresses = new();
 
-    private readonly string customSongsFolder;
+    private readonly string customSongsFolder = string.Empty;
     private (int left, int top) osuModeValue = new();
 
     public FontFamily GuiFont = new("Yu Gothic UI");
@@ -112,17 +112,14 @@ public sealed partial class RealtimePpur : Form
 
         LogUtils.DebugLogger("RealtimePPUR Initialized.");
 
-        if (File.Exists("Error.log"))
-        {
-            File.Delete("Error.log");
-        }
+        if (File.Exists("Error.log")) File.Delete("Error.log");
 
         if (!File.Exists("Config.cfg"))
         {
             FormUtils.ShowInformationMessageBox("Config.cfgがフォルダ内に存在しないため、すべての項目がOffとして設定されます。アップデートチェックのみ行われます。");
             GithubUtils.CheckUpdate(CURRENT_VERSION);
             inGameValue.Font = new Font(InGameOverlayFont, 19F);
-            customSongsFolder = "";
+            customSongsFolder = string.Empty;
         }
         else
         {
@@ -137,11 +134,8 @@ public sealed partial class RealtimePpur : Form
             if (defaultmodeTest)
             {
                 var defaultModeResult = int.TryParse(defaultmodestring, out int defaultmode);
-                if (!defaultModeResult || defaultmode is not (0 or 1 or 2))
-                {
-                    FormUtils.ShowErrorMessageBox("Config.cfgのDEFAULTMODEの値が不正であったため、初期値の0が適用されます。0、1、2のどれかを入力してください。");
-                }
-                else if (defaultmode is 1 or 2)
+                
+                if (defaultmode is 1 or 2)
                 {
                     ClientSize = new Size(316, 65);
                     currentBackgroundImage = defaultmode + 1;
@@ -168,7 +162,8 @@ public sealed partial class RealtimePpur : Form
                 }
             }
 
-            // InGameOverlay
+            osuModeValue.left = CheckConfigDictionary("LEFT", 0);
+            osuModeValue.top = CheckConfigDictionary("TOP", 60);
             sRToolStripMenuItem.Checked = CheckConfigDictionary("SR");
             sSPPToolStripMenuItem.Checked = CheckConfigDictionary("SSPP");
             currentPPToolStripMenuItem.Checked = CheckConfigDictionary("CURRENTPP");
@@ -195,129 +190,45 @@ public sealed partial class RealtimePpur : Form
             discordRichPresenceToolStripMenuItem.Checked = CheckConfigDictionary("DISCORDRICHPRESENCE");
             ingameoverlayPriority = CheckConfigDictionary("INGAMEOVERLAYPRIORITY", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19");
             calculateInterval = CheckConfigDictionary("CALCULATEINTERVAL", 15);
+
             if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string? customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
             {
                 customSongsFolder = customSongsFolderValue;
             }
             else
             {
-                customSongsFolder = "";
+                customSongsFolder = string.Empty;
             }
 
-            if (CheckConfigDictionary("USECUSTOMFONT"))
+            if (!CheckConfigDictionary("USECUSTOMFONT") || !File.Exists("Font"))
             {
-                if (File.Exists("Font"))
-                {
-                    var fontDictionary = ConfigUtils.ReadConfigFile("Font");
-
-                    var fontName = fontDictionary.TryGetValue("FONTNAME", out string? fontNameValue);
-                    var fontSize = fontDictionary.TryGetValue("FONTSIZE", out string? fontSizeValue);
-                    var fontStyle = fontDictionary.TryGetValue("FONTSTYLE", out string? fontStyleValue);
-
-                    fontNameValue ??= string.Empty;
-                    fontSizeValue ??= string.Empty;
-                    fontStyleValue ??= string.Empty;
-
-                    if (fontDictionary.Count == 3 && fontName && fontNameValue != "" && fontSize &&
-                        fontSizeValue != "" && fontStyle && fontStyleValue != "")
-                    {
-                        try
-                        {
-                            inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue),
-                                (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
-                        }
-                        catch
-                        {
-                            FormUtils.ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。");
-                            var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string? fontsizeValue);
-                            if (!fontsizeResult)
-                            {
-                                FormUtils.ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
-                                inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                            }
-                            else
-                            {
-                                var result = float.TryParse(fontsizeValue, out float fontsize);
-                                if (!result)
-                                {
-                                    FormUtils.ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
-                                    inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                                }
-                                else
-                                {
-                                    inGameValue.Font = new Font(InGameOverlayFont, fontsize);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        FormUtils.ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、デフォルトのフォントが適用されます。一度Fontファイルを削除してみることをお勧めします。");
-                        var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string? fontsizeValue);
-                        if (!fontsizeResult)
-                        {
-                            FormUtils.ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
-                            inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                        }
-                        else
-                        {
-                            var result = float.TryParse(fontsizeValue, out float fontsize);
-                            if (!result)
-                            {
-                                FormUtils.ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
-                                inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                            }
-                            else
-                            {
-                                inGameValue.Font = new Font(InGameOverlayFont, fontsize);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string? fontsizeValue);
-                    if (!fontsizeResult)
-                    {
-                        FormUtils.ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
-                        inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                    }
-                    else
-                    {
-                        var result = float.TryParse(fontsizeValue, out float fontsize);
-                        if (!result)
-                        {
-                            FormUtils.ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
-                            inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                        }
-                        else
-                        {
-                            inGameValue.Font = new Font(InGameOverlayFont, fontsize);
-                        }
-                    }
-                }
+                ResetOverlayFont();
+                return;
             }
-            else
+
+            var fontDictionary = ConfigUtils.ReadConfigFile("Font");
+
+            fontDictionary.TryGetValue("FONTNAME", out string? fontNameValue);
+            fontDictionary.TryGetValue("FONTSIZE", out string? fontSizeValue);
+            fontDictionary.TryGetValue("FONTSTYLE", out string? fontStyleValue);
+
+            fontNameValue ??= string.Empty;
+            fontSizeValue ??= string.Empty;
+            fontStyleValue ??= string.Empty;
+
+            if (fontNameValue == string.Empty || fontSizeValue == string.Empty || fontStyleValue == string.Empty)
             {
-                var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string? fontsizeValue);
-                if (!fontsizeResult)
-                {
-                    FormUtils.ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
-                    inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                }
-                else
-                {
-                    var result = float.TryParse(fontsizeValue, out float fontsize);
-                    if (!result)
-                    {
-                        FormUtils.ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
-                        inGameValue.Font = new Font(InGameOverlayFont, 19F);
-                    }
-                    else
-                    {
-                        inGameValue.Font = new Font(InGameOverlayFont, fontsize);
-                    }
-                }
+                ResetOverlayFont();
+                return;
+            }
+
+            try
+            {
+                inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue), (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
+            }
+            catch
+            {
+                ResetOverlayFont();
             }
         }
     }
@@ -342,40 +253,41 @@ public sealed partial class RealtimePpur : Form
 
     private void AdditionalInitialize()
     {
-            sRToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            sSPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            currentPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            currentACCToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            hitsToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            ifFCHitsToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            uRToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            offsetHelpToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            expectedManiaScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            avgOffsetToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            progressToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            ifFCPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            healthPercentageToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            currentPositionToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            higherScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            highestScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            userScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            currentBPMToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            currentRankToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            remainingNotesToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            pPLossModeToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            calculateFirstToolStripMenuItem.Click += FormUtils.ToggleChecked;
-            discordRichPresenceToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        sRToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        sSPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        currentPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        currentACCToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        hitsToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        ifFCHitsToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        uRToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        offsetHelpToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        expectedManiaScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        avgOffsetToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        progressToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        ifFCPPToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        healthPercentageToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        currentPositionToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        higherScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        highestScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        userScoreToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        currentBPMToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        currentRankToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        remainingNotesToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        pPLossModeToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        calculateFirstToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        discordRichPresenceToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        osuModeToolStripMenuItem.Click += FormUtils.ToggleChecked;
 
-            avgoffsethelp.Font = new Font(GuiFont, 20F, FontStyle.Bold);
-            ur.Font = new Font(GuiFont, 25F, FontStyle.Bold);
-            avgoffset.Font = new Font(GuiFont, 13F, FontStyle.Bold);
-            miss.Font = new Font(GuiFont, 15F, FontStyle.Bold);
-            ok.Font = new Font(GuiFont, 15F, FontStyle.Bold);
-            good.Font = new Font(GuiFont, 15F, FontStyle.Bold);
-            iffc.Font = new Font(GuiFont, 13F, FontStyle.Bold);
-            sr.Font = new Font(GuiFont, 13F, FontStyle.Bold);
-            currentPp.Font = new Font(GuiFont, 20F, FontStyle.Bold);
-            RoundCorners();
+        avgoffsethelp.Font = new Font(GuiFont, 20F, FontStyle.Bold);
+        ur.Font = new Font(GuiFont, 25F, FontStyle.Bold);
+        avgoffset.Font = new Font(GuiFont, 13F, FontStyle.Bold);
+        miss.Font = new Font(GuiFont, 15F, FontStyle.Bold);
+        ok.Font = new Font(GuiFont, 15F, FontStyle.Bold);
+        good.Font = new Font(GuiFont, 15F, FontStyle.Bold);
+        iffc.Font = new Font(GuiFont, 13F, FontStyle.Bold);
+        sr.Font = new Font(GuiFont, 13F, FontStyle.Bold);
+        currentPp.Font = new Font(GuiFont, 20F, FontStyle.Bold);
+        RoundCorners();
     }
 
     private void AddFontFile()
@@ -432,7 +344,7 @@ public sealed partial class RealtimePpur : Form
 
                 double currentPpValue = MathUtils.IsNaNWithNum(calculatedObject.CurrentPerformanceAttributes?.Total);
                 if (pPLossModeToolStripMenuItem.Checked && !isResultScreen && (currentGamemode is 1 or 3)) currentPpValue = MathUtils.IsNaNWithNum(calculatedObject?.PerformanceAttributesLossMode?.Total);
-                
+
                 double ifFcPpValue = MathUtils.IsNaNWithNum(calculatedObject?.PerformanceAttributesIffc?.Total);
                 double lossPpValue = MathUtils.IsNaNWithNum(calculatedObject?.PerformanceAttributesLossMode?.Total);
 
@@ -481,7 +393,7 @@ public sealed partial class RealtimePpur : Form
                 currentPp.Width = TextRenderer.MeasureText(currentPp.Text, currentPp.Font).Width;
                 currentPp.Left = ClientSize.Width - currentPp.Width - 35;
 
-                HitsResult simplifiedHits = hits.GetSimplifiedHits(currentOsuGamemode);
+                HitsResult simplifiedHits = hits.GetSimplifiedHits(currentGamemode);
 
                 good.Text = simplifiedHits.Hit300.ToString();
                 good.Width = TextRenderer.MeasureText(good.Text, good.Font).Width;
@@ -999,9 +911,9 @@ public sealed partial class RealtimePpur : Form
             try
             {
                 string fontInfo =
-                    "※絶対にこのファイルを自分で編集しないでください！\n" + 
-                    "※フォント名などを編集してしまうとフォントが見つからず、Windows標準のフォントが割り当てられてしまいます。\n" + 
-                    "※もし編集してしまった場合はこのファイルを削除することをお勧めします。\n" + 
+                    "※絶対にこのファイルを自分で編集しないでください！\n" +
+                    "※フォント名などを編集してしまうとフォントが見つからず、Windows標準のフォントが割り当てられてしまいます。\n" +
+                    "※もし編集してしまった場合はこのファイルを削除することをお勧めします。\n" +
                     $"FONTNAME={selectedFont.Name}\nFONTSIZE={selectedFont.Size}\nFONTSTYLE={selectedFont.Style}";
 
                 File.WriteAllText("Font", fontInfo);
@@ -1051,11 +963,8 @@ public sealed partial class RealtimePpur : Form
             try
             {
                 LogUtils.DebugLogger($"Font loaded: {fontNameValue} {fontSizeValue} {fontStyleValue}");
-                inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue),
-                    (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
-                MessageBox.Show(
-                    $"フォントの読み込みに成功しました。\n\nフォント名: {fontNameValue}\nサイズ: {fontSizeValue}\nスタイル: {fontStyleValue}",
-                    "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue), (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
+                MessageBox.Show($"フォントの読み込みに成功しました。\n\nフォント名: {fontNameValue}\nサイズ: {fontSizeValue}\nスタイル: {fontStyleValue}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch
             {
@@ -1070,35 +979,16 @@ public sealed partial class RealtimePpur : Form
 
     private void ResetFontToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (InGameOverlayFont == null)
-        {
-            FormUtils.ShowErrorMessageBox("InGameOverlayFontが見つからなかったため、フォントのリセットに失敗しました。");
-            return;
-        }
-
-        var fontsizeResult = configDictionary.TryGetValue("FONTSIZE", out string? fontsizeValue);
-        if (!fontsizeResult)
-        {
-            FormUtils.ShowErrorMessageBox("Config.cfgにFONTSIZEの値がなかったため、初期値の19が適用されます。");
-            inGameValue.Font = new Font(InGameOverlayFont, 19F);
-        }
-        else
-        {
-            var result = float.TryParse(fontsizeValue, out float fontsize);
-            if (!result)
-            {
-                FormUtils.ShowErrorMessageBox("Config.cfgのFONTSIZEの値が不正であったため、初期値の19が適用されます。");
-                inGameValue.Font = new Font(InGameOverlayFont, 19F);
-            }
-            else
-            {
-                inGameValue.Font = new Font(InGameOverlayFont, fontsize);
-            }
-
-            FormUtils.ShowInformationMessageBox("フォントのリセットが完了しました！");
-        }
+        ResetOverlayFont();
+        FormUtils.ShowInformationMessageBox("フォントのリセットが完了しました！");
 
         LogUtils.DebugLogger("Font reset.");
+    }
+
+    private void ResetOverlayFont()
+    {
+        var fontSize = CheckConfigDictionary("FONTSIZE", 19F);
+        inGameValue.Font = new Font(InGameOverlayFont, fontSize);
     }
     #endregion
 
@@ -1125,33 +1015,11 @@ public sealed partial class RealtimePpur : Form
     #endregion
 
     #region IngameOverlay
-    private void OsuModeToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        var lefttest = configDictionary.TryGetValue("LEFT", out string? leftvalue);
-        var toptest = configDictionary.TryGetValue("TOP", out string? topvalue);
-
-        if (!lefttest || !toptest || string.IsNullOrEmpty(leftvalue) || string.IsNullOrEmpty(topvalue))
-        {
-            FormUtils.ShowErrorMessageBox("Config.cfgにLEFTまたはTOPの値が存在しなかったため、InGameOverlayの起動に失敗しました。");
-            return;
-        }
-
-        var leftResult = int.TryParse(leftvalue, out int left);
-        var topResult = int.TryParse(topvalue, out int top);
-
-        if ((!leftResult || !topResult) && !IsOsuMode)
-        {
-            FormUtils.ShowErrorMessageBox("Config.cfgのLEFT、またはTOPの値が不正であったため、InGameOverlayの起動に失敗しました。LEFT、TOPには数値以外入力しないでください。");
-            return;
-        }
-
-        osuModeValue.left = left;
-        osuModeValue.top = top;
-        osuModeToolStripMenuItem.Checked = !IsOsuMode;
-    }
-    
     private bool IsOsuMode
         => osuModeToolStripMenuItem.Checked;
+
+    private bool IsMoveMode
+        => moveIngameOverlayToolStripMenuItem.Checked;
 
     private void ChangePriorityToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -1165,12 +1033,17 @@ public sealed partial class RealtimePpur : Form
         };
     }
 
+    private string previousIngameValue = string.Empty;
+
     private void RenderIngameOverlay(HitsResult hits, BeatmapData? calculatedData, int currentGamemodeValue)
     {
         CheckOsuMode();
         if (!overlayEnabled) return;
 
-        var inGameValueText = GetIngameValue(calculatedData, hits, currentGamemodeValue);
+        var inGameValueText = IsMoveMode ? "InGameOverlay: Move Mode\nSR: 0.00\nPP: 1.23" : GetIngameValue(calculatedData, hits, currentGamemodeValue);
+        
+        if (previousIngameValue == inGameValueText) return;
+        previousIngameValue = inGameValueText;
 
         using (Bitmap tempBitmap = new(1, 1))
         using (Graphics g = Graphics.FromImage(tempBitmap))
@@ -1183,6 +1056,7 @@ public sealed partial class RealtimePpur : Form
 
         using (Graphics g = Graphics.FromImage(canvas))
         {
+            if (IsMoveMode) g.Clear(Color.Black);
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawString(inGameValueText, inGameValue.Font, Brushes.White, 0, 0);
         }
@@ -1196,7 +1070,9 @@ public sealed partial class RealtimePpur : Form
         {
             if (!overlayEnabled)
             {
-                windowLocation = Location;
+                windowLocation.X = Left;
+                windowLocation.Y = Top;
+
                 overlayEnabled = true;
             }
 
@@ -1214,7 +1090,12 @@ public sealed partial class RealtimePpur : Form
             ur.Visible = false;
             Region = null;
             Size = new Size(inGameValue.Width, inGameValue.Height);
-            Location = new Point(rect.Left + osuModeValue.left + 2, rect.Top + osuModeValue.top);
+
+            if (!IsMoveMode)
+            {
+                Left = rect.Left + osuModeValue.left + 2;
+                Top = rect.Top + osuModeValue.top;
+            }
         }
 
         void DisableOverlay()
@@ -1255,7 +1136,9 @@ public sealed partial class RealtimePpur : Form
                     break;
             }
 
-            Location = windowLocation;
+            Left = windowLocation.X;
+            Top = windowLocation.Y;
+
             overlayEnabled = false;
 
             inGameValue.Visible = false;
@@ -1270,7 +1153,29 @@ public sealed partial class RealtimePpur : Form
             avgoffsethelp.Visible = true;
         }
 
-        if (IsOsuMode)
+        if (IsMoveMode)
+        {
+            if (_osuProcess != null)
+            {
+                IntPtr osuMainWindowHandle = _osuProcess.MainWindowHandle;
+
+                bool windowRect = GetWindowRect(osuMainWindowHandle, out Rect rect);
+
+                if (windowRect && osuMainWindowHandle != IntPtr.Zero)
+                {
+                    EnableOverlay(rect);
+                }
+                else
+                {
+                    DisableOverlay();
+                }
+            } 
+            else
+            {
+                DisableOverlay();
+            }
+        }
+        else if (IsOsuMode)
         {
             if (_osuProcess != null)
             {
@@ -1290,7 +1195,7 @@ public sealed partial class RealtimePpur : Form
             }
             else if (overlayEnabled)
             {
-                DisableOverlay();   
+                DisableOverlay();
             }
         }
         else if (overlayEnabled)
@@ -1611,52 +1516,47 @@ public sealed partial class RealtimePpur : Form
         return value;
     }
 
-    // Save Config
+    private float CheckConfigDictionary(string key, float value)
+    {
+        if (configDictionary.TryGetValue(key, out string? test))
+        {
+            var result = float.TryParse(test, out float testInt);
+            return result ? testInt : value;
+        }
+
+        return value;
+    }
+
     private void SaveConfigToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        try
+        var parameters = new Dictionary<string, string>
         {
-            const string filePath = "Config.cfg";
-            if (!File.Exists(filePath))
-            {
-                FormUtils.ShowErrorMessageBox("Config.cfgが見つかりませんでした。RealtimePPURをダウンロードし直してください。");
-                return;
-            }
-
-            var parameters = new Dictionary<string, string>
-            {
-                { "SR", ConfigUtils.ConfigValueToString(sRToolStripMenuItem.Checked) },
-                { "SSPP", ConfigUtils.ConfigValueToString(sSPPToolStripMenuItem.Checked) },
-                { "CURRENTPP", ConfigUtils.ConfigValueToString(currentPPToolStripMenuItem.Checked ) },
-                { "CURRENTACC", ConfigUtils.ConfigValueToString(currentACCToolStripMenuItem.Checked) },
-                { "HITS", ConfigUtils.ConfigValueToString(hitsToolStripMenuItem.Checked) },
-                { "IFFCHITS", ConfigUtils.ConfigValueToString(ifFCHitsToolStripMenuItem.Checked) },
-                { "UR", ConfigUtils.ConfigValueToString(uRToolStripMenuItem.Checked) },
-                { "OFFSETHELP", ConfigUtils.ConfigValueToString(offsetHelpToolStripMenuItem.Checked) },
-                { "EXPECTEDMANIASCORE", ConfigUtils.ConfigValueToString(expectedManiaScoreToolStripMenuItem.Checked) },
-                { "AVGOFFSET", ConfigUtils.ConfigValueToString(avgOffsetToolStripMenuItem.Checked) },
-                { "PROGRESS", ConfigUtils.ConfigValueToString(progressToolStripMenuItem.Checked) },
-                { "IFFCPP", ConfigUtils.ConfigValueToString(ifFCPPToolStripMenuItem.Checked) },
-                { "HEALTHPERCENTAGE", ConfigUtils.ConfigValueToString(healthPercentageToolStripMenuItem.Checked) },
-                { "CURRENTPOSITION", ConfigUtils.ConfigValueToString(currentPositionToolStripMenuItem.Checked) },
-                { "HIGHERSCOREDIFF", ConfigUtils.ConfigValueToString(higherScoreToolStripMenuItem.Checked) },
-                { "USERSCORE", ConfigUtils.ConfigValueToString(userScoreToolStripMenuItem.Checked) },
-                { "CURRENTBPM", ConfigUtils.ConfigValueToString(currentBPMToolStripMenuItem.Checked) },
-                { "CURRENTRANK", ConfigUtils.ConfigValueToString(currentRankToolStripMenuItem.Checked) },
-                { "REMAININGNOTES", ConfigUtils.ConfigValueToString(remainingNotesToolStripMenuItem.Checked) },
-                { "PPLOSSMODE", ConfigUtils.ConfigValueToString(pPLossModeToolStripMenuItem.Checked) },
-                { "CALCULATEFIRST", ConfigUtils.ConfigValueToString(calculateFirstToolStripMenuItem.Checked) },
-                { "DISCORDRICHPRESENCE", ConfigUtils.ConfigValueToString(discordRichPresenceToolStripMenuItem.Checked) }
-            };
-
-            ConfigUtils.WriteConfigFile(filePath, parameters);
-            FormUtils.ShowInformationMessageBox("Config.cfgの保存が完了しました！");
-        }
-        catch (Exception error)
-        {
-            ErrorLogger(error);
-            FormUtils.ShowErrorMessageBox("Config.cfgの保存に失敗しました。");
-        }
+            { "LEFT", osuModeValue.left.ToString() },
+            { "TOP", osuModeValue.top.ToString() },
+            { "SR", ConfigUtils.ConfigValueToString(sRToolStripMenuItem.Checked) },
+            { "SSPP", ConfigUtils.ConfigValueToString(sSPPToolStripMenuItem.Checked) },
+            { "CURRENTPP", ConfigUtils.ConfigValueToString(currentPPToolStripMenuItem.Checked ) },
+            { "CURRENTACC", ConfigUtils.ConfigValueToString(currentACCToolStripMenuItem.Checked) },
+            { "HITS", ConfigUtils.ConfigValueToString(hitsToolStripMenuItem.Checked) },
+            { "IFFCHITS", ConfigUtils.ConfigValueToString(ifFCHitsToolStripMenuItem.Checked) },
+            { "UR", ConfigUtils.ConfigValueToString(uRToolStripMenuItem.Checked) },
+            { "OFFSETHELP", ConfigUtils.ConfigValueToString(offsetHelpToolStripMenuItem.Checked) },
+            { "EXPECTEDMANIASCORE", ConfigUtils.ConfigValueToString(expectedManiaScoreToolStripMenuItem.Checked) },
+            { "AVGOFFSET", ConfigUtils.ConfigValueToString(avgOffsetToolStripMenuItem.Checked) },
+            { "PROGRESS", ConfigUtils.ConfigValueToString(progressToolStripMenuItem.Checked) },
+            { "IFFCPP", ConfigUtils.ConfigValueToString(ifFCPPToolStripMenuItem.Checked) },
+            { "HEALTHPERCENTAGE", ConfigUtils.ConfigValueToString(healthPercentageToolStripMenuItem.Checked) },
+            { "CURRENTPOSITION", ConfigUtils.ConfigValueToString(currentPositionToolStripMenuItem.Checked) },
+            { "HIGHERSCOREDIFF", ConfigUtils.ConfigValueToString(higherScoreToolStripMenuItem.Checked) },
+            { "USERSCORE", ConfigUtils.ConfigValueToString(userScoreToolStripMenuItem.Checked) },
+            { "CURRENTBPM", ConfigUtils.ConfigValueToString(currentBPMToolStripMenuItem.Checked) },
+            { "CURRENTRANK", ConfigUtils.ConfigValueToString(currentRankToolStripMenuItem.Checked) },
+            { "REMAININGNOTES", ConfigUtils.ConfigValueToString(remainingNotesToolStripMenuItem.Checked) },
+            { "PPLOSSMODE", ConfigUtils.ConfigValueToString(pPLossModeToolStripMenuItem.Checked) },
+            { "CALCULATEFIRST", ConfigUtils.ConfigValueToString(calculateFirstToolStripMenuItem.Checked) },
+            { "DISCORDRICHPRESENCE", ConfigUtils.ConfigValueToString(discordRichPresenceToolStripMenuItem.Checked) }
+        };
+        ConfigUtils.SaveConfigFile(parameters);
     }
     #endregion
 
@@ -1694,6 +1594,33 @@ public sealed partial class RealtimePpur : Form
     {
         if (strainGraph == null || strainGraph.IsDisposed) strainGraph = new StrainGraph();
         strainGraph.Show();
+    }
+
+    private void MoveIngameOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (IsMoveMode && _osuProcess != null)
+        {
+            IntPtr osuMainWindowHandle = _osuProcess.MainWindowHandle;
+            bool windowRect = GetWindowRect(osuMainWindowHandle, out Rect rect);
+
+            if (windowRect && osuMainWindowHandle != IntPtr.Zero)
+            {
+                osuModeValue.left = Left - rect.Left + 2;
+                osuModeValue.top = Top - rect.Top;
+
+                var parameters = new Dictionary<string, string>
+                {
+                    { "LEFT", osuModeValue.left.ToString() },
+                    { "TOP", osuModeValue.top.ToString() },
+                };
+
+                ConfigUtils.SaveConfigFile(parameters);
+
+                MessageBox.Show($"IngameOverlayの位置を変更しました。\n\nLEFT: {osuModeValue.left}\nTOP: {osuModeValue.top}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        moveIngameOverlayToolStripMenuItem.Checked = !IsMoveMode;
     }
     #endregion
 }

@@ -42,6 +42,7 @@ namespace RealtimePPUR.Forms
             ur = new Label();
             avgoffsethelp = new Label();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            toolStripMenuItem5 = new ToolStripMenuItem();
             modeToolStripMenuItem = new ToolStripMenuItem();
             realtimePPURToolStripMenuItem = new ToolStripMenuItem();
             offsetHelperToolStripMenuItem = new ToolStripMenuItem();
@@ -49,8 +50,10 @@ namespace RealtimePPUR.Forms
             calculationOptionToolStripMenuItem = new ToolStripMenuItem();
             pPLossModeToolStripMenuItem = new ToolStripMenuItem();
             calculateFirstToolStripMenuItem = new ToolStripMenuItem();
+            saveConfigToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             osuModeToolStripMenuItem = new ToolStripMenuItem();
+            moveIngameOverlayToolStripMenuItem = new ToolStripMenuItem();
             inGameOverlayToolStripMenuItem = new ToolStripMenuItem();
             sRToolStripMenuItem = new ToolStripMenuItem();
             sSPPToolStripMenuItem = new ToolStripMenuItem();
@@ -82,11 +85,9 @@ namespace RealtimePPUR.Forms
             uRGraphToolStripMenuItem1 = new ToolStripMenuItem();
             strainGraphToolStripMenuItem1 = new ToolStripMenuItem();
             discordRichPresenceToolStripMenuItem = new ToolStripMenuItem();
-            saveConfigToolStripMenuItem = new ToolStripMenuItem();
+            closeSoftwareToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new PictureBox();
-            toolStripMenuItem5 = new ToolStripMenuItem();
-            closeSoftwareToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inGameValue).BeginInit();
             SuspendLayout();
@@ -210,9 +211,16 @@ namespace RealtimePPUR.Forms
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem5, modeToolStripMenuItem, calculationOptionToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeSoftwareToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem5, modeToolStripMenuItem, calculationOptionToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, moveIngameOverlayToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeSoftwareToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(200, 312);
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Enabled = false;
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new Size(199, 22);
+            toolStripMenuItem5.Text = "---- Software Settings";
             // 
             // modeToolStripMenuItem
             // 
@@ -226,21 +234,21 @@ namespace RealtimePPUR.Forms
             realtimePPURToolStripMenuItem.Checked = true;
             realtimePPURToolStripMenuItem.CheckState = CheckState.Checked;
             realtimePPURToolStripMenuItem.Name = "realtimePPURToolStripMenuItem";
-            realtimePPURToolStripMenuItem.Size = new Size(180, 22);
+            realtimePPURToolStripMenuItem.Size = new Size(148, 22);
             realtimePPURToolStripMenuItem.Text = "RealtimePPUR";
             realtimePPURToolStripMenuItem.Click += RealtimePPURToolStripMenuItem_Click;
             // 
             // offsetHelperToolStripMenuItem
             // 
             offsetHelperToolStripMenuItem.Name = "offsetHelperToolStripMenuItem";
-            offsetHelperToolStripMenuItem.Size = new Size(180, 22);
+            offsetHelperToolStripMenuItem.Size = new Size(148, 22);
             offsetHelperToolStripMenuItem.Text = "Offset Helper";
             offsetHelperToolStripMenuItem.Click += OffsetHelperToolStripMenuItem_Click;
             // 
             // realtimePPToolStripMenuItem
             // 
             realtimePPToolStripMenuItem.Name = "realtimePPToolStripMenuItem";
-            realtimePPToolStripMenuItem.Size = new Size(180, 22);
+            realtimePPToolStripMenuItem.Size = new Size(148, 22);
             realtimePPToolStripMenuItem.Text = "RealtimePP";
             realtimePPToolStripMenuItem.Click += RealtimePPToolStripMenuItem_Click;
             // 
@@ -263,6 +271,13 @@ namespace RealtimePPUR.Forms
             calculateFirstToolStripMenuItem.Size = new Size(147, 22);
             calculateFirstToolStripMenuItem.Text = "Calculate First";
             // 
+            // saveConfigToolStripMenuItem
+            // 
+            saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
+            saveConfigToolStripMenuItem.Size = new Size(199, 22);
+            saveConfigToolStripMenuItem.Text = "Save Config";
+            saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
+            // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Enabled = false;
@@ -275,7 +290,13 @@ namespace RealtimePPUR.Forms
             osuModeToolStripMenuItem.Name = "osuModeToolStripMenuItem";
             osuModeToolStripMenuItem.Size = new Size(199, 22);
             osuModeToolStripMenuItem.Text = "Enable InGameOverlay";
-            osuModeToolStripMenuItem.Click += OsuModeToolStripMenuItem_Click;
+            // 
+            // moveIngameOverlayToolStripMenuItem
+            // 
+            moveIngameOverlayToolStripMenuItem.Name = "moveIngameOverlayToolStripMenuItem";
+            moveIngameOverlayToolStripMenuItem.Size = new Size(199, 22);
+            moveIngameOverlayToolStripMenuItem.Text = "Move IngameOverlay";
+            moveIngameOverlayToolStripMenuItem.Click += MoveIngameOverlayToolStripMenuItem_Click;
             // 
             // inGameOverlayToolStripMenuItem
             // 
@@ -474,12 +495,12 @@ namespace RealtimePPUR.Forms
             discordRichPresenceToolStripMenuItem.Size = new Size(199, 22);
             discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
             // 
-            // saveConfigToolStripMenuItem
+            // closeSoftwareToolStripMenuItem
             // 
-            saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
-            saveConfigToolStripMenuItem.Size = new Size(199, 22);
-            saveConfigToolStripMenuItem.Text = "Save Config";
-            saveConfigToolStripMenuItem.Click += SaveConfigToolStripMenuItem_Click;
+            closeSoftwareToolStripMenuItem.Enabled = false;
+            closeSoftwareToolStripMenuItem.Name = "closeSoftwareToolStripMenuItem";
+            closeSoftwareToolStripMenuItem.Size = new Size(199, 22);
+            closeSoftwareToolStripMenuItem.Text = "---- Close Software";
             // 
             // closeToolStripMenuItem
             // 
@@ -497,20 +518,8 @@ namespace RealtimePPUR.Forms
             inGameValue.TabIndex = 1;
             inGameValue.TabStop = false;
             inGameValue.Visible = false;
-            // 
-            // toolStripMenuItem5
-            // 
-            toolStripMenuItem5.Enabled = false;
-            toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new Size(199, 22);
-            toolStripMenuItem5.Text = "---- Software Settings";
-            // 
-            // closeSoftwareToolStripMenuItem
-            // 
-            closeSoftwareToolStripMenuItem.Enabled = false;
-            closeSoftwareToolStripMenuItem.Name = "closeSoftwareToolStripMenuItem";
-            closeSoftwareToolStripMenuItem.Size = new Size(199, 22);
-            closeSoftwareToolStripMenuItem.Text = "---- Close Software";
+            inGameValue.MouseDown += RealtimePPUR_MouseDown;
+            inGameValue.MouseMove += RealtimePPUR_MouseMove;
             // 
             // RealtimePpur
             // 
@@ -604,6 +613,7 @@ namespace RealtimePPUR.Forms
         private ToolStripMenuItem toolStripMenuItem3;
         private ToolStripMenuItem toolStripMenuItem5;
         private ToolStripMenuItem closeSoftwareToolStripMenuItem;
+        private ToolStripMenuItem moveIngameOverlayToolStripMenuItem;
     }
 }
 

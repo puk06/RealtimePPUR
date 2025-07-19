@@ -51,12 +51,11 @@ public partial class ChangePriorityForm : Form
 
         try
         {
-            const string filePath = "Config.cfg";
-            var param = new Dictionary<string, string>
+            var parameter = new Dictionary<string, string>
             {
                 { "INGAMEOVERLAYPRIORITY", message }
             };
-            ConfigUtils.WriteConfigFile(filePath, param);
+            ConfigUtils.SaveConfigFile(parameter);
             MessageBox.Show("値の変更を反映し、保存しました。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch
