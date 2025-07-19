@@ -206,30 +206,7 @@ public sealed partial class RealtimePpur : Form
                 return;
             }
 
-            var fontDictionary = ConfigUtils.ReadConfigFile("Font");
-
-            fontDictionary.TryGetValue("FONTNAME", out string? fontNameValue);
-            fontDictionary.TryGetValue("FONTSIZE", out string? fontSizeValue);
-            fontDictionary.TryGetValue("FONTSTYLE", out string? fontStyleValue);
-
-            fontNameValue ??= string.Empty;
-            fontSizeValue ??= string.Empty;
-            fontStyleValue ??= string.Empty;
-
-            if (fontNameValue == string.Empty || fontSizeValue == string.Empty || fontStyleValue == string.Empty)
-            {
-                ResetOverlayFont();
-                return;
-            }
-
-            try
-            {
-                inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue), (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
-            }
-            catch
-            {
-                ResetOverlayFont();
-            }
+            LoadFontFile();
         }
     }
 
@@ -935,32 +912,7 @@ public sealed partial class RealtimePpur : Form
     {
         if (File.Exists("Font"))
         {
-            var fontDictionary = ConfigUtils.ReadConfigFile("Font");
-
-            fontDictionary.TryGetValue("FONTNAME", out string? fontNameValue);
-            fontDictionary.TryGetValue("FONTSIZE", out string? fontSizeValue);
-            fontDictionary.TryGetValue("FONTSTYLE", out string? fontStyleValue);
-
-            fontNameValue ??= string.Empty;
-            fontSizeValue ??= string.Empty;
-            fontStyleValue ??= string.Empty;
-
-            if (string.IsNullOrEmpty(fontNameValue) || string.IsNullOrEmpty(fontSizeValue) || string.IsNullOrEmpty(fontStyleValue))
-            {
-                FormUtils.ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。");
-                return;
-            }
-
-            try
-            {
-                LogUtils.DebugLogger($"Font loaded: {fontNameValue} {fontSizeValue} {fontStyleValue}");
-                inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue), (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
-                MessageBox.Show($"フォントの読み込みに成功しました。\n\nフォント名: {fontNameValue}\nサイズ: {fontSizeValue}\nスタイル: {fontStyleValue}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch
-            {
-                FormUtils.ShowErrorMessageBox("Fontファイルのフォント情報が不正、もしくは非対応であったため読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。");
-            }
+            LoadFontFile();
         }
         else
         {
@@ -980,6 +932,36 @@ public sealed partial class RealtimePpur : Form
     {
         var fontSize = CheckConfigDictionary("FONTSIZE", 19F);
         inGameValue.Font = new Font(InGameOverlayFont, fontSize);
+    }
+
+    private void LoadFontFile()
+    {
+        var fontDictionary = ConfigUtils.ReadConfigFile("Font");
+
+        fontDictionary.TryGetValue("FONTNAME", out string? fontNameValue);
+        fontDictionary.TryGetValue("FONTSIZE", out string? fontSizeValue);
+        fontDictionary.TryGetValue("FONTSTYLE", out string? fontStyleValue);
+
+        fontNameValue ??= string.Empty;
+        fontSizeValue ??= string.Empty;
+        fontStyleValue ??= string.Empty;
+
+        if (string.IsNullOrEmpty(fontNameValue) || string.IsNullOrEmpty(fontSizeValue) || string.IsNullOrEmpty(fontStyleValue))
+        {
+            FormUtils.ShowErrorMessageBox("Fontファイルのフォント情報が不正であったため、読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。");
+            return;
+        }
+
+        try
+        {
+            LogUtils.DebugLogger($"Font loaded: {fontNameValue} {fontSizeValue} {fontStyleValue}");
+            inGameValue.Font = new Font(fontNameValue, float.Parse(fontSizeValue), (FontStyle)Enum.Parse(typeof(FontStyle), fontStyleValue));
+            MessageBox.Show($"フォントの読み込みに成功しました。\n\nフォント名: {fontNameValue}\nサイズ: {fontSizeValue}\nスタイル: {fontStyleValue}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch
+        {
+            FormUtils.ShowErrorMessageBox("Fontファイルのフォント情報が不正、もしくは非対応であったため読み込まれませんでした。一度Fontファイルを削除してみることをお勧めします。");
+        }
     }
     #endregion
 
