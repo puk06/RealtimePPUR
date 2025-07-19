@@ -45,7 +45,8 @@ internal class ConfigUtils
 
     internal static string ConfigValueToString(bool value) 
         => value ? "true" : "false";
-    internal static void SaveConfigFile(Dictionary<string, string> parameters)
+
+    internal static void SaveConfigFile(Dictionary<string, string> parameters, bool showDialog = true)
     {
         try
         {
@@ -56,7 +57,7 @@ internal class ConfigUtils
                 return;
             }
 
-            ConfigUtils.WriteConfigFile(filePath, parameters);
+            if (showDialog) WriteConfigFile(filePath, parameters);
             FormUtils.ShowInformationMessageBox("Config.cfgの保存が完了しました！");
         }
         catch

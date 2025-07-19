@@ -1614,7 +1614,7 @@ public sealed partial class RealtimePpur : Form
                     { "TOP", osuModeValue.top.ToString() },
                 };
 
-                ConfigUtils.SaveConfigFile(parameters);
+                ConfigUtils.SaveConfigFile(parameters, false);
 
                 MessageBox.Show($"IngameOverlayの位置を変更しました。\n\nLEFT: {osuModeValue.left}\nTOP: {osuModeValue.top}", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
