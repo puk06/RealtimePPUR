@@ -109,3 +109,7 @@ RealtimePPUR-Build.bat "リワークのリポジトリ" "コミット、ブラ�
 # Credit
 
 Joystick icons created by Us and Up - Flaticon
+
+Software UI Design Based - Gosumemory, Tosu -> Ingame2 by Dartandr(https://github.com/Dartandr)
+
+UI PSD, CLIP files -> RealtimePPUR/Overlays
