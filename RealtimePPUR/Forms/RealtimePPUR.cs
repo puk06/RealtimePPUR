@@ -935,16 +935,7 @@ public sealed partial class RealtimePpur : Form
     {
         if (File.Exists("Font"))
         {
-            var fontDictionaryLoad = new Dictionary<string, string>();
-            string[] fontInfo = File.ReadAllLines("Font");
-            foreach (string line in fontInfo)
-            {
-                string[] parts = line.Split('=');
-                if (parts.Length != 2) continue;
-                string name = parts[0].Trim();
-                string value = parts[1].Trim();
-                fontDictionaryLoad[name] = value;
-            }
+            var fontDictionaryLoad = ConfigUtils.ReadConfigFile("Font");
 
             fontDictionaryLoad.TryGetValue("FONTNAME", out string? fontNameValue);
             fontDictionaryLoad.TryGetValue("FONTSIZE", out string? fontSizeValue);
@@ -980,9 +971,9 @@ public sealed partial class RealtimePpur : Form
     private void ResetFontToolStripMenuItem_Click(object sender, EventArgs e)
     {
         ResetOverlayFont();
-        FormUtils.ShowInformationMessageBox("フォントのリセットが完了しました！");
-
         LogUtils.DebugLogger("Font reset.");
+
+        FormUtils.ShowInformationMessageBox("フォントのリセットが完了しました！");
     }
 
     private void ResetOverlayFont()
