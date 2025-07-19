@@ -992,7 +992,7 @@ public sealed partial class RealtimePpur : Form
         => osuModeToolStripMenuItem.Checked;
 
     private bool IsMoveMode
-        => moveIngameOverlayToolStripMenuItem.Checked;
+        => moveInGameOverlayToolStripMenuItem.Checked;
 
     private void ChangePriorityToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -1572,7 +1572,7 @@ public sealed partial class RealtimePpur : Form
         strainGraph.Show();
     }
 
-    private void MoveIngameOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+    private void MoveInGameOverlayToolStripMenuItem_Click(object sender, EventArgs e)
     {
         if (IsMoveMode && _osuProcess != null)
         {
@@ -1596,7 +1596,7 @@ public sealed partial class RealtimePpur : Form
             }
         }
 
-        moveIngameOverlayToolStripMenuItem.Checked = !IsMoveMode;
+        moveInGameOverlayToolStripMenuItem.Checked = !IsMoveMode;
     }
     #endregion
 }
