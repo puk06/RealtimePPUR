@@ -1061,6 +1061,9 @@ public sealed partial class RealtimePpur : Form
             g.DrawString(inGameValueText, inGameValue.Font, Brushes.White, 0, 0);
         }
 
+        inGameValue.Image?.Dispose();
+        inGameValue.Image = null;
+
         inGameValue.Image = canvas;
     }
 
