@@ -213,7 +213,7 @@ namespace RealtimePPUR.Forms
             // 
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem5, modeToolStripMenuItem, calculationOptionToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, moveInGameOverlayToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeSoftwareToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(200, 312);
+            contextMenuStrip1.Size = new Size(200, 334);
             // 
             // toolStripMenuItem5
             // 
@@ -465,7 +465,7 @@ namespace RealtimePPUR.Forms
             toolStripMenuItem3.Enabled = false;
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.Size = new Size(199, 22);
-            toolStripMenuItem3.Text = "---- Featrures";
+            toolStripMenuItem3.Text = "---- Features";
             // 
             // graphToolStripMenuItem
             // 
