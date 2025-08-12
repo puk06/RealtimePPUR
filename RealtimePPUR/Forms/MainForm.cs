@@ -1479,7 +1479,7 @@ public sealed partial class Main : Form
                     {
                         if (currentGamemodeValue is 1 or 3)
                         {
-                            double targetRatio = targetValue / 100;
+                            double targetRatio = targetValue / 100.0;
 
                             int currentNotes = currentGamemodeValue switch
                             {
@@ -1494,8 +1494,6 @@ public sealed partial class Main : Form
                             int adjustedTarget = (int)Math.Floor(rawTarget) - adjustment;
                             int current300Hits = hits.Hit300;
                             if (currentGamemodeValue == 3) current300Hits += hits.HitGeki;
-
-                            bool canAchieveARank = current300Hits >= adjustedTarget;
 
                             int count = current300Hits - adjustedTarget;
                             string prefix = count >= 0 ? "+" : "";
