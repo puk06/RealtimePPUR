@@ -70,6 +70,8 @@ public sealed partial class Main : Form
     private string customSongsFolder = string.Empty;
     private (int left, int top) osuModeValue = new();
 
+    private int targetValue = 90;
+
     public FontFamily GuiFont = new("Yu Gothic UI");
     public FontFamily InGameOverlayFont = new("Yu Gothic UI");
 
@@ -1018,7 +1020,7 @@ public sealed partial class Main : Form
         if (!overlayEnabled) return;
 
         var inGameValueText = IsMoveMode ? "InGameOverlay: Move Mode\nSR: 0.00\nPP: 1.23" : GetIngameValue(calculatedData, hits, currentGamemodeValue);
-        
+
         if (previousIngameValue == inGameValueText) return;
         previousIngameValue = inGameValueText;
 
@@ -1149,7 +1151,7 @@ public sealed partial class Main : Form
                 {
                     DisableOverlay();
                 }
-            } 
+            }
             else
             {
                 DisableOverlay();
@@ -1475,28 +1477,28 @@ public sealed partial class Main : Form
                 case 20:
                     if (targetToolStripMenuItem.Checked && calculatedData != null)
                     {
-                        if (currentGamemodeValue != 1)
+                        if (currentGamemodeValue is 1 or 3)
                         {
-                            const double targetRatio = 0.9; // 90%
-                            int totalNotes = hits.Hit300 + hits.Hit100 + hits.HitMiss; // 総ノート数
+                            double targetRatio = targetValue / 100;
 
-                            // まずは90%での理論目標（少数）
-                            double rawTarget = totalNotes * targetRatio;
+                            int currentNotes = currentGamemodeValue switch
+                            {
+                                1 => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+                                3 => hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss,
+                                _ => throw new NotImplementedException()
+                            };
 
-                            // 10ノートごとに1つ減らす調整
-                            int adjustment = totalNotes / 10;
+                            double rawTarget = currentNotes * targetRatio;
 
-                            // 最終目標は少数の切り捨て - 調整分
+                            int adjustment = currentNotes / 10;
                             int adjustedTarget = (int)Math.Floor(rawTarget) - adjustment;
-
-                            // 実際の300ヒット数
                             int current300Hits = hits.Hit300;
+                            if (currentGamemodeValue == 3) current300Hits += hits.HitGeki;
 
-                            // 今の300ヒット数が目標を超えていればAランク可能と判断
                             bool canAchieveARank = current300Hits >= adjustedTarget;
 
-                            int count = adjustedTarget - current300Hits;
-                            string prefix = count >= 0 ? "+" : "-";
+                            int count = current300Hits - adjustedTarget;
+                            string prefix = count >= 0 ? "+" : "";
 
                             displayFormat += "Target: " + prefix + count + "\n";
                         }
@@ -1633,6 +1635,14 @@ public sealed partial class Main : Form
         }
 
         moveInGameOverlayToolStripMenuItem.Checked = !IsMoveMode;
+    }
+
+    private void ChangeTargetToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ChangeTargetForm changeTargetForm = new(targetValue);
+        changeTargetForm.ShowDialog();
+
+        targetValue = changeTargetForm.selectedValue;
     }
     #endregion
 }

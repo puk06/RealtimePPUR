@@ -75,11 +75,13 @@ namespace RealtimePPUR.Forms
             currentBPMToolStripMenuItem = new ToolStripMenuItem();
             currentRankToolStripMenuItem = new ToolStripMenuItem();
             remainingNotesToolStripMenuItem = new ToolStripMenuItem();
+            targetToolStripMenuItem = new ToolStripMenuItem();
             overlayOptionToolStripMenuItem = new ToolStripMenuItem();
             changePriorityToolStripMenuItem1 = new ToolStripMenuItem();
             changeFontToolStripMenuItem1 = new ToolStripMenuItem();
             loadFontToolStripMenuItem1 = new ToolStripMenuItem();
             resetFontToolStripMenuItem1 = new ToolStripMenuItem();
+            changeTargetToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
             graphToolStripMenuItem = new ToolStripMenuItem();
             uRGraphToolStripMenuItem1 = new ToolStripMenuItem();
@@ -88,8 +90,6 @@ namespace RealtimePPUR.Forms
             closeSoftwareToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             inGameValue = new PictureBox();
-            targetToolStripMenuItem = new ToolStripMenuItem();
-            changeTargetToolStripMenuItem = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inGameValue).BeginInit();
             SuspendLayout();
@@ -215,7 +215,7 @@ namespace RealtimePPUR.Forms
             // 
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem5, modeToolStripMenuItem, calculationOptionToolStripMenuItem, saveConfigToolStripMenuItem, toolStripMenuItem2, osuModeToolStripMenuItem, moveInGameOverlayToolStripMenuItem, inGameOverlayToolStripMenuItem, overlayOptionToolStripMenuItem, toolStripMenuItem3, graphToolStripMenuItem, discordRichPresenceToolStripMenuItem, closeSoftwareToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(200, 334);
+            contextMenuStrip1.Size = new Size(200, 312);
             // 
             // toolStripMenuItem5
             // 
@@ -427,6 +427,12 @@ namespace RealtimePPUR.Forms
             remainingNotesToolStripMenuItem.Size = new Size(187, 22);
             remainingNotesToolStripMenuItem.Text = "RemainingNotes";
             // 
+            // targetToolStripMenuItem
+            // 
+            targetToolStripMenuItem.Name = "targetToolStripMenuItem";
+            targetToolStripMenuItem.Size = new Size(187, 22);
+            targetToolStripMenuItem.Text = "Target";
+            // 
             // overlayOptionToolStripMenuItem
             // 
             overlayOptionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changePriorityToolStripMenuItem1, changeFontToolStripMenuItem1, loadFontToolStripMenuItem1, resetFontToolStripMenuItem1, changeTargetToolStripMenuItem });
@@ -461,6 +467,13 @@ namespace RealtimePPUR.Forms
             resetFontToolStripMenuItem1.Size = new Size(180, 22);
             resetFontToolStripMenuItem1.Text = "ResetFont";
             resetFontToolStripMenuItem1.Click += ResetFontToolStripMenuItem_Click;
+            // 
+            // changeTargetToolStripMenuItem
+            // 
+            changeTargetToolStripMenuItem.Name = "changeTargetToolStripMenuItem";
+            changeTargetToolStripMenuItem.Size = new Size(180, 22);
+            changeTargetToolStripMenuItem.Text = "Change Target";
+            changeTargetToolStripMenuItem.Click += ChangeTargetToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
             // 
@@ -522,18 +535,6 @@ namespace RealtimePPUR.Forms
             inGameValue.Visible = false;
             inGameValue.MouseDown += RealtimePPUR_MouseDown;
             inGameValue.MouseMove += RealtimePPUR_MouseMove;
-            // 
-            // targetToolStripMenuItem
-            // 
-            targetToolStripMenuItem.Name = "targetToolStripMenuItem";
-            targetToolStripMenuItem.Size = new Size(187, 22);
-            targetToolStripMenuItem.Text = "Target";
-            // 
-            // changeTargetToolStripMenuItem
-            // 
-            changeTargetToolStripMenuItem.Name = "changeTargetToolStripMenuItem";
-            changeTargetToolStripMenuItem.Size = new Size(180, 22);
-            changeTargetToolStripMenuItem.Text = "Change Target";
             // 
             // Main
             // 
