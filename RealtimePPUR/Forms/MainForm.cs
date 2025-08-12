@@ -1490,8 +1490,7 @@ public sealed partial class Main : Form
 
                             double rawTarget = currentNotes * targetRatio;
 
-                            int adjustment = currentNotes / 10;
-                            int adjustedTarget = (int)Math.Floor(rawTarget) - adjustment;
+                            int adjustedTarget = (int)Math.Floor(rawTarget);
                             int current300Hits = hits.Hit300;
                             if (currentGamemodeValue == 3) current300Hits += hits.HitGeki;
 
