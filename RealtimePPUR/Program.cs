@@ -17,7 +17,7 @@ namespace RealtimePPUR
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                Application.Run(new RealtimePpur());
+                Application.Run(new Main());
             }
             catch (Exception softwareError)
             {

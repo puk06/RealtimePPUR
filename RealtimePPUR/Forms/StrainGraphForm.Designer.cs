@@ -1,6 +1,6 @@
 ﻿namespace RealtimePPUR.Forms
 {
-    partial class StrainGraph
+    partial class StrainGraphForm
     {
         /// <summary>
         /// Required designer variable.

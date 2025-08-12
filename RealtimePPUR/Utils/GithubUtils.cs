@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace RealtimePPUR.Utils;
 
-internal class GithubUtils
+internal static class GithubUtils
 {
     internal static async void CheckUpdate(string currentVersion)
     {

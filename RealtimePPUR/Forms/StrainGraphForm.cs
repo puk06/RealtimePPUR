@@ -5,7 +5,7 @@ using OxyPlot.WindowsForms;
 
 namespace RealtimePPUR.Forms
 {
-    public partial class StrainGraph : Form
+    public partial class StrainGraphForm : Form
     {
         private readonly OxyColor Blue = OxyColor.Parse("#66ccff");
         private readonly OxyColor Green = OxyColor.Parse("#88b300");
@@ -13,7 +13,7 @@ namespace RealtimePPUR.Forms
         private readonly OxyColor Yellow = OxyColor.Parse("#ffcc22");
         private readonly OxyColor Pink = OxyColor.Parse("#f000ec");
 
-        public StrainGraph()
+        public StrainGraphForm()
         {
             InitializeComponent();
 

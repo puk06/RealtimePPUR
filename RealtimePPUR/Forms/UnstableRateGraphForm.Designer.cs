@@ -1,6 +1,6 @@
 ﻿namespace RealtimePPUR.Forms
 {
-    partial class UnstableRateGraph
+    partial class UnstableRateGraphForm
     {
         /// <summary>
         /// Required designer variable.

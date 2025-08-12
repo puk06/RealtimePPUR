@@ -13,15 +13,15 @@ using System.Runtime.InteropServices;
 
 namespace RealtimePPUR.Forms;
 
-public sealed partial class RealtimePpur : Form
+public sealed partial class Main : Form
 {
-    private const string CURRENT_VERSION = "v1.2.1-Release";
+    private const string CURRENT_VERSION = "v1.2.2-Release";
     private const string DISCORD_CLIENT_ID = "1237279508239749211";
 
     private readonly PrivateFontCollection fontCollection = new();
     private readonly Stopwatch stopwatch = new();
-    private string ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19";
-    private readonly int calculateInterval = 15;
+    private string ingameoverlayPriority = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20";
+    private int calculateInterval = 15;
 
     private Point mousePoint = Point.Empty;
     private Point windowLocation = Point.Empty;
@@ -62,18 +62,18 @@ public sealed partial class RealtimePpur : Form
     private string prevErrorMessage = string.Empty;
     public List<int> UnstableRateArray { get; set; } = [];
 
-    private readonly Dictionary<string, string> configDictionary = [];
+    private Dictionary<string, string> configDictionary = [];
 
     private readonly StructuredOsuMemoryReader sreader = StructuredOsuMemoryReader.GetInstance(new("osu!"));
     private readonly OsuBaseAddresses baseAddresses = new();
 
-    private readonly string customSongsFolder = string.Empty;
+    private string customSongsFolder = string.Empty;
     private (int left, int top) osuModeValue = new();
 
     public FontFamily GuiFont = new("Yu Gothic UI");
     public FontFamily InGameOverlayFont = new("Yu Gothic UI");
 
-    private StrainGraph? strainGraph;
+    private StrainGraphForm? strainGraph;
     //private UnstableRateGraph? unstableRateGraph;
 
     [LibraryImport("user32.dll")]
@@ -99,7 +99,7 @@ public sealed partial class RealtimePpur : Form
     private bool _isObsRunning = false;
     private Process? _osuProcess = null;
 
-    public RealtimePpur()
+    public Main()
     {
 #if DEBUG
         AllocConsole();
@@ -109,17 +109,19 @@ public sealed partial class RealtimePpur : Form
 
         InitializeComponent();
         AdditionalInitialize();
-
-        LogUtils.DebugLogger("RealtimePPUR Initialized.");
+        ReadSoftwareConfigulation();
 
         if (File.Exists("Error.log")) File.Delete("Error.log");
 
+        LogUtils.DebugLogger("RealtimePPUR Initialized.");
+    }
+
+    private void ReadSoftwareConfigulation()
+    {
         if (!File.Exists("Config.cfg"))
         {
             FormUtils.ShowInformationMessageBox("Config.cfgがフォルダ内に存在しないため、すべての項目がOffとして設定されます。アップデートチェックのみ行われます。");
             GithubUtils.CheckUpdate(CURRENT_VERSION);
-            inGameValue.Font = new Font(InGameOverlayFont, 19F);
-            customSongsFolder = string.Empty;
         }
         else
         {
@@ -130,11 +132,8 @@ public sealed partial class RealtimePpur : Form
                 GithubUtils.CheckUpdate(CURRENT_VERSION);
             }
 
-            var defaultmodeTest = configDictionary.TryGetValue("DEFAULTMODE", out string? defaultmodestring);
-            if (defaultmodeTest)
+            if (configDictionary.TryGetValue("DEFAULTMODE", out string? defaultmodestring) && int.TryParse(defaultmodestring, out int defaultmode))
             {
-                var defaultModeResult = int.TryParse(defaultmodestring, out int defaultmode);
-                
                 if (defaultmode is 1 or 2)
                 {
                     ClientSize = new Size(316, 65);
@@ -184,6 +183,7 @@ public sealed partial class RealtimePpur : Form
             currentBPMToolStripMenuItem.Checked = CheckConfigDictionary("CURRENTBPM");
             currentRankToolStripMenuItem.Checked = CheckConfigDictionary("CURRENTRANK");
             remainingNotesToolStripMenuItem.Checked = CheckConfigDictionary("REMAININGNOTES");
+            targetToolStripMenuItem.Checked = CheckConfigDictionary("TARGET");
 
             pPLossModeToolStripMenuItem.Checked = CheckConfigDictionary("PPLOSSMODE");
             calculateFirstToolStripMenuItem.Checked = CheckConfigDictionary("CALCULATEFIRST");
@@ -194,10 +194,6 @@ public sealed partial class RealtimePpur : Form
             if (configDictionary.TryGetValue("CUSTOMSONGSFOLDER", out string? customSongsFolderValue) && !customSongsFolderValue.Equals("songs", StringComparison.CurrentCultureIgnoreCase))
             {
                 customSongsFolder = customSongsFolderValue;
-            }
-            else
-            {
-                customSongsFolder = string.Empty;
             }
 
             if (!CheckConfigDictionary("USECUSTOMFONT") || !File.Exists("Font"))
@@ -251,6 +247,7 @@ public sealed partial class RealtimePpur : Form
         currentRankToolStripMenuItem.Click += FormUtils.ToggleChecked;
         remainingNotesToolStripMenuItem.Click += FormUtils.ToggleChecked;
         pPLossModeToolStripMenuItem.Click += FormUtils.ToggleChecked;
+        targetToolStripMenuItem.Click += FormUtils.ToggleChecked;
         calculateFirstToolStripMenuItem.Click += FormUtils.ToggleChecked;
         discordRichPresenceToolStripMenuItem.Click += FormUtils.ToggleChecked;
         osuModeToolStripMenuItem.Click += FormUtils.ToggleChecked;
@@ -270,25 +267,33 @@ public sealed partial class RealtimePpur : Form
     private void AddFontFile()
     {
         LogUtils.DebugLogger("Loading fonts...");
-        fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
-        fontCollection.AddFontFile("./src/Fonts/IBMPlexSans-Light.ttf");
 
-        foreach (FontFamily font in fontCollection.Families)
+        try
         {
-            switch (font.Name)
+            fontCollection.AddFontFile("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf");
+            fontCollection.AddFontFile("./src/Fonts/IBMPlexSans-Light.ttf");
+
+            foreach (FontFamily font in fontCollection.Families)
             {
-                case "Rounded Mplus 1c ExtraBold":
-                    GuiFont = font;
-                    break;
-                case "IBM Plex Sans Light":
-                    InGameOverlayFont = font;
-                    break;
+                switch (font.Name)
+                {
+                    case "Rounded Mplus 1c ExtraBold":
+                        GuiFont = font;
+                        break;
+                    case "IBM Plex Sans Light":
+                        InGameOverlayFont = font;
+                        break;
+                }
+
+                LogUtils.DebugLogger($"Font found: {font.Name}");
             }
 
-            LogUtils.DebugLogger($"Font found: {font.Name}");
+            LogUtils.DebugLogger("Fonts loaded.");
         }
-
-        LogUtils.DebugLogger("Fonts loaded.");
+        catch
+        {
+            LogUtils.DebugLogger($"Failed to load Fonts.");
+        }
     }
     #endregion
 
@@ -492,13 +497,12 @@ public sealed partial class RealtimePpur : Form
             {
                 Thread.Sleep(calculateInterval);
 
-                if (Process.GetProcessesByName("osu!").Length == 0) throw new Exception("osu! is not running.");
+                if (!_isOsuRunning) throw new Exception("osu! is not running.");
                 if (!isDirectoryLoaded) throw new Exception("Directory not loaded. Skipping...");
 
                 bool isReplay = baseAddresses.Player.IsReplay;
-                string currentOsuFileName = baseAddresses.Beatmap.OsuFileName;
-                string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", currentOsuFileName ?? "");
 
+                string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", baseAddresses.Beatmap.OsuFileName ?? "");
                 if (osuBeatmapPath == songsPath) continue;
 
                 OsuMemoryStatus status = currentStatus;
@@ -523,20 +527,20 @@ public sealed partial class RealtimePpur : Form
                     {
                         // Fix the beatmap path(idk why)
                         LogUtils.DebugLogger("Beatmap file not found. Trying to fix the path... (Attempting 1)");
-                        osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName ?? "");
+                        osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", baseAddresses.Beatmap.OsuFileName ?? "");
                         LogUtils.DebugLogger($"Current beatmap path: {osuBeatmapPath}");
 
                         if (!File.Exists(osuBeatmapPath))
                         {
                             LogUtils.DebugLogger("Beatmap file not found. Trying to fix the path again... (Attempting 2)");
-                            osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", currentOsuFileName?.Trim() ?? "");
+                            osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", baseAddresses.Beatmap.OsuFileName?.Trim() ?? "");
                             LogUtils.DebugLogger($"Current beatmap path: {osuBeatmapPath}");
                         }
 
                         if (!File.Exists(osuBeatmapPath))
                         {
                             LogUtils.DebugLogger("Beatmap file not found. Trying to fix the path again... (Attempting 3)");
-                            osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", currentOsuFileName?.Trim() ?? "");
+                            osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName?.Trim() ?? "", baseAddresses.Beatmap.OsuFileName?.Trim() ?? "");
                             LogUtils.DebugLogger($"Current beatmap path: {osuBeatmapPath}");
                         }
 
@@ -1467,6 +1471,38 @@ public sealed partial class RealtimePpur : Form
                     }
 
                     break;
+
+                case 20:
+                    if (targetToolStripMenuItem.Checked && calculatedData != null)
+                    {
+                        if (currentGamemodeValue != 1)
+                        {
+                            const double targetRatio = 0.9; // 90%
+                            int totalNotes = hits.Hit300 + hits.Hit100 + hits.HitMiss; // 総ノート数
+
+                            // まずは90%での理論目標（少数）
+                            double rawTarget = totalNotes * targetRatio;
+
+                            // 10ノートごとに1つ減らす調整
+                            int adjustment = totalNotes / 10;
+
+                            // 最終目標は少数の切り捨て - 調整分
+                            int adjustedTarget = (int)Math.Floor(rawTarget) - adjustment;
+
+                            // 実際の300ヒット数
+                            int current300Hits = hits.Hit300;
+
+                            // 今の300ヒット数が目標を超えていればAランク可能と判断
+                            bool canAchieveARank = current300Hits >= adjustedTarget;
+
+                            int count = adjustedTarget - current300Hits;
+                            string prefix = count >= 0 ? "+" : "-";
+
+                            displayFormat += "Target: " + prefix + count + "\n";
+                        }
+                    }
+
+                    break;
             }
         }
 
@@ -1568,7 +1604,7 @@ public sealed partial class RealtimePpur : Form
 
     private void StrainGraphToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (strainGraph == null || strainGraph.IsDisposed) strainGraph = new StrainGraph();
+        if (strainGraph == null || strainGraph.IsDisposed) strainGraph = new StrainGraphForm();
         strainGraph.Show();
     }
 

@@ -6,11 +6,11 @@ using OxyPlot.Series;
 
 namespace RealtimePPUR.Forms
 {
-    public partial class UnstableRateGraph : Form
+    public partial class UnstableRateGraphForm : Form
     {
-        private readonly RealtimePpur mainForm;
+        private readonly Main mainForm;
 
-        public UnstableRateGraph(RealtimePpur mainForm)
+        public UnstableRateGraphForm(Main mainForm)
         {
             this.mainForm = mainForm;
             InitializeComponent();

@@ -5,7 +5,7 @@ namespace RealtimePPUR.Classes;
 
 internal static class SourceDownloader
 {
-    private const string SRC_VERSION = "v1.0.7";
+    private const string SRC_VERSION = "v1.0.8";
     private const string BASEURL = "https://github.com/puk06/RealtimePPUR-src/releases/download/";
 
     public static async Task DownloadFiles()
