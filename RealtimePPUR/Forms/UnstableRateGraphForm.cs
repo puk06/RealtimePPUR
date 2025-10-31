@@ -15,6 +15,8 @@ namespace RealtimePPUR.Forms
             this.mainForm = mainForm;
             InitializeComponent();
 
+            BackgroundImage = null;
+
             UpdateLoop();
         }
 

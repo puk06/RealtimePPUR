@@ -76,6 +76,7 @@ public sealed partial class Main : Form
     public FontFamily InGameOverlayFont = new("Yu Gothic UI");
 
     private StrainGraphForm? strainGraph;
+    private UnstableRateBar? unstableRateBar;
     //private UnstableRateGraph? unstableRateGraph;
 
     [LibraryImport("user32.dll")]
@@ -482,7 +483,7 @@ public sealed partial class Main : Form
                     _ => baseAddresses.GeneralData.GameMode
                 };
 
-                //UnstableRateArray = baseAddresses.Player.HitErrors;
+                UnstableRateArray = baseAddresses.Player.HitErrors;
             }
             catch (Exception e)
             {
@@ -1596,9 +1597,12 @@ public sealed partial class Main : Form
     #region Event Handler
     private void URGraphToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        FormUtils.ShowErrorMessageBox("現在、この機能は無効化されています。アップデートで機能の修正が終わり次第、有効化されます。");
+        //FormUtils.ShowErrorMessageBox("現在、この機能は無効化されています。アップデートで機能の修正が終わり次第、有効化されます。");
         //if (unstableRateGraph == null || unstableRateGraph.IsDisposed) unstableRateGraph = new UnstableRateGraph(this);
         //unstableRateGraph.Show();
+
+        if (unstableRateBar == null || unstableRateBar.IsDisposed) unstableRateBar = new UnstableRateBar(this);
+        unstableRateBar.Show();
     }
 
     private void StrainGraphToolStripMenuItem_Click(object sender, EventArgs e)
