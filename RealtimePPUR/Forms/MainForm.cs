@@ -15,7 +15,7 @@ namespace RealtimePPUR.Forms;
 
 public sealed partial class Main : Form
 {
-    private const string CURRENT_VERSION = "v1.2.2-Release";
+    private const string CURRENT_VERSION = "v1.2.3-Release";
     private const string DISCORD_CLIENT_ID = "1237279508239749211";
 
     private readonly PrivateFontCollection fontCollection = new();
