@@ -34,3 +34,11 @@ This software uses the following third-party libraries:
   Licensed under the MIT License.
   Copyright (c) GitHub, Inc.
   https://github.com/octokit/octokit.net/blob/main/LICENSE
+
+- OsuMemoryDataProvider
+  License: GPL-3.0 license
+  License URL: https://github.com/Piotrekol/ProcessMemoryDataFinder/blob/master/LICENSE
+
+- ProcessMemoryDataFinder
+  License: GPL-3.0 license
+  License URL: https://github.com/Piotrekol/ProcessMemoryDataFinder/blob/master/LICENSE
