@@ -42,3 +42,8 @@ This software uses the following third-party libraries:
 - ProcessMemoryDataFinder
   License: GPL-3.0 license
   License URL: https://github.com/Piotrekol/ProcessMemoryDataFinder/blob/master/LICENSE
+
+- osu (https://github.com/ppy/osu)
+  Licensed under the MIT License.
+  Copyright (c) 2025 ppy Pty Ltd <contact@ppy.sh>.
+  https://github.com/ppy/osu/blob/master/LICENCE
