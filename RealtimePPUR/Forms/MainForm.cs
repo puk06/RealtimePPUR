@@ -15,7 +15,7 @@ namespace RealtimePPUR.Forms;
 
 public sealed partial class Main : Form
 {
-    private const string CURRENT_VERSION = "v1.2.5-Release";
+    private const string CURRENT_VERSION = "v1.2.6-Release";
     private const string DISCORD_CLIENT_ID = "1237279508239749211";
 
     private readonly PrivateFontCollection fontCollection = new();
@@ -101,6 +101,8 @@ public sealed partial class Main : Form
     private bool _isOsuRunning = false;
     private bool _isObsRunning = false;
     private Process? _osuProcess = null;
+
+    private readonly object _lockObject = new();
 
     public Main()
     {
@@ -446,44 +448,48 @@ public sealed partial class Main : Form
                 if (!isDirectoryLoaded) throw new Exception("osu! directory not found.");
 
                 if (!sreader.CanRead) throw new Exception("Memory reader is not initialized.");
-                sreader.TryRead(baseAddresses.Beatmap);
-                sreader.TryRead(baseAddresses.Player);
-                sreader.TryRead(baseAddresses.GeneralData);
-                sreader.TryRead(baseAddresses.LeaderBoard);
-                sreader.TryRead(baseAddresses.ResultsScreen);
-                sreader.TryRead(baseAddresses.BanchoUser);
 
-                currentStatus = baseAddresses.GeneralData.OsuStatus;
-
-                if (currentStatus == OsuMemoryStatus.Playing)
+                lock (_lockObject)
                 {
-                    isPlaying = true;
+                    sreader.TryRead(baseAddresses.Beatmap);
+                    sreader.TryRead(baseAddresses.Player);
+                    sreader.TryRead(baseAddresses.GeneralData);
+                    sreader.TryRead(baseAddresses.LeaderBoard);
+                    sreader.TryRead(baseAddresses.ResultsScreen);
+                    sreader.TryRead(baseAddresses.BanchoUser);
 
-                    if (!baseAddresses.Player.IsReplay)
+                    currentStatus = baseAddresses.GeneralData.OsuStatus;
+
+                    if (currentStatus == OsuMemoryStatus.Playing)
                     {
-                        stopwatch.Start();
+                        isPlaying = true;
+
+                        if (!baseAddresses.Player.IsReplay)
+                        {
+                            stopwatch.Start();
+                        }
                     }
-                }
-                else if (currentStatus != OsuMemoryStatus.ResultsScreen)
-                {
-                    isPlaying = false;
-                    stopwatch.Reset();
-                }
-                else
-                {
-                    stopwatch.Reset();
-                }
+                    else if (currentStatus != OsuMemoryStatus.ResultsScreen)
+                    {
+                        isPlaying = false;
+                        stopwatch.Reset();
+                    }
+                    else
+                    {
+                        stopwatch.Reset();
+                    }
 
-                isResultScreen = currentStatus == OsuMemoryStatus.ResultsScreen;
+                    isResultScreen = currentStatus == OsuMemoryStatus.ResultsScreen;
 
-                currentOsuGamemode = currentStatus switch
-                {
-                    OsuMemoryStatus.Playing => baseAddresses.Player.Mode,
-                    OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Mode,
-                    _ => baseAddresses.GeneralData.GameMode
-                };
+                    currentOsuGamemode = currentStatus switch
+                    {
+                        OsuMemoryStatus.Playing => baseAddresses.Player.Mode,
+                        OsuMemoryStatus.ResultsScreen => baseAddresses.ResultsScreen.Mode,
+                        _ => baseAddresses.GeneralData.GameMode
+                    };
 
-                UnstableRateArray = baseAddresses.Player.HitErrors;
+                    UnstableRateArray = baseAddresses.Player.HitErrors;
+                }
             }
             catch (Exception e)
             {
@@ -503,8 +509,6 @@ public sealed partial class Main : Form
                 if (!_isOsuRunning) throw new Exception("osu! is not running.");
                 if (!isDirectoryLoaded) throw new Exception("Directory not loaded. Skipping...");
 
-                bool isReplay = baseAddresses.Player.IsReplay;
-
                 string osuBeatmapPath = Path.Combine(songsPath ?? "", baseAddresses.Beatmap.FolderName ?? "", baseAddresses.Beatmap.OsuFileName ?? "");
                 if (osuBeatmapPath == songsPath) continue;
 
@@ -512,12 +516,15 @@ public sealed partial class Main : Form
 
                 if (status == OsuMemoryStatus.Playing)
                 {
-                    double currentUr = baseAddresses.Player.HitErrors == null || baseAddresses.Player.HitErrors.Count == 0 ? 0 : OsuUtils.CalculateUnstableRate(baseAddresses.Player.HitErrors);
-                    double currentAvgOffset = OsuUtils.CalculateAverage(baseAddresses.Player.HitErrors);
+                    lock (_lockObject)
+                    {
+                        double currentUr = baseAddresses.Player.HitErrors == null || baseAddresses.Player.HitErrors.Count == 0 ? 0 : OsuUtils.CalculateUnstableRate(baseAddresses.Player.HitErrors);
+                        double currentAvgOffset = OsuUtils.CalculateAverage(baseAddresses.Player.HitErrors);
 
-                    if (!double.IsNaN(currentUr)) urValue = (int)Math.Round(currentUr);
-                    if (!double.IsNaN(currentAvgOffset)) avgOffset = baseAddresses.Player.HitErrors == null || baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(currentAvgOffset, 2);
-                    avgOffsethelp = (int)Math.Round(-avgOffset);
+                        if (!double.IsNaN(currentUr)) urValue = (int)Math.Round(currentUr);
+                        if (!double.IsNaN(currentAvgOffset)) avgOffset = baseAddresses.Player.HitErrors == null || baseAddresses.Player.HitErrors.Count == 0 ? 0 : -Math.Round(currentAvgOffset, 2);
+                        avgOffsethelp = (int)Math.Round(-avgOffset);
+                    }
                 }
 
                 if (preMapPath != osuBeatmapPath)
