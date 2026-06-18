@@ -42,12 +42,12 @@ public partial class MainWindow : Window
             }
 
             IffcValue.Text = ifFcString;
-            PpValue.Text = attributes.CurrentPerformancePoint.ToString("F2");
+            PpValue.Text = attributes.CurrentPerformancePoint.ToString("F0");
 
             OffsetValue.Text = Math.Round(attributes.HitErrorInfo.Average).ToString("F0");
-            AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2");
+            AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2") + "ms";
 
-            UrValue.Text = attributes.HitErrorInfo.UnstableRate.ToString("F2");
+            UrValue.Text = attributes.HitErrorInfo.UnstableRate.ToString("F0");
             
             try
             {
