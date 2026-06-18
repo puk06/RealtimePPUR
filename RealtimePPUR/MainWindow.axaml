@@ -94,7 +94,7 @@
 						</Panel>
 					</Grid>
 
-					<Grid Grid.Row="1" ColumnDefinitions="1.4*,*" Margin="5,0,0,0">
+					<Grid Grid.Row="1" ColumnDefinitions="1.4*,*">
 						<Grid RowDefinitions="*,Auto" VerticalAlignment="Center">
 							<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 								<TextBlock Classes="label" Text="Offset" FontSize="27" VerticalAlignment="Center"/>
