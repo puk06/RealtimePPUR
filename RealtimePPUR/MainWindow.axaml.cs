@@ -1,17 +1,59 @@
-using Avalonia.Controls;
-using RealtimePPUR.Services;
-using Avalonia.Threading;
 using System;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using RealtimePPUR.Models;
+using RealtimePPUR.Services;
 
 namespace RealtimePPUR;
 
 public partial class MainWindow : Window
 {
+    private double _displayedPp = 0;
+    private double _displayedSr = 0;
+    private double _displayedUr = 0;
+
+    private double _targetPp = 0;
+    private double _targetSr = 0;
+    private double _targetUr = 0;
+
+    private readonly HitResult simplifedHitResult = new();
+
+    private readonly DispatcherTimer _smoothTimer;
+
     public MainWindow()
     {
         InitializeComponent();
+        _smoothTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(1000.0 / 60)
+        };
+        _smoothTimer.Tick += OnSmoothUpdate;
+        _smoothTimer.Start();
+
         RealtimePPCalculator.Instance.Start();
         RealtimePPCalculator.Instance.OnCalculate += OnUpdate;
+    }
+
+    private DateTime _lastUpdate = DateTime.Now;
+    private const double SmoothTime = 0.75;
+
+    private static double Lerp(double current, double target, double t) => current + (target - current) * t;
+    private void OnSmoothUpdate(object? sender, EventArgs e)
+    {
+        var now = DateTime.Now;
+        var deltaTime = (now - _lastUpdate).TotalSeconds;
+        _lastUpdate = now;
+
+        // フレームレートに依存しないLerp係数
+        var t = 1.0 - Math.Pow(0.01, deltaTime / SmoothTime);
+
+        _displayedPp = Lerp(_displayedPp, _targetPp, t);
+        _displayedSr = Lerp(_displayedSr, _targetSr, t);
+        _displayedUr = Lerp(_displayedUr, _targetUr, t);
+
+        PpValue.Text = _displayedPp.ToString("F0");
+        SrValue.Text = _displayedSr.ToString("F2");
+        UrValue.Text = _displayedUr.ToString("F0");
     }
 
     private async void OnUpdate()
@@ -20,7 +62,10 @@ public partial class MainWindow : Window
         {
             var attributes = RealtimePPCalculator.Instance.CurrentAttributes;
             var memoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
-            SrValue.Text = attributes.CurrentStarRating.ToString("F2");
+
+            _targetPp = attributes.CurrentPerformancePoint;
+            _targetSr = attributes.CurrentStarRating;
+            _targetUr = attributes.HitErrorInfo.UnstableRate;
 
             string ifFcString = string.Empty;
             var lossModePp = Math.Round(attributes.LossModePerformancePoint).ToString("F0");
@@ -29,36 +74,67 @@ public partial class MainWindow : Window
             if (memoryData.IsPlaying)
             {
                 var isLossModeAvailable = memoryData.CurrentGameMode == Models.OsuGameMode.Taiko || memoryData.CurrentGameMode == Models.OsuGameMode.Mania;
-                if (isLossModeAvailable) ifFcString = lossModePp + " / " + ssPp;
-                else ifFcString = iffcPp + " / " + ssPp;
+                if (isLossModeAvailable)
+                {
+                    IffcLabel.Text = "LOSS/SS";
+                    ifFcString = lossModePp + " / " + ssPp;
+                }
+                else
+                {
+                    IffcLabel.Text = "IFFC/SS";
+                    ifFcString = iffcPp + " / " + ssPp;
+                }
             }
             else if (memoryData.IsResultScreen)
             {
+                IffcLabel.Text = "IFFC/SS";
                 ifFcString = iffcPp + " / " + ssPp;
             }
             else
             {
+                IffcLabel.Text = "SSPP";
                 ifFcString = ssPp;
             }
 
             IffcValue.Text = ifFcString;
-            PpValue.Text = attributes.CurrentPerformancePoint.ToString("F0");
 
             OffsetValue.Text = Math.Round(attributes.HitErrorInfo.Average).ToString("F0");
             AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2") + "ms";
 
-            UrValue.Text = attributes.HitErrorInfo.UnstableRate.ToString("F0");
-            
-            try
-            {
-                Count300.Text = attributes.CurrentHitResults[osu.Game.Rulesets.Scoring.HitResult.Great].ToString();
-                Count100.Text = attributes.CurrentHitResults[osu.Game.Rulesets.Scoring.HitResult.Ok].ToString();
-                Count50.Text = attributes.CurrentHitResults[osu.Game.Rulesets.Scoring.HitResult.Miss].ToString();
-            }
-            catch
-            {
-                // Ignore
-            }
+            // TODO: プレイ時以外リセットされない
+            SimplifyHits(simplifedHitResult, memoryData.HitResult, memoryData.CurrentGameMode);
+            Count300.Text = simplifedHitResult.Hit300.ToString();
+            Count100.Text = simplifedHitResult.Hit100.ToString();
+            CountMiss.Text = simplifedHitResult.HitMiss.ToString();
         });
+    }
+
+    private static void SimplifyHits(HitResult target, HitResult original, OsuGameMode mode)
+    {
+        switch (mode)
+        {
+            case OsuGameMode.Osu:
+                target.Hit300 = original.Hit300;
+                target.Hit100 = original.Hit100 + original.Hit50;
+                target.HitMiss = original.HitMiss;
+                break;
+            case OsuGameMode.Taiko:
+                target.Hit300 = original.Hit300;
+                target.Hit100 = original.Hit100;
+                target.HitMiss = original.HitMiss;
+                break;
+            case OsuGameMode.Catch:
+                target.Hit300 = original.Hit300;
+                target.Hit100 = original.Hit100 + original.Hit50;
+                target.HitMiss = original.HitMiss;
+                break;
+            case OsuGameMode.Mania:
+                target.Hit300 = original.HitGeki + original.Hit300;
+                target.Hit100 = original.HitKatu + original.Hit100 + original.Hit50;
+                target.HitMiss = original.HitMiss;
+                break;
+            default:
+                throw new ArgumentException("Invalid mode provided. mode -> " + mode);
+        }
     }
 }
