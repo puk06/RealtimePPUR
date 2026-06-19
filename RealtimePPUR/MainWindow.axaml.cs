@@ -60,6 +60,7 @@ public partial class MainWindow : Window
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
+            var currentGameMode = RealtimePPCalculator.Instance.CurrentCalculationGameMode;
             var attributes = RealtimePPCalculator.Instance.CurrentAttributes;
             var memoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
 
@@ -73,7 +74,7 @@ public partial class MainWindow : Window
             var ssPp = Math.Round(attributes.MapPerformanceAttributes?.Total ?? 0).ToString("F0");
             if (memoryData.IsPlaying)
             {
-                var isLossModeAvailable = memoryData.CurrentGameMode == Models.OsuGameMode.Taiko || memoryData.CurrentGameMode == Models.OsuGameMode.Mania;
+                var isLossModeAvailable = currentGameMode == OsuGameMode.Taiko || currentGameMode == OsuGameMode.Mania;
                 if (isLossModeAvailable)
                 {
                     IffcLabel.Text = "LOSS/SS";
@@ -102,7 +103,7 @@ public partial class MainWindow : Window
             AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2") + "ms";
 
             // TODO: プレイ時以外リセットされない
-            SimplifyHits(simplifedHitResult, memoryData.HitResult, memoryData.CurrentGameMode);
+            SimplifyHits(simplifedHitResult, memoryData.HitResult, currentGameMode);
             Count300.Text = simplifedHitResult.Hit300.ToString();
             Count100.Text = simplifedHitResult.Hit100.ToString();
             CountMiss.Text = simplifedHitResult.HitMiss.ToString();

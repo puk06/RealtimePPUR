@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using OsuMemoryDataProvider;
@@ -27,7 +27,8 @@ public class RealtimePPCalculator
     public MemoryData CurrentMemoryData => MemoryReader.CurrentMemoryData;
     public SimplifiedAttributes CurrentAttributes => SimplifiedAttributes;
 
-    public int ExpectedManiaScore { get; set; }
+    public OsuBetmapInfo OsuBeatmapInfo { get; } = new();
+    public OsuGameMode CurrentCalculationGameMode => CachedMemoryData.PreviousCalculatedGameMode;
 
     private readonly int calculateInterval = 15;
 
@@ -41,16 +42,16 @@ public class RealtimePPCalculator
         new Thread(Update) { IsBackground = true }.Start();
     }
 
-    private void Update()
+    private async void Update()
     {
         while (true)
         {
-            CalculatePerformance();
+            await CalculatePerformance();
             Thread.Sleep(calculateInterval);
         }
     }
 
-    private void CalculatePerformance()
+    private async Task CalculatePerformance()
     {
         try
         {
@@ -61,22 +62,35 @@ public class RealtimePPCalculator
             var current = MemoryReader.CurrentMemoryData;
 
             string previousMapPath = cached.PreviousMapPath;
-            string currentMapPath = current.OsuMapInfo.FullPath(current.OsuPathInfo.SongsPath);
-            if (previousMapPath != currentMapPath && File.Exists(currentMapPath))
+            string currentMapPath = current.OsuMapInfo.RelativeBeatmapPath;
+            if (previousMapPath != currentMapPath)
             {
-                current.OsuBeatmapInfo.ProcessorWorkingBeatmap = ProcessorWorkingBeatmap.FromFile(currentMapPath);
-                recalculateRequired = true;
-                recalculateMapAttributesRequired = true;
+                var fixedBeatmapPath = OsuBeatmapUtils.GetMapPath(
+                    current.OsuPathInfo.SongsPath,
+                    current.OsuMapInfo.FolderName,
+                    current.OsuMapInfo.FileName
+                );
+
+                OsuBeatmapInfo.BeatmapGameMode = OsuGameMode.None;
+
+                if (!string.IsNullOrEmpty(fixedBeatmapPath))
+                {
+                    OsuBeatmapInfo.ProcessorWorkingBeatmap = ProcessorWorkingBeatmap.FromFile(fixedBeatmapPath);
+                    OsuBeatmapInfo.BeatmapGameMode = await OsuBeatmapUtils.GetMapMode(fixedBeatmapPath);
+                    recalculateRequired = true;
+                    recalculateMapAttributesRequired = true;
+                }
+
                 cached.PreviousMapPath = currentMapPath;
             }
 
             var previousCalculatedGameMode = cached.PreviousCalculatedGameMode;
-            var currentGameMode = current.CurrentGameMode;
+            var currentGameMode = GetCalculationMode(current.OsuGameMode, OsuBeatmapInfo.BeatmapGameMode, current.OsuMemoryStatus);
             if (previousCalculatedGameMode != currentGameMode)
             {
                 recalculateRequired = true;
                 recalculateMapAttributesRequired = true;
-                cached.PreviousCalculatedGameMode = current.CurrentGameMode;
+                cached.PreviousCalculatedGameMode = currentGameMode;
             }
 
             var previousHitResult = cached.PreviousHitResult;
@@ -102,7 +116,6 @@ public class RealtimePPCalculator
                 recalculateRequired = true;
                 cached.PreviousCombo = current.CurrentCombo;
             }
-
 
             var previousOsuStatus = cached.PreviousOsuMemoryStatus;
             var currentOsuStatus = current.OsuMemoryStatus;
@@ -132,15 +145,15 @@ public class RealtimePPCalculator
 
             if (recalculateRequired || recalculateMapAttributesRequired)
             {
-                Args.GameMode = current.CurrentGameMode;
+                Args.GameMode = currentGameMode;
                 Args.IsResultScreen = current.IsResultScreen;
                 Args.IsPlaying = current.IsPlaying;
                 Args.Score = current.CurrentScore;
                 Args.AudioTime = current.CurrentAudioTime;
-                Args.Mods = OsuModParser.ToOsuMods(current.CurrentGameMode, current.CurrentMods);
+                Args.Mods = OsuModParser.ToOsuMods(currentGameMode, current.CurrentMods);
 
-                if (recalculateMapAttributesRequired) PPCalculator.CalculateMapAttributes(Args, current.OsuBeatmapInfo, SimplifiedAttributes);
-                PPCalculator.Calculate(Args, current.OsuBeatmapInfo, SimplifiedAttributes, current.HitResult);
+                if (recalculateMapAttributesRequired) PPCalculator.CalculateMapAttributes(Args, OsuBeatmapInfo, SimplifiedAttributes);
+                PPCalculator.Calculate(Args, OsuBeatmapInfo, SimplifiedAttributes, current.HitResult);
 
                 updated = true;
             }
@@ -198,6 +211,12 @@ public class RealtimePPCalculator
         double iqr = q3 - q1;
 
         return sortedArray.Where(x => x >= q1 - (1.5 * iqr) && x <= q3 + (1.5 * iqr)).Average();
+    }
+
+    private static OsuGameMode GetCalculationMode(OsuGameMode osu, OsuGameMode beatmap, OsuMemoryStatus status)
+    {
+        if (status == OsuMemoryStatus.EditingMap || beatmap != OsuGameMode.Osu) return beatmap;
+        else return osu;
     }
 }
 

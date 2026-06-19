@@ -19,7 +19,7 @@ public class MemoryReader
     private readonly MemoryData _memoryData = new();
 
     private readonly int retrieveInterval = 15;
-    private readonly int processRetrieveInterval = 3000;
+    private readonly int processRetrieveInterval = 1000;
     public static readonly Lock LockObject = new();
 
     public MemoryData CurrentMemoryData => _memoryData;
@@ -52,7 +52,7 @@ public class MemoryReader
                     _memoryReader.TryRead(baseAddresses.BanchoUser);
                 
                     _memoryData.OsuMemoryStatus = baseAddresses.GeneralData.OsuStatus;
-                    _memoryData.OsuGameModeInfo.Osu = _memoryData.OsuMemoryStatus switch
+                    _memoryData.OsuGameMode = _memoryData.OsuMemoryStatus switch
                     {
                         OsuMemoryStatus.Playing => (OsuGameMode)baseAddresses.Player.Mode,
                         OsuMemoryStatus.ResultsScreen => (OsuGameMode)baseAddresses.ResultsScreen.Mode,
@@ -138,12 +138,9 @@ public class MemoryData
 
     public OsuMemoryStatus OsuMemoryStatus { get; set; } = OsuMemoryStatus.Unknown;
     public OsuMapInfo OsuMapInfo { get; } = new();
-    public OsuBetmapInfo OsuBeatmapInfo { get; } = new();
     public int CurrentAudioTime { get; set; } = 0;
 
-    public OsuGameModeInfo OsuGameModeInfo { get; } = new();
-    // public OsuGameMode CurrentGameMode => (OsuMemoryStatus == OsuMemoryStatus.EditingMap || OsuGameModeInfo.Beatmap != OsuGameMode.Osu) ? OsuGameModeInfo.Osu : OsuGameModeInfo.Osu;
-    public OsuGameMode CurrentGameMode => OsuGameMode.Taiko;
+    public OsuGameMode OsuGameMode { get; set; } = OsuGameMode.None;
 
     public bool IsPlaying => OsuMemoryStatus == OsuMemoryStatus.Playing;
     public bool IsResultScreen => OsuMemoryStatus == OsuMemoryStatus.ResultsScreen;
