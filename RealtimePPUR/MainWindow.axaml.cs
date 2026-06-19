@@ -134,8 +134,6 @@ public partial class MainWindow : Window
                 target.Hit100 = original.HitKatu + original.Hit100 + original.Hit50;
                 target.HitMiss = original.HitMiss;
                 break;
-            default:
-                throw new ArgumentException("Invalid mode provided. mode -> " + mode);
         }
     }
 }

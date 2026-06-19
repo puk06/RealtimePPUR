@@ -215,7 +215,8 @@ public class RealtimePPCalculator
 
     private static OsuGameMode GetCalculationMode(OsuGameMode osu, OsuGameMode beatmap, OsuMemoryStatus status)
     {
-        if (status == OsuMemoryStatus.EditingMap || beatmap != OsuGameMode.Osu) return beatmap;
+        if (beatmap == OsuGameMode.None) return osu;
+        else if (status == OsuMemoryStatus.EditingMap || beatmap != OsuGameMode.Osu) return beatmap;
         else return osu;
     }
 }
