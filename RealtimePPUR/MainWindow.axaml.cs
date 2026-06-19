@@ -102,7 +102,6 @@ public partial class MainWindow : Window
             OffsetValue.Text = Math.Round(attributes.HitErrorInfo.Average).ToString("F0");
             AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2") + "ms";
 
-            // TODO: プレイ時以外リセットされない
             SimplifyHits(simplifedHitResult, memoryData.HitResult, currentGameMode);
             Count300.Text = simplifedHitResult.Hit300.ToString();
             Count100.Text = simplifedHitResult.Hit100.ToString();

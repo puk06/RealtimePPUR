@@ -77,15 +77,12 @@ public class MemoryReader
                     if (_memoryData.OsuMemoryStatus == OsuMemoryStatus.Playing || _memoryData.IsPlaying) rulesetPlayData = baseAddresses.Player;
                     else if (_memoryData.OsuMemoryStatus == OsuMemoryStatus.ResultsScreen) rulesetPlayData = baseAddresses.ResultsScreen;
 
-                    if (rulesetPlayData != null)
-                    {
-                        _memoryData.HitResult.HitGeki = rulesetPlayData.HitGeki;
-                        _memoryData.HitResult.Hit300 = rulesetPlayData.Hit300;
-                        _memoryData.HitResult.HitKatu = rulesetPlayData.HitKatu;
-                        _memoryData.HitResult.Hit100 = rulesetPlayData.Hit100;
-                        _memoryData.HitResult.Hit50 = rulesetPlayData.Hit50;
-                        _memoryData.HitResult.HitMiss = rulesetPlayData.HitMiss;
-                    }
+                    _memoryData.HitResult.HitGeki = rulesetPlayData?.HitGeki ?? 0;
+                    _memoryData.HitResult.Hit300 = rulesetPlayData?.Hit300 ?? 0;
+                    _memoryData.HitResult.HitKatu = rulesetPlayData?.HitKatu ?? 0;
+                    _memoryData.HitResult.Hit100 = rulesetPlayData?.Hit100 ?? 0;
+                    _memoryData.HitResult.Hit50 = rulesetPlayData?.Hit50 ?? 0;
+                    _memoryData.HitResult.HitMiss = rulesetPlayData?.HitMiss ?? 0;
 
                     _memoryData.HitErrors = baseAddresses.Player.HitErrors;
                 }
