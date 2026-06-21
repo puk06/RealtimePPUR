@@ -1,33 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0-windows7.0</TargetFramework>
 		<OutputType>WinExe</OutputType>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<UseWindowsForms>true</UseWindowsForms>
-		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-	
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>none</DebugType>
-	</PropertyGroup>
-	
+
 	<ItemGroup>
-		<Content Include="icon.ico" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="DiscordRichPresence" Version="1.143.0" />
-		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Octokit" Version="14.0.0" />
+		<PackageReference Include="Avalonia" Version="11.3.17" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.17" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.17" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.17" />
 		<PackageReference Include="OsuMemoryDataProvider" Version="0.12.2" />
-		<PackageReference Include="OxyPlot.WindowsForms" Version="2.2.0" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Catch\osu.Game.Rulesets.Catch.csproj" />
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Mania\osu.Game.Rulesets.Mania.csproj" />
@@ -35,34 +23,4 @@
 		<ProjectReference Include="..\osu\osu.Game.Rulesets.Taiko\osu.Game.Rulesets.Taiko.csproj" />
 		<ProjectReference Include="..\osu\osu.Game\osu.Game.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-		<Compile Update="Properties\Settings.Designer.cs">
-			<DesignTimeSharedInput>True</DesignTimeSharedInput>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Settings.settings</DependentUpon>
-		</Compile>
-	</ItemGroup>
-	
-	<ItemGroup>
-		<None Update="Properties\Settings.settings">
-			<Generator>SettingsSingleFileGenerator</Generator>
-			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
-		</None>
-	</ItemGroup>
-
-	<PropertyGroup>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<NoWarn>$(NoWarn);CA1416</NoWarn>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
-
-	<Target Name="CopyAndRunBuildJs" AfterTargets="AfterBuild">
-		<Copy SourceFiles="build.js" DestinationFolder="$(OutDir)" />
-		<Exec Command="node build.js" WorkingDirectory="$(OutDir)" />
-	</Target>
 </Project>

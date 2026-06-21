@@ -1,39 +1,46 @@
 const fs = require("fs");
 const path = require("path");
 
-const OSU_LIBRARY = [
-    "osu.Game.dll",
-    "osu.Game.Rulesets.Osu.dll",
-    "osu.Game.Rulesets.Taiko.dll",
-    "osu.Game.Rulesets.Catch.dll",
-    "osu.Game.Rulesets.Mania.dll",
-    "osu.Framework.dll",
-    "MessagePack.dll",
+const REQUIRED_LIBRARIES = [
+    "Avalonia.Markup.dll",
+    "Avalonia.Markup.Xaml.dll",
+    "Avalonia.Metal.dll",
+    "Avalonia.MicroCom.dll",
+    "Avalonia.OpenGL.dll",
+    "Avalonia.Skia.dll",
+    "Avalonia.Themes.Fluent.dll",
+    "Avalonia.Vulkan.dll",
+    "Avalonia.Win32.Automation.dll",
+    "Avalonia.Win32.dll",
+    "HarfBuzzSharp.dll",
+    "libHarfBuzzSharp.dll",
+    "libSkiaSharp.dll",
     "MessagePack.Annotations.dll",
-    "AutoMapper.dll",
-    "osuTK.dll",
-    "Realm.dll",
+    "MicroCom.Runtime.dll",
     "Newtonsoft.Json.dll",
     "nunit.framework.dll",
-    "ppy.ManagedBass.dll"
-];
-
-const SOFTWARE_LIBRARY = [
-    "DiscordRPC.dll",
-    "Octokit.dll",
+    "osu.Framework.dll",
+    "osu.Game.dll",
+    "osu.Game.Rulesets.Catch.dll",
+    "osu.Game.Rulesets.Mania.dll",
+    "osu.Game.Rulesets.Osu.dll",
+    "osu.Game.Rulesets.Taiko.dll",
     "OsuMemoryDataProvider.dll",
+    "osuTK.dll",
+    "ppy.ManagedBass.dll",
     "ProcessMemoryDataFinder.dll",
-    "OxyPlot.WindowsForms.dll",
-    "OxyPlot.dll",
-    "MathNet.Numerics.dll",
-    "System.Diagnostics.DiagnosticSource.dll"
-];
-
-const REALTIMEPPUR_FILES = [
-    "RealtimePPUR.deps.json",
+    "Realm.dll",
     "RealtimePPUR.dll",
     "RealtimePPUR.exe",
-    "RealtimePPUR.runtimeconfig.json"
+    "SkiaSharp.dll",
+    "RealtimePPUR.runtimeconfig.json",
+    "AutoMapper.dll",
+    "av_libglesv2.dll",
+    "Avalonia.Base.dll",
+    "Avalonia.Controls.dll",
+    "Avalonia.Desktop.dll",
+    "Avalonia.Dialogs.dll",
+    "Avalonia.Fonts.Inter.dll"
 ];
 
 const BUILD_FOLDER = "../../build";
@@ -54,21 +61,7 @@ if (!fs.existsSync(BUILD_FOLDER)) {
     }
 }
 
-for (const file of OSU_LIBRARY) {
-    const filePath = path.join(BUILD_FOLDER, file);
-    console.log(`Copying ${file} to ${filePath}`);
-    fs.copyFileSync(file, filePath);
-    fs.unlinkSync(file);
-}
-
-for (const file of SOFTWARE_LIBRARY) {
-    const filePath = path.join(BUILD_FOLDER, file);
-    console.log(`Copying ${file} to ${filePath}`);
-    fs.copyFileSync(file, filePath);
-    fs.unlinkSync(file);
-}
-
-for (const file of REALTIMEPPUR_FILES) {
+for (const file of REQUIRED_LIBRARIES) {
     const filePath = path.join(BUILD_FOLDER, file);
     console.log(`Copying ${file} to ${filePath}`);
     fs.copyFileSync(file, filePath);

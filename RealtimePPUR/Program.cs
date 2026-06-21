@@ -1,40 +1,21 @@
-﻿using RealtimePPUR.Classes;
-using RealtimePPUR.Forms;
-using System.Globalization;
+﻿using Avalonia;
+using System;
 
-namespace RealtimePPUR
+namespace RealtimePPUR;
+
+class Program
 {
-    internal static class Program
-    {
-        [STAThread]
-        private static void Main()
-        {
-            try
-            {
-                CheckFiles().Wait();
-                CultureInfo.CurrentCulture = new CultureInfo("en-us");
-                CultureInfo.CurrentUICulture = new CultureInfo("en-us");
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
+    // Initialization code. Don't use any Avalonia, third-party APIs or any
+    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
+    // yet and stuff might break.
+    [STAThread]
+    public static void Main(string[] args) => BuildAvaloniaApp()
+        .StartWithClassicDesktopLifetime(args);
 
-                Application.Run(new Main());
-            }
-            catch (Exception softwareError)
-            {
-                MessageBox.Show($"ソフトの起動に失敗しました。\nエラー内容: {softwareError}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private static async Task CheckFiles()
-        {
-            if (!Directory.Exists("Updater") || !File.Exists("config.cfg") || !Directory.Exists("src") || !File.Exists("./src/Fonts/MPLUSRounded1c-ExtraBold.ttf") || !File.Exists("./src/Fonts/IBMPlexSans-Light.ttf"))
-            {
-                MessageBox.Show("起動に必要なファイルをダウンロードします。", "ダウンロード", MessageBoxButtons.OK, MessageBoxIcon.Information);
-#pragma warning disable CS0618 // 型またはメンバーが旧型式です
-                await SourceDownloader.DownloadFiles();
-#pragma warning restore CS0618
-                MessageBox.Show("ダウンロードが完了しました！ソフトを起動します！", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-    }
+    // Avalonia configuration, don't remove; also used by visual designer.
+    public static AppBuilder BuildAvaloniaApp()
+        => AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .WithInterFont()
+            .LogToTrace();
 }
