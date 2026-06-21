@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using RealtimePPUR.Models;
 using RealtimePPUR.Services;
@@ -139,4 +140,27 @@ public partial class MainWindow : Window
                 break;
         }
     }
+
+    #region Window Move
+    private bool pointerStatus = false;
+    private Avalonia.Point startPoint = new();
+
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs args)
+    {
+        if (!args.Properties.IsLeftButtonPressed) return;
+        pointerStatus = true;
+        startPoint = args.GetPosition(this);
+    }
+    private void OnPointerMoved(object? sender, PointerEventArgs args)
+    {
+        if (!pointerStatus || !args.Properties.IsLeftButtonPressed) return;
+        var point = args.GetPosition(this);
+        Position = new Avalonia.PixelPoint((int)(Position.X + (point.X - startPoint.X)), (int)(Position.Y + (point.Y - startPoint.Y)));
+    }
+    private void OnPointerReleased(object? sender, PointerReleasedEventArgs args)
+    {
+        if (!args.Properties.IsLeftButtonPressed) return;
+        pointerStatus = false;
+    }
+    #endregion
 }

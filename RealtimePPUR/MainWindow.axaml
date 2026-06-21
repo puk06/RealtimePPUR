@@ -7,7 +7,12 @@
 	Background="Transparent"
 	TransparencyLevelHint="AcrylicBlur"
 	FontFamily="Oxanium"
-	CanResize="True">
+	CanResize="True"
+	ExtendClientAreaChromeHints="NoChrome"
+	ExtendClientAreaToDecorationsHint="True"
+	PointerPressed="OnPointerPressed"
+	PointerMoved="OnPointerMoved"
+	PointerReleased="OnPointerReleased">
 
 	<Window.Styles>
 		<Styles>
@@ -35,7 +40,6 @@
 		</Styles>
 	</Window.Styles>
 
-	<!-- グラス背景 -->
 	<Border CornerRadius="14" ClipToBounds="True">
 
 		<Panel Background="Black">
