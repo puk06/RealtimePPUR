@@ -1,6 +1,10 @@
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using osu.Game.Beatmaps;
 using osu.Game.IO;
+using osu.Game.Rulesets.Catch.Objects;
+using osu.Game.Rulesets.Taiko.Objects;
 using RealtimePPUR.Models;
 
 namespace RealtimePPUR.Utils;
@@ -46,5 +50,27 @@ public static class OsuBeatmapUtils
         if (!File.Exists(beatmapPath)) return string.Empty;
 
         return beatmapPath;
+    }
+    public static int GetMaxCombo(IBeatmap beatmap, OsuGameMode mode)
+    {
+        return mode switch
+        {
+            OsuGameMode.Osu => beatmap.GetMaxCombo(),
+            OsuGameMode.Taiko => beatmap.HitObjects.OfType<Hit>().Count(),
+            OsuGameMode.Catch => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>().SelectMany(j => j.NestedHitObjects).Count(h => h is not TinyDroplet),
+            OsuGameMode.Mania => beatmap.HitObjects.Count,
+            _ => 0
+        };
+    }
+    public static int CountTotalHitObjects(IBeatmap beatmap, OsuGameMode mode)
+    {
+        return mode switch
+        {
+            OsuGameMode.Osu => beatmap.HitObjects.Count,
+            OsuGameMode.Taiko => GetMaxCombo(beatmap, mode),
+            OsuGameMode.Catch => GetMaxCombo(beatmap, mode),
+            OsuGameMode.Mania => GetMaxCombo(beatmap, mode),
+            _ => 0
+        };
     }
 }

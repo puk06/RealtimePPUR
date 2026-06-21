@@ -63,6 +63,7 @@ public class MemoryReader
                     _memoryData.OsuMapInfo.FileName = baseAddresses.Beatmap.OsuFileName;
 
                     _memoryData.CurrentAudioTime = baseAddresses.GeneralData.AudioTime;
+                    _memoryData.TotalAudioTime = baseAddresses.GeneralData.TotalAudioTime;
 
                     // Mods
                     _memoryData.CurrentMods = _memoryData.OsuMemoryStatus switch
@@ -107,9 +108,10 @@ public class MemoryReader
                 {
                     var osuProcesses = ProcessService.GetProcessInfo(processName);
 
+                    _memoryData.OsuProcess = osuProcesses.Process;
+                    _memoryData.IsOsuRunning = osuProcesses.IsRunning;
                     _memoryData.OsuPathInfo.OsuProcessDirectory = osuProcesses.Path;
                     _memoryData.OsuPathInfo.SongsPath = Path.Combine(osuProcesses.Path, "Songs");
-                    _memoryData.IsOsuRunning = osuProcesses.IsRunning;
                 }
             }
             catch (OperationCanceledException)
@@ -130,12 +132,14 @@ public class MemoryReader
 
 public class MemoryData
 {
+    public Process? OsuProcess { get; set; } = null;
     public bool IsOsuRunning { get; set; } = false;
     public OsuPathInfo OsuPathInfo { get; } = new();
 
     public OsuMemoryStatus OsuMemoryStatus { get; set; } = OsuMemoryStatus.Unknown;
     public OsuMapInfo OsuMapInfo { get; } = new();
     public int CurrentAudioTime { get; set; } = 0;
+    public double TotalAudioTime { get; set; } = 0;
 
     public OsuGameMode OsuGameMode { get; set; } = OsuGameMode.None;
 

@@ -248,6 +248,7 @@ public class SimplifiedAttributes
     public Dictionary<osu.Game.Rulesets.Scoring.HitResult, int> LossModeHitResults = new();
 
     public HitErrorInfo HitErrorInfo { get; } = new();
+    public int TotalHitObjectsCount { get; set; } = 0; // TODO: InGameOverlay用に作る
 }
 
 public class CachedMemoryData

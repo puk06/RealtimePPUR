@@ -32,6 +32,8 @@ public partial class MainWindow : Window
 
         RealtimePPCalculator.Instance.Start();
         RealtimePPCalculator.Instance.OnCalculate += OnUpdate;
+
+        new InGameOverlay().Show();
     }
 
     private DateTime _lastUpdate = DateTime.Now;

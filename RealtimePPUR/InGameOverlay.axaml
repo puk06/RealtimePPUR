@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="RealtimePPUR.InGameOverlay"
+	Title="RealtimePPUR"
+	Background="Transparent"
+	TransparencyLevelHint="Transparent"
+	FontFamily="Oxanium"
+    ExtendClientAreaToDecorationsHint="True"
+	SizeToContent="WidthAndHeight"
+	ExtendClientAreaChromeHints="NoChrome">
+	<Border Background="Transparent">
+        <TextBlock x:Name="IngameOverlayValue" Text="" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="24" Margin="5"/>
+    </Border>
+</Window>

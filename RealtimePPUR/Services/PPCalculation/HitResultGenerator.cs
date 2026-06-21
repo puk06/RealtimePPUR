@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Taiko.Objects;
 using RealtimePPUR.Models;
 using HitResult = osu.Game.Rulesets.Scoring.HitResult;
+using static RealtimePPUR.Utils.OsuBeatmapUtils;
 
 namespace RealtimePPUR.Services.PPCalculation;
 
@@ -244,28 +245,5 @@ public static class HitResultGenerator
             default:
                 throw new ArgumentException("Invalid mode provided. Given mode: " + mode);
         }
-    }
-
-    public static int GetMaxCombo(IBeatmap beatmap, OsuGameMode mode)
-    {
-        return mode switch
-        {
-            OsuGameMode.Osu => beatmap.GetMaxCombo(),
-            OsuGameMode.Taiko => beatmap.HitObjects.OfType<Hit>().Count(),
-            OsuGameMode.Catch => beatmap.HitObjects.Count(h => h is Fruit) + beatmap.HitObjects.OfType<JuiceStream>().SelectMany(j => j.NestedHitObjects).Count(h => h is not TinyDroplet),
-            OsuGameMode.Mania => beatmap.HitObjects.Count,
-            _ => throw new ArgumentException("Invalid ruleset ID provided.")
-        };
-    }
-    public static int CountTotalHitObjects(IBeatmap beatmap, OsuGameMode mode)
-    {
-        return mode switch
-        {
-            OsuGameMode.Osu => beatmap.HitObjects.Count,
-            OsuGameMode.Taiko => GetMaxCombo(beatmap, mode),
-            OsuGameMode.Catch => GetMaxCombo(beatmap, mode),
-            OsuGameMode.Mania => GetMaxCombo(beatmap, mode),
-            _ => throw new ArgumentException("Invalid ruleset ID provided.")
-        };
     }
 }

@@ -1,40 +1,45 @@
 const fs = require("fs");
 const path = require("path");
 
-const OSU_LIBRARY = [
+const REQUIRED_LIBRARIES = [
+    "Avalonia.Controls.dll",
+    "Avalonia.Base.dll",
+    "Avalonia.Desktop.dll",
+    "Avalonia.Markup.Xaml.dll",
+    "Avalonia.Themes.Fluent.dll",
+    "Avalonia.Dialogs.dll",
+    "Avalonia.Win32.Automation.dll",
+    "Avalonia.Markup.dll",
+    "Avalonia.Fonts.Inter.dll",
+    "Avalonia.HarfBuzz.dll",
+    "Avalonia.Win32.dll",
+    "MicroCom.Runtime.dll",
+    "Avalonia.Skia.dll",
+    "Avalonia.OpenGL.dll",
+    "Avalonia.Vulkan.dll",
+    "Avalonia.MicroCom.dll",
+    "Avalonia.Metal.dll",
     "osu.Game.dll",
-    "osu.Game.Rulesets.Osu.dll",
-    "osu.Game.Rulesets.Taiko.dll",
+    "osu.Framework.dll",
     "osu.Game.Rulesets.Catch.dll",
     "osu.Game.Rulesets.Mania.dll",
-    "osu.Framework.dll",
-    "MessagePack.dll",
-    "MessagePack.Annotations.dll",
-    "AutoMapper.dll",
-    "osuTK.dll",
+    "osu.Game.Rulesets.Osu.dll",
+    "osu.Game.Rulesets.Taiko.dll",
     "Realm.dll",
-    "Newtonsoft.Json.dll",
-    "nunit.framework.dll",
-    "ppy.ManagedBass.dll"
-];
-
-const SOFTWARE_LIBRARY = [
-    "DiscordRPC.dll",
-    "Octokit.dll",
     "OsuMemoryDataProvider.dll",
     "ProcessMemoryDataFinder.dll",
-    "OxyPlot.WindowsForms.dll",
-    "OxyPlot.dll",
-    "MathNet.Numerics.dll",
-    "System.Diagnostics.DiagnosticSource.dll"
-];
-
-const REALTIMEPPUR_FILES = [
+    "HarfBuzzSharp.dll",
+    "osuTK.dll",
+    "Newtonsoft.Json.dll",
+    "ppy.ManagedBass.dll",
+    "AutoMapper.dll",
+    "MessagePack.Annotations.dll",
+    "nunit.framework.dll",
     "RealtimePPUR.deps.json",
     "RealtimePPUR.dll",
     "RealtimePPUR.exe",
     "RealtimePPUR.runtimeconfig.json"
-];
+]
 
 const BUILD_FOLDER = "../../build";
 
@@ -54,21 +59,7 @@ if (!fs.existsSync(BUILD_FOLDER)) {
     }
 }
 
-for (const file of OSU_LIBRARY) {
-    const filePath = path.join(BUILD_FOLDER, file);
-    console.log(`Copying ${file} to ${filePath}`);
-    fs.copyFileSync(file, filePath);
-    fs.unlinkSync(file);
-}
-
-for (const file of SOFTWARE_LIBRARY) {
-    const filePath = path.join(BUILD_FOLDER, file);
-    console.log(`Copying ${file} to ${filePath}`);
-    fs.copyFileSync(file, filePath);
-    fs.unlinkSync(file);
-}
-
-for (const file of REALTIMEPPUR_FILES) {
+for (const file of REQUIRED_LIBRARIES) {
     const filePath = path.join(BUILD_FOLDER, file);
     console.log(`Copying ${file} to ${filePath}`);
     fs.copyFileSync(file, filePath);

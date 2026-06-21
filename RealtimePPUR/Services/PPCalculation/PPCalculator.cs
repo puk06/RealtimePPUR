@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Beatmaps;
@@ -11,6 +10,7 @@ using osu.Game.Rulesets.Taiko;
 using osu.Game.Scoring;
 using RealtimePPUR.Models;
 using HitResult = osu.Game.Rulesets.Scoring.HitResult;
+using static RealtimePPUR.Utils.OsuBeatmapUtils;
 
 namespace RealtimePPUR.Services.PPCalculation;
 
@@ -48,7 +48,7 @@ public static class PPCalculator
         var performanceCalculator = PerformanceCalculatorDictionary[ctx.GameMode];
 
         var statistics = HitResultGenerator.ToSS(playableBeatmap, ctx.GameMode);
-        var maxCombo = HitResultGenerator.GetMaxCombo(playableBeatmap, ctx.GameMode);
+        var maxCombo = GetMaxCombo(playableBeatmap, ctx.GameMode);
 
         var scoreInfo = new ScoreInfo(playableBeatmap.BeatmapInfo, ruleset.RulesetInfo)
         {
@@ -63,6 +63,8 @@ public static class PPCalculator
 
         simplifiedAttributes.MapDifficultyAttributes = difficultyAttributes;
         simplifiedAttributes.MapPerformanceAttributes = performanceAttibutes;
+
+        simplifiedAttributes.TotalHitObjectsCount = CountTotalHitObjects(playableBeatmap, ctx.GameMode);
     }
 
     public static void Calculate(PerformanceCalculationContext ctx, OsuBetmapInfo osuBeatmapInfo, SimplifiedAttributes simplifiedAttributes, Models.HitResult hitResult)
@@ -81,7 +83,7 @@ public static class PPCalculator
 
         var performanceCalculator = PerformanceCalculatorDictionary[ctx.GameMode];
 
-        var maxCombo = HitResultGenerator.GetMaxCombo(playableBeatmap, ctx.GameMode);
+        var maxCombo = GetMaxCombo(playableBeatmap, ctx.GameMode);
         var statisticsSs = HitResultGenerator.ToSS(playableBeatmap, ctx.GameMode);
         var statisticsCurrent = HitResultGenerator.FromHitResult(hitResult, ctx.GameMode);
 
@@ -166,6 +168,7 @@ public static class PPCalculator
 
             var performanceAttributesLossMode = performanceCalculator.Calculate(lossScoreInfo, simplifiedAttributes.MapDifficultyAttributes);
             simplifiedAttributes.LossModePerformancePoint = performanceAttributesLossMode.Total;
+            simplifiedAttributes.LossModeHitResults = staticsLoss;
         }
     }
 
@@ -181,7 +184,9 @@ public static class PPCalculator
                     var countMiss = statistics[HitResult.Miss];
                     var total = countGreat + countGood + countMeh + countMiss;
 
-                    return (double)((6 * countGreat) + (2 * countGood) + countMeh) / (6 * total);
+                    var acc = (double)((6 * countGreat) + (2 * countGood) + countMeh) / (6 * total);
+
+                    return double.IsNaN(acc) ? 0 : acc;
                 }
 
             case OsuGameMode.Taiko:
@@ -191,7 +196,9 @@ public static class PPCalculator
                     var countMiss = statistics[HitResult.Miss];
                     var total = countGreat + countGood + countMiss;
 
-                    return (double)((2 * countGreat) + countGood) / (2 * total);
+                    var acc = (double)((2 * countGreat) + countGood) / (2 * total);
+
+                    return double.IsNaN(acc) ? 0 : acc;
                 }
 
             case OsuGameMode.Catch:
@@ -199,7 +206,9 @@ public static class PPCalculator
                     double hits = statistics[HitResult.Great] + statistics[HitResult.LargeTickHit] + statistics[HitResult.SmallTickHit];
                     double total = hits + statistics[HitResult.Miss] + statistics[HitResult.SmallTickMiss];
 
-                    return hits / total;
+                    var acc = hits / total;
+
+                    return double.IsNaN(acc) ? 0 : acc;
                 }
 
             case OsuGameMode.Mania:
@@ -210,15 +219,22 @@ public static class PPCalculator
                         (4 * statistics[HitResult.Good]) +
                         (2 * statistics[HitResult.Ok]) +
                         statistics[HitResult.Meh];
-                    double total = 6 * (statistics[HitResult.Meh] + statistics[HitResult.Ok] +
-                                        statistics[HitResult.Great] + statistics[HitResult.Miss] +
-                                        statistics[HitResult.Perfect] + statistics[HitResult.Good]);
 
-                    return hits / total;
+                    double total = 6 * (
+                        statistics[HitResult.Meh] +
+                        statistics[HitResult.Ok] +
+                        statistics[HitResult.Great] +
+                        statistics[HitResult.Miss] +
+                        statistics[HitResult.Perfect] +
+                        statistics[HitResult.Good]
+                    );
+
+                    var acc = hits / total;
+
+                    return double.IsNaN(acc) ? 0 : acc;
                 }
 
-            default:
-                throw new ArgumentException("Invalid mode provided. Given mode: " + mode);
+            default: return 0;
         }
     }
 }
