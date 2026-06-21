@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RealtimePPUR.Models;
 using RealtimePPUR.Services.PPCalculation;
 
 namespace RealtimePPUR.Services;
@@ -8,26 +9,35 @@ namespace RealtimePPUR.Services;
 public static class InGameValueBuilder
 {
     private delegate string InGameValueRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator);
-    private static readonly Dictionary<int, InGameValueRowBuilder> InGameValueRowBuilders = new()
+    private static readonly Dictionary<InGameOverlayValues, InGameValueRowBuilder> InGameValueRowBuilders = new()
     {
-        { 1, StarRatingRowBuilder },
-        { 2, MapPerformanceRowBuilder },
-        { 3, PerformanceRowBuilder },
-        { 4, AccuracyRowBuilder },
-        { 5, HitResultRowBuilder }
+        { InGameOverlayValues.StarRatings, StarRatingRowBuilder },
+        { InGameOverlayValues.SSPerformancePoint, MapPerformanceRowBuilder },
+        { InGameOverlayValues.CurrentPerformancePoint, PerformanceRowBuilder },
+        { InGameOverlayValues.CurrentAccuracy, AccuracyRowBuilder },
+        { InGameOverlayValues.CurrentHits, HitResultRowBuilder },
+        { InGameOverlayValues.IfFCHits, IfFCHitResultRowBuilder },
+        { InGameOverlayValues.UnstableRate, UnstableRateRowBuilder },
+        { InGameOverlayValues.OffsetHelp, OffsetHelpRowBuilder },
+        { InGameOverlayValues.AverageError, AverageErrorRowBuilder },
+        { InGameOverlayValues.SongProgress, SongProgressRowBuilder },
+        { InGameOverlayValues.HealthPercentage, HealthPercentageRowBuilder },
+        { InGameOverlayValues.Score, ScoreRowBuilder },
+        { InGameOverlayValues.RemainingNotes, RemainingNotesRowBuilder }
     };
 
-    public static string Build(MemoryData memory, RealtimePPCalculator calculator, int[] valueList)
+    public static string Build(MemoryData memory, RealtimePPCalculator calculator, InGameOverlayValues flags)
     {
         StringBuilder valueBuilder = new();
 
-        bool firstValueAdded = false;
-        foreach (int value in valueList)
+        var firstValueAdded = false;
+        for (int i = 0; i < InGameValueRowBuilders.Keys.Count; i++)
         {
-            if (!InGameValueRowBuilders.ContainsKey(value)) continue;
+            var bit = (InGameOverlayValues)(1 << i);
+            if ((flags & bit) != bit || !InGameValueRowBuilders.ContainsKey(bit)) continue;
 
             if (firstValueAdded) valueBuilder.Append(Environment.NewLine);
-            valueBuilder.Append(InGameValueRowBuilders[value](memory, calculator));
+            valueBuilder.Append(InGameValueRowBuilders[bit](memory, calculator));
 
             firstValueAdded = true;
         }
@@ -53,7 +63,6 @@ public static class InGameValueBuilder
             $"{currentStars:F2} / {mapStars:F2}"
         );
     }
-
     private static string MapPerformanceRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
     {
         var attributes = calculator.CurrentAttributes;
@@ -65,7 +74,6 @@ public static class InGameValueBuilder
             $"{mapPerformance:F2}pp"
         );
     }
-
     private static string PerformanceRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
     {
         var attributes = calculator.CurrentAttributes;
@@ -75,7 +83,7 @@ public static class InGameValueBuilder
         var current = attributes.CurrentPerformancePoint;
 
         var mode = calculator.CurrentCalculationGameMode;
-        if (mode == Models.OsuGameMode.Taiko || mode == Models.OsuGameMode.Mania)
+        if (mode == OsuGameMode.Taiko || mode == OsuGameMode.Mania)
         {
             return GenerateInGameValueRow(
                 "PP",
@@ -90,7 +98,6 @@ public static class InGameValueBuilder
             );
         }
     }
-
     private static string AccuracyRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
     {
         var attributes = calculator.CurrentAttributes;
@@ -98,7 +105,7 @@ public static class InGameValueBuilder
 
         var current = PPCalculator.GetAccuracy(attributes.CurrentHitResults, mode) * 100;
 
-        if (mode == Models.OsuGameMode.Taiko || mode == Models.OsuGameMode.Mania)
+        if (mode == OsuGameMode.Taiko || mode == OsuGameMode.Mania)
         {
             var lossMode = PPCalculator.GetAccuracy(attributes.LossModeHitResults, mode) * 100;
             return GenerateInGameValueRow(
@@ -114,7 +121,6 @@ public static class InGameValueBuilder
             );
         }
     }
-
     private static string HitResultRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
     {
         var attributes = calculator.CurrentAttributes;
@@ -125,6 +131,99 @@ public static class InGameValueBuilder
         return GenerateInGameValueRow(
             "Hits",
             hitResultsString
+        );
+    }
+    private static string IfFCHitResultRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var attributes = calculator.CurrentAttributes;
+        var hitResults = attributes.IfFCHitResults;
+
+        var hitResultsString = string.Join('/', hitResults.Values);
+
+        return GenerateInGameValueRow(
+            "IFFCHits",
+            hitResultsString
+        );
+    }
+    private static string UnstableRateRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var attributes = calculator.CurrentAttributes;
+        double unstableRate = attributes.HitErrorInfo.UnstableRate;
+
+        return GenerateInGameValueRow(
+            "UR",
+            unstableRate.ToString("F2")
+        );
+    }
+    private static string OffsetHelpRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var attributes = calculator.CurrentAttributes;
+        double offsetHelp = Math.Round(attributes.HitErrorInfo.Average);
+
+        return GenerateInGameValueRow(
+            "OffsetHelp",
+            offsetHelp.ToString("F0")
+        );
+    }
+    private static string AverageErrorRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var attributes = calculator.CurrentAttributes;
+        var average = -attributes.HitErrorInfo.Average;
+
+        return GenerateInGameValueRow(
+            "AvgError",
+            $"{average:F2}ms"
+        );
+    }
+    private static string SongProgressRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var progress = memoryData.TotalAudioTime > 0 ? memoryData.CurrentAudioTime / memoryData.TotalAudioTime * 100 : 0;
+
+        return GenerateInGameValueRow(
+            "Progress",
+            $"{progress:F1}%"
+        );
+    }
+    private static string HealthPercentageRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var hp = memoryData.HealthPercentage / 2;
+
+        return GenerateInGameValueRow(
+            "HP",
+            $"{hp:F1}%"
+        );
+    }
+    private static string ScoreRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var score = memoryData.CurrentScore;
+
+        return GenerateInGameValueRow(
+            "Score",
+            score.ToString()
+        );
+    }
+    private static string RemainingNotesRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var attributes = calculator.CurrentAttributes;
+        var total = attributes.TotalHitObjectsCount;
+
+        var mode = calculator.CurrentCalculationGameMode;
+
+        var hits = calculator.CurrentMemoryData.HitResult;
+        int currentNotes = mode switch
+        {
+            OsuGameMode.Osu => hits.Hit300 + hits.Hit100 + hits.Hit50 + hits.HitMiss,
+            OsuGameMode.Taiko => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+            OsuGameMode.Catch => hits.Hit300 + hits.Hit100 + hits.HitMiss,
+            OsuGameMode.Mania => hits.HitGeki + hits.Hit300 + hits.HitKatu + hits.Hit100 + hits.Hit50 + hits.HitMiss,
+            _ => 0
+        };
+
+        var remainingNotes = total - currentNotes;
+
+        return GenerateInGameValueRow(
+            "Notes",
+            remainingNotes.ToString()
         );
     }
     #endregion

@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Topmost = true;
+        ContextMenu = GenerateContextMenu();
 
         _smoothTimer = new DispatcherTimer
         {
@@ -37,6 +38,20 @@ public partial class MainWindow : Window
         RealtimePPCalculator.Instance.OnCalculate += OnUpdate;
 
         new InGameOverlay().Show();
+    }
+
+    private ContextMenu GenerateContextMenu()
+    {
+        var contextMenu = new ContextMenu();
+
+        var settings = new MenuItem() { Header = "設定" };
+        var close = new MenuItem() { Header = "閉じる" }; // TODO: 作る
+        close.Click += (_, _) => Close();
+
+        contextMenu.Items.Add(settings);
+        contextMenu.Items.Add(close);
+
+        return contextMenu;
     }
 
     private DateTime _lastUpdate = DateTime.Now;

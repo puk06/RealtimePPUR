@@ -205,12 +205,14 @@ public class RealtimePPCalculator
 
         var sortedArray = hitErrors.OrderBy(x => x).ToArray();
 
-        int count = sortedArray.Length;
+        var count = sortedArray.Length;
         double q1 = sortedArray[(int)(count * 0.25)];
         double q3 = sortedArray[(int)(count * 0.75)];
         double iqr = q3 - q1;
 
-        return sortedArray.Where(x => x >= q1 - (1.5 * iqr) && x <= q3 + (1.5 * iqr)).Average();
+        var avg = sortedArray.Where(x => x >= q1 - (1.5 * iqr) && x <= q3 + (1.5 * iqr)).Average();
+
+        return avg;
     }
 
     private static OsuGameMode GetCalculationMode(OsuGameMode osu, OsuGameMode beatmap, OsuMemoryStatus status)
@@ -229,7 +231,7 @@ public class PerformanceCalculationContext
     public int Score { get; set; } = 0;
     public int Combo { get; set; } = 0;
     public int AudioTime { get; set; } = 0;
-    public Mod[] Mods { get; set; } = Array.Empty<Mod>();
+    public Mod[] Mods { get; set; } = [];
 }
 
 public class SimplifiedAttributes
@@ -248,7 +250,7 @@ public class SimplifiedAttributes
     public Dictionary<osu.Game.Rulesets.Scoring.HitResult, int> LossModeHitResults = new();
 
     public HitErrorInfo HitErrorInfo { get; } = new();
-    public int TotalHitObjectsCount { get; set; } = 0; // TODO: InGameOverlay用に作る
+    public int TotalHitObjectsCount { get; set; } = 0;
 }
 
 public class CachedMemoryData

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using RealtimePPUR.Models;
 using RealtimePPUR.Services;
 
 namespace RealtimePPUR;
@@ -15,15 +16,15 @@ public partial class InGameOverlay : Window
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool SetForegroundWindow(IntPtr hWnd);
 
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetWindowRect(IntPtr hWnd, out WindowRect rect);
+
     [StructLayout(LayoutKind.Sequential)]
     private struct WindowRect
     {
         public int Left, Top, Right, Bottom;
     }
-
-    [LibraryImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool GetWindowRect(IntPtr hWnd, out WindowRect rect);
 
     private readonly DispatcherTimer _windowRefleshTimer;
 
@@ -33,7 +34,7 @@ public partial class InGameOverlay : Window
 
         _windowRefleshTimer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromMilliseconds(1000.0 / 30)
+            Interval = TimeSpan.FromMilliseconds(1000.0 / 60)
         };
         _windowRefleshTimer.Tick += OnWindowReflesh;
         _windowRefleshTimer.Start();
@@ -70,9 +71,10 @@ public partial class InGameOverlay : Window
         });
     }
 
-    private static int[] testValues = { 1, 2, 3, 4, 5 }; // TODO: 消す
+    // TODO: テストだから、これを設定画面とかで管理する
+    private static InGameOverlayValues testValues = InGameOverlayValues.StarRatings | InGameOverlayValues.CurrentPerformancePoint | InGameOverlayValues.CurrentAccuracy | InGameOverlayValues.CurrentHits | InGameOverlayValues.AverageError | InGameOverlayValues.HealthPercentage | InGameOverlayValues.UnstableRate | InGameOverlayValues.OffsetHelp | InGameOverlayValues.RemainingNotes | InGameOverlayValues.IfFCHits | InGameOverlayValues.Score;
 
-    private string GenerateInGameValue()
+    private static string GenerateInGameValue()
     {
         var memory = RealtimePPCalculator.Instance.CurrentMemoryData;
         var calculator = RealtimePPCalculator.Instance;

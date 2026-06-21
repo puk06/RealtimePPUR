@@ -65,7 +65,6 @@ public class MemoryReader
                     _memoryData.CurrentAudioTime = baseAddresses.GeneralData.AudioTime;
                     _memoryData.TotalAudioTime = baseAddresses.GeneralData.TotalAudioTime;
 
-                    // Mods
                     _memoryData.CurrentMods = _memoryData.OsuMemoryStatus switch
                     {
                         OsuMemoryStatus.Playing => baseAddresses.Player.Mods.Value,
@@ -84,8 +83,10 @@ public class MemoryReader
                     _memoryData.HitResult.Hit100 = rulesetPlayData?.Hit100 ?? 0;
                     _memoryData.HitResult.Hit50 = rulesetPlayData?.Hit50 ?? 0;
                     _memoryData.HitResult.HitMiss = rulesetPlayData?.HitMiss ?? 0;
+                    _memoryData.CurrentScore = rulesetPlayData?.Score ?? 0; // TODO: アドレスが壊れている
 
                     _memoryData.HitErrors = baseAddresses.Player.HitErrors;
+                    _memoryData.HealthPercentage = baseAddresses.Player.HP;
                 }
             }
             catch
@@ -152,4 +153,5 @@ public class MemoryData
     public int CurrentMods { get; set; } = 0;
 
     public List<int> HitErrors { get; set; } = new();
+    public double HealthPercentage { get; set; } = 0;
 }

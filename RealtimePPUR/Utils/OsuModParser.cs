@@ -62,7 +62,7 @@ public static class OsuModParser
     {
         List<string> modStrings = new();
 
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < modsDict.Keys.Count; i++)
         {
             int bit = 1 << i;
             if ((mods & bit) != bit || !modsDict.ContainsKey(bit)) continue;
