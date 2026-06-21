@@ -23,6 +23,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Topmost = true;
+
         _smoothTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(1000.0 / 60)
