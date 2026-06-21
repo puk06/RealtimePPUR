@@ -57,7 +57,7 @@ public partial class MainWindow : Window
     private DateTime _lastUpdate = DateTime.Now;
     private const double SmoothTime = 0.75;
 
-    private static double Lerp(double current, double target, double t) => current + (target - current) * t;
+    private static double Lerp(double current, double target, double t) => current + ((target - current) * t);
     private void OnSmoothUpdate(object? sender, EventArgs e)
     {
         var now = DateTime.Now;

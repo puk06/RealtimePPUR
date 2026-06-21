@@ -45,7 +45,6 @@ public static class OsuModParser
         { 1 << 30, "MR" }
     };
 
-    
     public static readonly Dictionary<OsuGameMode, IEnumerable<Mod>> AvailableModsDictionary = new()
     {
         { OsuGameMode.Osu, PPCalculator.RulesetDictionary[OsuGameMode.Osu].CreateAllMods() },
