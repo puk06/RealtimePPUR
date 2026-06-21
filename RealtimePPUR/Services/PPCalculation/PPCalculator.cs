@@ -86,16 +86,20 @@ public static class PPCalculator
         var maxCombo = GetMaxCombo(playableBeatmap, ctx.GameMode);
         var statisticsSs = HitResultGenerator.ToSS(playableBeatmap, ctx.GameMode);
         var statisticsCurrent = HitResultGenerator.FromHitResult(hitResult, ctx.GameMode);
+        var accuracy = GetAccuracy(statisticsCurrent, ctx.GameMode);
 
         simplifiedAttributes.CurrentStarRating = simplifiedAttributes.MapDifficultyAttributes.StarRating;
         simplifiedAttributes.CurrentPerformancePoint = simplifiedAttributes.MapPerformanceAttributes.Total;
+        simplifiedAttributes.CurrentHitResults = statisticsCurrent;
+        simplifiedAttributes.CurrentAccuracy = accuracy;
 
         if (ctx.IsResultScreen || ctx.IsPlaying)
         {
             var staticsForCalcIfFc = HitResultGenerator.ToIfFC(playableBeatmap, hitResult, ctx.GameMode);
+            var iffcAccuracy = GetAccuracy(staticsForCalcIfFc, ctx.GameMode);
             var iffcScoreInfo = new ScoreInfo(playableBeatmap.BeatmapInfo, ruleset.RulesetInfo)
             {
-                Accuracy = GetAccuracy(staticsForCalcIfFc, ctx.GameMode),
+                Accuracy = iffcAccuracy,
                 MaxCombo = maxCombo,
                 Statistics = staticsForCalcIfFc,
                 Mods = ctx.Mods
@@ -104,13 +108,14 @@ public static class PPCalculator
             var performanceAttributesIffc = performanceCalculator.Calculate(iffcScoreInfo, simplifiedAttributes.MapDifficultyAttributes);
             simplifiedAttributes.IfFCPerformancePoint = performanceAttributesIffc.Total;
             simplifiedAttributes.IfFCHitResults = staticsForCalcIfFc;
+            simplifiedAttributes.IfFCAccuracy = iffcAccuracy;
         }
 
         if (ctx.IsResultScreen)
         {
             var resultScoreInfo = new ScoreInfo(playableBeatmap.BeatmapInfo, ruleset.RulesetInfo)
             {
-                Accuracy = GetAccuracy(statisticsCurrent, ctx.GameMode),
+                Accuracy = accuracy,
                 MaxCombo = ctx.Combo,
                 Statistics = statisticsCurrent,
                 Mods = ctx.Mods,
@@ -119,7 +124,6 @@ public static class PPCalculator
 
             var performanceAttributesResult = performanceCalculator.Calculate(resultScoreInfo, simplifiedAttributes.MapDifficultyAttributes);
             simplifiedAttributes.CurrentPerformancePoint = performanceAttributesResult.Total;
-            simplifiedAttributes.CurrentHitResults = statisticsCurrent;
 
             return;
         }
@@ -137,10 +141,9 @@ public static class PPCalculator
         var workingBeatmapCurrent = new ProcessorWorkingBeatmap(beatmapCurrent);
         var difficultyCalculatorCurrent = ruleset.CreateDifficultyCalculator(workingBeatmapCurrent);
         var difficultyAttributesCurrent = difficultyCalculatorCurrent.Calculate(ctx.Mods);
-
         var currentScoreInfo = new ScoreInfo(playableBeatmap.BeatmapInfo, ruleset.RulesetInfo)
         {
-            Accuracy = GetAccuracy(statisticsCurrent, ctx.GameMode),
+            Accuracy = accuracy,
             MaxCombo = ctx.Combo,
             Statistics = statisticsCurrent,
             Mods = ctx.Mods,
@@ -156,10 +159,10 @@ public static class PPCalculator
         if (ctx.GameMode == OsuGameMode.Taiko || ctx.GameMode == OsuGameMode.Mania)
         {
             var staticsLoss = HitResultGenerator.ToLossMode(statisticsSs, hitResult, ctx.GameMode);
-
+            var lossModeAccuracy = GetAccuracy(staticsLoss, ctx.GameMode);
             var lossScoreInfo = new ScoreInfo(playableBeatmap.BeatmapInfo, ruleset.RulesetInfo)
             {
-                Accuracy = GetAccuracy(staticsLoss, ctx.GameMode),
+                Accuracy = lossModeAccuracy,
                 MaxCombo = ctx.Combo,
                 Statistics = staticsLoss,
                 Mods = ctx.Mods,
@@ -169,6 +172,7 @@ public static class PPCalculator
             var performanceAttributesLossMode = performanceCalculator.Calculate(lossScoreInfo, simplifiedAttributes.MapDifficultyAttributes);
             simplifiedAttributes.LossModePerformancePoint = performanceAttributesLossMode.Total;
             simplifiedAttributes.LossModeHitResults = staticsLoss;
+            simplifiedAttributes.LossModeAccuracy = lossModeAccuracy;
         }
     }
 

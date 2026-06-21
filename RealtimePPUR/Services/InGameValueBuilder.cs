@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using RealtimePPUR.Models;
-using RealtimePPUR.Services.PPCalculation;
 
 namespace RealtimePPUR.Services;
 
@@ -16,6 +15,7 @@ public static class InGameValueBuilder
         { InGameOverlayValues.CurrentPerformancePoint, PerformanceRowBuilder },
         { InGameOverlayValues.CurrentAccuracy, AccuracyRowBuilder },
         { InGameOverlayValues.CurrentHits, HitResultRowBuilder },
+        { InGameOverlayValues.LossModeHits, LossModeHitResultRowBuilder },
         { InGameOverlayValues.IfFCHits, IfFCHitResultRowBuilder },
         { InGameOverlayValues.UnstableRate, UnstableRateRowBuilder },
         { InGameOverlayValues.OffsetHelp, OffsetHelpRowBuilder },
@@ -23,6 +23,7 @@ public static class InGameValueBuilder
         { InGameOverlayValues.SongProgress, SongProgressRowBuilder },
         { InGameOverlayValues.HealthPercentage, HealthPercentageRowBuilder },
         { InGameOverlayValues.Score, ScoreRowBuilder },
+        { InGameOverlayValues.Combo, ComboRowBuilder },
         { InGameOverlayValues.RemainingNotes, RemainingNotesRowBuilder }
     };
 
@@ -103,11 +104,11 @@ public static class InGameValueBuilder
         var attributes = calculator.CurrentAttributes;
         var mode = calculator.CurrentCalculationGameMode;
 
-        var current = PPCalculator.GetAccuracy(attributes.CurrentHitResults, mode) * 100;
+        var current = attributes.CurrentAccuracy * 100;
 
         if (mode == OsuGameMode.Taiko || mode == OsuGameMode.Mania)
         {
-            var lossMode = PPCalculator.GetAccuracy(attributes.LossModeHitResults, mode) * 100;
+            var lossMode = attributes.LossModeAccuracy * 100;
             return GenerateInGameValueRow(
                 "ACC",
                 $"{current:F2} / {lossMode:F2}%"
@@ -130,6 +131,18 @@ public static class InGameValueBuilder
 
         return GenerateInGameValueRow(
             "Hits",
+            hitResultsString
+        );
+    }
+    private static string LossModeHitResultRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var attributes = calculator.CurrentAttributes;
+        var hitResults = attributes.LossModeHitResults;
+
+        var hitResultsString = string.Join('/', hitResults.Values);
+
+        return GenerateInGameValueRow(
+            "LossHits",
             hitResultsString
         );
     }
@@ -200,6 +213,16 @@ public static class InGameValueBuilder
         return GenerateInGameValueRow(
             "Score",
             score.ToString()
+        );
+    }
+    private static string ComboRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
+    {
+        var combo = memoryData.CurrentCombo;
+        var maxCombo = memoryData.CurrentMaxCombo;
+
+        return GenerateInGameValueRow(
+            "Combo",
+            $"{combo} / {maxCombo}x"
         );
     }
     private static string RemainingNotesRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)

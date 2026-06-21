@@ -72,7 +72,7 @@ public partial class InGameOverlay : Window
     }
 
     // TODO: テストだから、これを設定画面とかで管理する
-    private static InGameOverlayValues testValues = InGameOverlayValues.StarRatings | InGameOverlayValues.CurrentPerformancePoint | InGameOverlayValues.CurrentAccuracy | InGameOverlayValues.CurrentHits | InGameOverlayValues.AverageError | InGameOverlayValues.HealthPercentage | InGameOverlayValues.UnstableRate | InGameOverlayValues.OffsetHelp | InGameOverlayValues.RemainingNotes | InGameOverlayValues.IfFCHits | InGameOverlayValues.Score;
+    private static InGameOverlayValues testValues = InGameOverlayValues.LossModeHits | InGameOverlayValues.Combo | InGameOverlayValues.StarRatings | InGameOverlayValues.CurrentPerformancePoint | InGameOverlayValues.CurrentAccuracy | InGameOverlayValues.CurrentHits | InGameOverlayValues.AverageError | InGameOverlayValues.HealthPercentage | InGameOverlayValues.UnstableRate | InGameOverlayValues.OffsetHelp | InGameOverlayValues.RemainingNotes | InGameOverlayValues.IfFCHits | InGameOverlayValues.Score;
 
     private static string GenerateInGameValue()
     {

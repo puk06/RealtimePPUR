@@ -242,12 +242,15 @@ public class SimplifiedAttributes
     public double CurrentStarRating { get; set; } = 0;
     public double CurrentPerformancePoint { get; set; } = 0;
     public Dictionary<osu.Game.Rulesets.Scoring.HitResult, int> CurrentHitResults = new();
+    public double CurrentAccuracy { get; set; } = 0;
 
     public double IfFCPerformancePoint { get; set; } = 0;
     public Dictionary<osu.Game.Rulesets.Scoring.HitResult, int> IfFCHitResults = new();
+    public double IfFCAccuracy { get; set; } = 0;
 
     public double LossModePerformancePoint { get; set; } = 0;
     public Dictionary<osu.Game.Rulesets.Scoring.HitResult, int> LossModeHitResults = new();
+    public double LossModeAccuracy { get; set; } = 0;
 
     public HitErrorInfo HitErrorInfo { get; } = new();
     public int TotalHitObjectsCount { get; set; } = 0;

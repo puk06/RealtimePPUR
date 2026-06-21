@@ -84,6 +84,8 @@ public class MemoryReader
                     _memoryData.HitResult.Hit50 = rulesetPlayData?.Hit50 ?? 0;
                     _memoryData.HitResult.HitMiss = rulesetPlayData?.HitMiss ?? 0;
                     _memoryData.CurrentScore = rulesetPlayData?.Score ?? 0; // TODO: アドレスが壊れている
+                    _memoryData.CurrentCombo = rulesetPlayData?.Combo ?? 0;
+                    _memoryData.CurrentMaxCombo = rulesetPlayData?.MaxCombo ?? 0;
 
                     _memoryData.HitErrors = baseAddresses.Player.HitErrors;
                     _memoryData.HealthPercentage = baseAddresses.Player.HP;
@@ -149,6 +151,7 @@ public class MemoryData
 
     public HitResult HitResult { get; } = new();
     public int CurrentCombo { get; set; } = 0;
+    public int CurrentMaxCombo { get; set; } = 0;
     public int CurrentScore { get; set; } = 0;
     public int CurrentMods { get; set; } = 0;
 

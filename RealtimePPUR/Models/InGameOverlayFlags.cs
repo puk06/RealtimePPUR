@@ -11,12 +11,14 @@ public enum InGameOverlayValues
     CurrentPerformancePoint = 1 << 2,
     CurrentAccuracy = 1 << 3,
     CurrentHits = 1 << 4,
-    IfFCHits = 1 << 5,
-    UnstableRate = 1 << 6,
-    OffsetHelp = 1 << 7,
-    AverageError = 1 << 8,
-    SongProgress = 1 << 9,
-    HealthPercentage = 1 << 10,
-    Score = 1 << 11,
-    RemainingNotes = 1 << 12
+    LossModeHits = 1 << 5,
+    IfFCHits = 1 << 6,
+    UnstableRate = 1 << 7,
+    OffsetHelp = 1 << 8,
+    AverageError = 1 << 9,
+    SongProgress = 1 << 10,
+    HealthPercentage = 1 << 11,
+    Score = 1 << 12,
+    Combo = 1 << 13,
+    RemainingNotes = 1 << 14
 }
