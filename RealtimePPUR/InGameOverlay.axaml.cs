@@ -47,36 +47,51 @@ public partial class InGameOverlay : Window
 
     private async void OnWindowReflesh(object? sender, EventArgs e)
     {
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        try
         {
-            var currentMemoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
-
-            var process = currentMemoryData.OsuProcess;
-            if (process == null) return;
-
-            var handle = process.MainWindowHandle;
-            if (!GetWindowRect(handle, out WindowRect rect)) return;
-            
-            var runtimeSettings = RealtimePPCalculator.Instance.RuntimeSettings;
-
-            var enableOverlay = runtimeSettings.EnableOverlay;
-            var currentForeground = GetForegroundWindow();
-            
-            var shouldEnableOverlay = enableOverlay && currentMemoryData.IsPlaying && (currentForeground == handle || ProcessIntPtrManager.HasValue(currentForeground));
-            ToggleOverlay(shouldEnableOverlay, handle);
-
-            Position = new Avalonia.PixelPoint(rect.Left + 2 + runtimeSettings.OverlayLeft, rect.Top + runtimeSettings.OverlayTop);
-            if (Topmost != shouldEnableOverlay) Topmost = shouldEnableOverlay;
-        });
+            await Dispatcher.UIThread.InvokeAsync(() => UpdateWindowStatus());
+        }
+        catch
+        {
+            // Ignored
+        }
     }
-
     private async void OnCalculate()
     {
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        try
         {
-            if (!IsVisible) return;
-            IngameOverlayValue.Text = GenerateInGameValue();
-        });
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (!IsVisible) return;
+                IngameOverlayValue.Text = GenerateInGameValue();
+            });
+        }
+        catch
+        {
+            // Ignored
+        }
+    }
+
+    private void UpdateWindowStatus()
+    {
+        var currentMemoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
+
+        var process = currentMemoryData.OsuProcess;
+        if (process == null) return;
+
+        var handle = process.MainWindowHandle;
+        if (!GetWindowRect(handle, out WindowRect rect)) return;
+        
+        var runtimeSettings = RealtimePPCalculator.Instance.RuntimeSettings;
+
+        var enableOverlay = runtimeSettings.EnableOverlay;
+        var currentForeground = GetForegroundWindow();
+        
+        var shouldEnableOverlay = enableOverlay && currentMemoryData.IsPlaying && (currentForeground == handle || ProcessIntPtrManager.HasValue(currentForeground));
+        ToggleOverlay(shouldEnableOverlay, handle);
+
+        Position = new Avalonia.PixelPoint(rect.Left + 2 + runtimeSettings.OverlayLeft, rect.Top + runtimeSettings.OverlayTop);
+        if (Topmost != shouldEnableOverlay) Topmost = shouldEnableOverlay;
     }
 
     private static string GenerateInGameValue()

@@ -103,55 +103,68 @@ public partial class MainWindow : Window
 
     private async void OnUpdate()
     {
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        try
         {
-            var currentGameMode = RealtimePPCalculator.Instance.CurrentCalculationGameMode;
-            var attributes = RealtimePPCalculator.Instance.CurrentAttributes;
-            var memoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
+            await Dispatcher.UIThread.InvokeAsync(() => UpdateValues());
+        }
+        catch
+        {
+            // Ignored
+        }
+    }
 
-            _targetPp = attributes.CurrentPerformancePoint;
-            _targetSr = attributes.CurrentStarRating;
-            _targetUr = attributes.HitErrorInfo.UnstableRate;
+    private async void UpdateValues()
+    {
+        var currentGameMode = RealtimePPCalculator.Instance.CurrentCalculationGameMode;
+        var attributes = RealtimePPCalculator.Instance.CurrentAttributes;
+        var memoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
+        var settings = RealtimePPCalculator.Instance.RuntimeSettings;
 
-            string ifFcString = string.Empty;
-            var lossModePp = Math.Round(attributes.LossModePerformancePoint).ToString("F0");
-            var iffcPp = Math.Round(attributes.IfFCPerformancePoint).ToString("F0");
-            var ssPp = Math.Round(attributes.MapPerformanceAttributes?.Total ?? 0).ToString("F0");
-            if (memoryData.IsPlaying)
+        var isLossModeAvailable = currentGameMode == OsuGameMode.Taiko || currentGameMode == OsuGameMode.Mania;
+        var isLossModeEnabled = settings.EnableLossMode;
+        var isCurrentPpLossMode = isLossModeAvailable && isLossModeEnabled;
+
+        _targetPp = isCurrentPpLossMode ? attributes.LossModePerformancePoint : attributes.CurrentPerformancePoint;
+        _targetSr = attributes.CurrentStarRating;
+        _targetUr = attributes.HitErrorInfo.UnstableRate;
+
+        string ifFcString;
+        var lossModePp = Math.Round(attributes.LossModePerformancePoint).ToString("F0");
+        var iffcPp = Math.Round(attributes.IfFCPerformancePoint).ToString("F0");
+        var ssPp = Math.Round(attributes.MapPerformanceAttributes?.Total ?? 0).ToString("F0");
+        if (memoryData.IsPlaying)
+        {
+            if (isLossModeAvailable && !isLossModeEnabled)
             {
-                var isLossModeAvailable = currentGameMode == OsuGameMode.Taiko || currentGameMode == OsuGameMode.Mania;
-                if (isLossModeAvailable)
-                {
-                    IffcLabel.Text = "LOSS/SS";
-                    ifFcString = lossModePp + " / " + ssPp;
-                }
-                else
-                {
-                    IffcLabel.Text = "IFFC/SS";
-                    ifFcString = iffcPp + " / " + ssPp;
-                }
+                IffcLabel.Text = "LOSS/SS";
+                ifFcString = lossModePp + " / " + ssPp;
             }
-            else if (memoryData.IsResultScreen)
+            else
             {
                 IffcLabel.Text = "IFFC/SS";
                 ifFcString = iffcPp + " / " + ssPp;
             }
-            else
-            {
-                IffcLabel.Text = "SSPP";
-                ifFcString = ssPp;
-            }
+        }
+        else if (memoryData.IsResultScreen)
+        {
+            IffcLabel.Text = "IFFC/SS";
+            ifFcString = iffcPp + " / " + ssPp;
+        }
+        else
+        {
+            IffcLabel.Text = "SSPP";
+            ifFcString = ssPp;
+        }
 
-            IffcValue.Text = ifFcString;
+        IffcValue.Text = ifFcString;
 
-            OffsetValue.Text = Math.Round(attributes.HitErrorInfo.Average).ToString("F0");
-            AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2") + "ms";
+        OffsetValue.Text = Math.Round(attributes.HitErrorInfo.Average).ToString("F0");
+        AvgValue.Text = (-attributes.HitErrorInfo.Average).ToString("F2") + "ms";
 
-            SimplifyHits(simplifedHitResult, memoryData.HitResult, currentGameMode);
-            Count300.Text = simplifedHitResult.Hit300.ToString();
-            Count100.Text = simplifedHitResult.Hit100.ToString();
-            CountMiss.Text = simplifedHitResult.HitMiss.ToString();
-        });
+        SimplifyHits(simplifedHitResult, memoryData.HitResult, currentGameMode);
+        Count300.Text = simplifedHitResult.Hit300.ToString();
+        Count100.Text = simplifedHitResult.Hit100.ToString();
+        CountMiss.Text = simplifedHitResult.HitMiss.ToString();
     }
 
     private static void SimplifyHits(HitResult target, HitResult original, OsuGameMode mode)

@@ -2,6 +2,8 @@ namespace RealtimePPUR.Models;
 
 public class RuntimeSettings
 {
+    public static readonly RuntimeSettings Empty = new();
+
     public bool EnableLossMode { get; set; } = true;
     public int CalculationInterval { get; set; } = 15;
     public string CustomSongsFolder { get; set; } = string.Empty;

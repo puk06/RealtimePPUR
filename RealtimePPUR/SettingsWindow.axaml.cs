@@ -10,6 +10,7 @@ namespace RealtimePPUR;
 public partial class SettingsWindow : Window
 {
     private readonly Dictionary<ToggleSwitch, InGameOverlayValues> InGameOverlaySwitchValues;
+    
     public SettingsWindow()
     {
         InitializeComponent();
@@ -65,14 +66,8 @@ public partial class SettingsWindow : Window
         SetFromInGameOverlayValues(runtimeSettings.InGameOverlayValues);
     }
 
-    public void ResetSettings()
-    {
-        SetFromSettings(RealtimePPCalculator.Instance.RuntimeSettings);
-    }
-    public void ResetToDefaultSettings()
-    {
-        SetFromSettings(new RuntimeSettings());
-    }
+    public void ResetSettings() => SetFromSettings(RealtimePPCalculator.Instance.RuntimeSettings);
+    public void ResetToDefaultSettings() => SetFromSettings(RuntimeSettings.Empty);
     public void ApplySettings()
     {
         RealtimePPCalculator.Instance.UpdateSettings(new RuntimeSettings()

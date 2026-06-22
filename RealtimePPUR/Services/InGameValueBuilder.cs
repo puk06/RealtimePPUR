@@ -77,18 +77,33 @@ public static class InGameValueBuilder
     private static string PerformanceRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
     {
         var attributes = calculator.CurrentAttributes;
+        var settings = calculator.RuntimeSettings;
 
         var ifFc = attributes.IfFCPerformancePoint;
         var lossMode = attributes.LossModePerformancePoint;
         var current = attributes.CurrentPerformancePoint;
-
+        
         var mode = calculator.CurrentCalculationGameMode;
-        if (mode == OsuGameMode.Taiko || mode == OsuGameMode.Mania)
+        var isLossModeAvailable = mode == OsuGameMode.Taiko || mode == OsuGameMode.Mania;
+        var isLossModeEnabled = settings.EnableLossMode;
+        var isCurrentPpLossMode = isLossModeAvailable && isLossModeEnabled;
+
+        if (isLossModeAvailable)
         {
-            return GenerateInGameValueRow(
-                "PP",
-                $"{current:F2} / {lossMode:F2}pp"
-            );
+            if (isCurrentPpLossMode)
+            {
+                return GenerateInGameValueRow(
+                    "PP",
+                    $"{lossMode:F2} / {ifFc:F2}pp"
+                );
+            }
+            else
+            {
+                return GenerateInGameValueRow(
+                    "PP",
+                    $"{current:F2} / {lossMode:F2}pp"
+                );
+            }
         }
         else
         {
