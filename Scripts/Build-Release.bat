@@ -1,4 +1,5 @@
-set ProjectRootDirectory=%~dp0..\
+set ScriptDirectory=%~dp0
+set ProjectRootDirectory=%ScriptDirectory%..\
 set ProjectDirectory=%ProjectRootDirectory%RealtimePPUR\
 set ProjectFile=%ProjectDirectory%RealtimePPUR.csproj
 set BuildTargetDirectory=%ProjectDirectory%bin\build
@@ -10,7 +11,7 @@ rmdir "%BuildTargetDirectory%" /s /q
 dotnet publish "%ProjectFile%" -c Release -r win-x64 -o "%BuildTargetDirectory%"
 
 @REM Remove Unnecessary Files
-node RemoveUnnecessaryFiles.js "%BuildTargetDirectory%"
+node "%ScriptDirectory%RemoveUnnecessaryFiles.js" "%BuildTargetDirectory%"
 
 @REM Copy Licenses
 copy "%ProjectRootDirectory%LICENSE" "%BuildTargetDirectory%\LICENSE"
