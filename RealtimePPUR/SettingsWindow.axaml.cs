@@ -40,11 +40,13 @@ public partial class SettingsWindow : Window
     private InGameOverlayValues GetCurrentInGameOverlayValues()
     {
         InGameOverlayValues result = 0;
+
         foreach (var kpv in InGameOverlaySwitchValues)
         {
             var isChecked = kpv.Key?.IsChecked ?? false;
             if (isChecked) result |= kpv.Value;
         }
+
         return result;
     }
     private void SetFromInGameOverlayValues(InGameOverlayValues inGameOverlayValues)
@@ -63,6 +65,7 @@ public partial class SettingsWindow : Window
         EnableOverlay?.IsChecked = runtimeSettings.EnableOverlay;
         OverlayLeft?.Text = runtimeSettings.OverlayLeft.ToString();
         OverlayTop?.Text = runtimeSettings.OverlayTop.ToString();
+        AutoCheckUpdateOnStartup?.IsChecked = runtimeSettings.AutoCheckUpdateOnStartup;
         SetFromInGameOverlayValues(runtimeSettings.InGameOverlayValues);
     }
 
@@ -78,7 +81,8 @@ public partial class SettingsWindow : Window
             EnableOverlay = EnableOverlay?.IsChecked ?? false,
             OverlayLeft = ValueParser.Int(OverlayLeft?.Text, 0),
             OverlayTop = ValueParser.Int(OverlayTop?.Text, 75),
-            InGameOverlayValues = GetCurrentInGameOverlayValues()
+            InGameOverlayValues = GetCurrentInGameOverlayValues(),
+            AutoCheckUpdateOnStartup = AutoCheckUpdateOnStartup?.IsChecked ?? false,
         });
         RealtimePPCalculator.Instance.SaveSettings();
     }

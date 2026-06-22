@@ -54,12 +54,12 @@
 				<Grid DockPanel.Dock="Top" ColumnDefinitions="*,*,*">
 					<StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 						<TextBlock Classes="label" Text="SR" FontSize="21" VerticalAlignment="Center"/>
-						<TextBlock x:Name="SrValue" Classes="value" Text="6.49" FontSize="26" VerticalAlignment="Center"/>
+						<TextBlock x:Name="SrValue" Classes="value" Text="0" FontSize="26" VerticalAlignment="Center"/>
 					</StackPanel>
 
 					<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 						<TextBlock x:Name="IffcLabel" Classes="label" Text="IFFC" FontSize="21" VerticalAlignment="Center"/>
-						<TextBlock x:Name="IffcValue" Classes="value" Text="465" FontSize="26" VerticalAlignment="Center"/>
+						<TextBlock x:Name="IffcValue" Classes="value" Text="0" FontSize="26" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Grid>
 
@@ -97,7 +97,7 @@
 
 						<Panel Grid.Column="1">
 							<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="3" Margin="0,0,0,10">
-								<TextBlock x:Name="PpValue" Classes="value" Text="465" FontSize="42" FontWeight="ExtraBold" VerticalAlignment="Center"/>
+								<TextBlock x:Name="PpValue" Classes="value" Text="0" FontSize="42" FontWeight="ExtraBold" VerticalAlignment="Center"/>
 								<TextBlock Classes="label" Text="pp" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
 							</StackPanel>
 						</Panel>
@@ -107,18 +107,18 @@
 						<Grid RowDefinitions="*,Auto" VerticalAlignment="Center">
 							<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 								<TextBlock Classes="label" Text="Offset" FontSize="27" VerticalAlignment="Center"/>
-								<TextBlock x:Name="OffsetValue" Classes="value" Text="12" FontSize="35" VerticalAlignment="Center"/>
+								<TextBlock x:Name="OffsetValue" Classes="value" Text="0" FontSize="35" VerticalAlignment="Center"/>
 							</StackPanel>
 
 							<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 								<TextBlock Classes="label" Text="Avg" FontSize="18" VerticalAlignment="Center"/>
-								<TextBlock x:Name="AvgValue" Classes="value" Text="9.27ms" FontSize="19" VerticalAlignment="Center"/>
+								<TextBlock x:Name="AvgValue" Classes="value" Text="0ms" FontSize="19" VerticalAlignment="Center"/>
 							</StackPanel>
 						</Grid>
 						
 						<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 							<TextBlock Classes="label" Text="UR" FontSize="34" VerticalAlignment="Center"/>
-							<TextBlock x:Name="UrValue" Classes="value" Text="76" FontSize="45" VerticalAlignment="Center"/>
+							<TextBlock x:Name="UrValue" Classes="value" Text="0" FontSize="45" VerticalAlignment="Center"/>
 						</StackPanel>
 					</Grid>
 				</Grid>
