@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const REQUIRED_LIBRARIES = [
+const REQUIRED_FILES = [
     "Avalonia.Markup.dll",
     "Avalonia.Markup.Xaml.dll",
     "Avalonia.Metal.dll",
@@ -43,34 +43,13 @@ const REQUIRED_LIBRARIES = [
     "Avalonia.Fonts.Inter.dll"
 ];
 
-const BUILD_FOLDER = "../../build";
+const BuildDirectory = process.argv[2];
 
-if (!fs.existsSync(BUILD_FOLDER)) {
-    fs.mkdirSync(BUILD_FOLDER);
-} else {
-    const BUILD_FOLDER_CONTENTS = fs.readdirSync(BUILD_FOLDER);
-    for (const file of BUILD_FOLDER_CONTENTS) {
-        const filePath = path.join(BUILD_FOLDER, file);
-        console.log(`Deleting ${filePath}`);
-        const buildFileStat = fs.statSync(filePath);
-        if (buildFileStat.isDirectory()) {
-            fs.rmSync(filePath, { recursive: true, force: true });
-        } else {
-            fs.unlinkSync(filePath);
-        }
-    }
-}
-
-for (const file of REQUIRED_LIBRARIES) {
-    const filePath = path.join(BUILD_FOLDER, file);
-    console.log(`Copying ${file} to ${filePath}`);
-    fs.copyFileSync(file, filePath);
-    fs.unlinkSync(file);
-}
-
-const fileList = fs.readdirSync(".");
-for (const file of fileList) {
-    const filePath = path.join(".", file);
+const FilesList = fs.readdirSync(BuildDirectory);
+for (const file of FilesList) {
+    if (REQUIRED_FILES.includes(file)) continue;
+    
+    const filePath = path.join(BuildDirectory, file);
     const stat = fs.statSync(filePath);
 
     if (stat.isDirectory()) {

@@ -16,13 +16,8 @@ git checkout %2
 cd ..
 
 :skip
-REM Build the project targeting .NET 8.0
-cd RealtimePPUR
-dotnet build RealtimePPUR.csproj -c Release
-
-REM Change to the build output directory
-cd bin\build
+REM Build the project
+Scripts/Build-Release.bat
 
 REM Run the executable
-"explorer.exe" .
-RealtimePPUR.exe
+"explorer.exe" ./bin/build

@@ -154,12 +154,6 @@ public class RealtimePPCalculator
                 cached.PreviousMods = current.CurrentMods;
             }
 
-            if (current.IsResultScreen)
-            {
-                recalculateRequired = true;
-                recalculateMapAttributesRequired = true;
-            }
-
             bool updated = false;
 
             if (recalculateRequired || recalculateMapAttributesRequired)
