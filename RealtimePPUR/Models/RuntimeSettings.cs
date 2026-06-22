@@ -4,7 +4,7 @@ public class RuntimeSettings
 {
     public static readonly RuntimeSettings Empty = new();
 
-    public bool EnableLossMode { get; set; } = true;
+    public bool EnableLossMode { get; set; } = false;
     public int CalculationInterval { get; set; } = 15;
     public string CustomSongsFolder { get; set; } = string.Empty;
 
