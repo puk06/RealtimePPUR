@@ -18,6 +18,7 @@ const REQUIRED_FILES = [
     "MessagePack.Annotations.dll",
     "MicroCom.Runtime.dll",
     "Newtonsoft.Json.dll",
+    "Notification.Avalonia.dll",
     "nunit.framework.dll",
     "osu.Framework.dll",
     "osu.Game.dll",

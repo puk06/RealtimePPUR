@@ -1,7 +1,11 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Notification;
 using Avalonia.Threading;
+using RealtimePPUR.Data;
 using RealtimePPUR.Models;
 using RealtimePPUR.Services;
 
@@ -25,6 +29,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        NotificationMessageContainer.Manager = new NotificationMessageManager();
+
         Topmost = true;
         ContextMenu = GenerateContextMenu();
 
@@ -43,6 +49,14 @@ public partial class MainWindow : Window
 
         var platformHandle = TryGetPlatformHandle();
         if (platformHandle != null) ProcessIntPtrManager.Register(typeof(MainWindow), platformHandle.Handle);
+    }
+
+    public async void OnLoaded(object? sender, RoutedEventArgs args)
+    {
+        if (RealtimePPCalculator.Instance.RuntimeSettings.AutoCheckUpdateOnStartup)
+        {
+            await CheckUpdate();
+        }
     }
 
     private ContextMenu GenerateContextMenu()
@@ -189,4 +203,36 @@ public partial class MainWindow : Window
         pointerStatus = false;
     }
     #endregion
+
+    private async Task CheckUpdate()
+    {
+        var result = await UpdateChecker.CheckUpdate();
+        if (string.IsNullOrEmpty(result)) return;
+
+        NotificationMessageContainer.Manager
+            .CreateMessage()
+            .Accent("#1751C3")
+            .Animates(true)
+            .Background("#333")
+            .HasBadge("Info")
+            .HasMessage("アップデートが利用可能です！")
+            .Dismiss().WithButton("Update now", async button => await OpenLink(SoftwareLink.LatestReleasePageURL))
+            .Dismiss().WithDelay(TimeSpan.FromSeconds(5))
+            .Queue();
+    }
+    private async Task OpenLink(string url)
+    {
+        try
+        {
+            var launcher = GetTopLevel(this)?.Launcher;
+            if (launcher == null) return;
+
+            var uri = new Uri(url);
+            await launcher.LaunchUriAsync(uri);
+        }
+        catch
+        {
+            // Ignored
+        }
+    }
 }

@@ -15,4 +15,6 @@ public class RuntimeSettings
         InGameOverlayValues.CurrentPerformancePoint |
         InGameOverlayValues.OffsetHelp |
         InGameOverlayValues.RemainingNotes;
+
+    public bool AutoCheckUpdateOnStartup { get; set; } = true;
 }

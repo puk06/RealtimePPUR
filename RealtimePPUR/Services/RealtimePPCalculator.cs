@@ -16,6 +16,8 @@ namespace RealtimePPUR.Services;
 
 public class RealtimePPCalculator
 {
+    public static readonly string CURRENT_VERSION = "v2.0.0";
+
     public event Action? OnCalculate = null;
     private MemoryReader MemoryReader { get; } = new();
     private SimplifiedAttributes SimplifiedAttributes { get; } = new();
