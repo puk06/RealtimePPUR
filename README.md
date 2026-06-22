@@ -1,5 +1,3 @@
-![](https://github.com/puk06/RealtimePPUR-old/assets/86549420/5a41b979-3176-443a-91f0-6150d9243cda)
-
 # RealtimePPUR ![License](https://img.shields.io/github/license/puk06/RealtimePPUR?style=flat-square) ![Release](https://img.shields.io/github/v/release/puk06/RealtimePPUR?style=flat-square) ![Language](https://img.shields.io/badge/language-c%23-green?style=flat-square) ![CodeFactor](https://www.codefactor.io/repository/github/puk06/RealtimePPUR/badge)
 This software will tell you how much the offset is off, with real-time PP, UR, in the osu game.
 
@@ -26,14 +24,9 @@ This software will tell you how much the offset is off, with real-time PP, UR, i
 # How to launch RealtimePPUR?
 Simply launch RealtimePPUR.exe, the icon with the blue, PP.
 
-# How to change the default software settings
-Change the Config.cfg file in the folder!
-
-I have written a lot of explanations so it will be easy to understand!
-
 # About IngameOverlay
 
-### Values
+## Values
 1: SR → SR: 〇〇 / 〇〇
 
 2: SSPP → SSPP: 〇〇pp
@@ -50,61 +43,16 @@ I have written a lot of explanations so it will be easy to understand!
 
 8: OffsetHelp → Offset: 〇〇
 
-9: ExpectedManiaScore  → ManiaScore: 〇〇〇〇〇〇
+9: AVGOFFSET → AvgOffset: 〇〇
 
-10: AVGOFFSET → AvgOffset: 〇〇
+10: HealthPercentage → HP: 〇〇%
 
-11: PROGRESS → Progress: 〇〇%
+11: UserScore → Score: 〇〇
 
-12: HealthPercentage → HP: 〇〇%
-
-13: CurrentPosition → Position: #〇
-
-14: HigherScoreDiff → HigherDiff: 〇〇
-
-15: HighestScoreDiff → HighestDiff: 〇〇
-
-16: UserScore → Score: 〇〇
-
-17: CurrentBPM → BPM: 〇〇〇
-
-18: CurrentRank → Rank: 〇 / 〇
-
-19: Remaining Notes → Notes: 〇〇〇〇
-
-# I want to build RealtimePPUR!!
-必要なモノ
-1. Node.js
-2. .NET8.0 SDK
-3. Git
-
-手順
-1. [RealtimePPUR-Build.bat](https://raw.githubusercontent.com/puk06/RealtimePPUR/refs/heads/master/RealtimePPUR-Build.bat)このリンクを右クリックして、リンク先を保存からダウンロードしてください。
-2. ダウンロードしたファイルを、RealtimePPURを作りたいフォルダに移動して、ダブルクリックで起動します。(RealtimePPUR-Build.batがあるフォルダと同じ場所にRealtimePPURというフォルダが作られます。)
-3. ビルドが終わると、自動でビルド先のエクスプローラーが開き、RealtimePPUR.exeを実行します。(ビルド先はRealtimePPUR/RealtimePPUR/bin/buildフォルダです)
-
-
-# I want to build RealtimePPUR with Local Rulesets for Rework!!
-必要なものは上と同じです。
-
-手順
-1. [RealtimePPUR-Build.bat](https://raw.githubusercontent.com/puk06/RealtimePPUR/refs/heads/master/RealtimePPUR-Build.bat)このリンクを右クリックして、リンク先を保存からダウンロードしてください。
-2. RealtimePPURを作りたいフォルダのパスをコピーし、コマンドプロンプトを開いて
-```php
-cd "コピーしたパス"
-```
-と入力し、"〇〇> (コマンド入力する所)"の左の〇〇ところがコピーしたところになってればOKです。
-次にそのフォルダ内にRealtimePPUR-Build.batがあることを確認して、
-```php
-RealtimePPUR-Build.bat "リワークのリポジトリ" "コミット、ブランチ、タグなどあればここに"
-```
-と入力し、ビルドします。
-3. ビルドが終わると、自動でビルド先のエクスプローラーが開き、RealtimePPUR.exeを実行します。(ビルド先はRealtimePPUR/RealtimePPUR/bin/buildフォルダです)
+12: Remaining Notes → Notes: 〇〇〇〇
 
 # Credit
 
 Joystick icons created by Us and Up - Flaticon
 
 Software UI Design Based - Gosumemory, Tosu -> Ingame2 by Dartandr(https://github.com/Dartandr)
-
-UI PSD, CLIP files -> RealtimePPUR/Overlays
