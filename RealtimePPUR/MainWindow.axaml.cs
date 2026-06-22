@@ -67,6 +67,7 @@ public partial class MainWindow : Window
         settings.Click += (_, _) =>
         {
             _settingsWindow.Show();
+            _settingsWindow.WindowState = WindowState.Normal;
             _settingsWindow.Topmost = true;
             _settingsWindow.Topmost = false;
         };
