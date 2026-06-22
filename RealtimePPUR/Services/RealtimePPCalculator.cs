@@ -55,7 +55,6 @@ public class RealtimePPCalculator
         settingsManager.Save();
     }
 
-
     private async void Update()
     {
         while (true)
