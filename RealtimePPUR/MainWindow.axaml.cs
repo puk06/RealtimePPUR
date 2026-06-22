@@ -122,7 +122,7 @@ public partial class MainWindow : Window
 
         var isLossModeAvailable = currentGameMode == OsuGameMode.Taiko || currentGameMode == OsuGameMode.Mania;
         var isLossModeEnabled = settings.EnableLossMode;
-        var isCurrentPpLossMode = isLossModeAvailable && isLossModeEnabled;
+        var isCurrentPpLossMode = memoryData.IsPlaying && isLossModeAvailable && isLossModeEnabled;
 
         _targetPp = isCurrentPpLossMode ? attributes.LossModePerformancePoint : attributes.CurrentPerformancePoint;
         _targetSr = attributes.CurrentStarRating;
