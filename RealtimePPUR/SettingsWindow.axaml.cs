@@ -42,10 +42,7 @@ public partial class SettingsWindow : Window
         foreach (var kpv in InGameOverlaySwitchValues)
         {
             var isChecked = kpv.Key?.IsChecked ?? false;
-            if (isChecked)
-            {
-                result |= kpv.Value;
-            }
+            if (isChecked) result |= kpv.Value;
         }
         return result;
     }
@@ -53,10 +50,7 @@ public partial class SettingsWindow : Window
     {
         foreach (var kpv in InGameOverlaySwitchValues)
         {
-            if ((inGameOverlayValues & kpv.Value) == kpv.Value)
-            {
-                kpv.Key.IsChecked = true;
-            }
+            kpv.Key.IsChecked = (inGameOverlayValues & kpv.Value) == kpv.Value;
         }
     }
 

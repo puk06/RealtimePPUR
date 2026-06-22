@@ -50,7 +50,12 @@ public partial class MainWindow : Window
         var contextMenu = new ContextMenu();
 
         var settings = new MenuItem() { Header = "設定" };
-        settings.Click += (_, _) => _settingsWindow.Show();
+        settings.Click += (_, _) =>
+        {
+            _settingsWindow.Show();
+            _settingsWindow.Topmost = true;
+            _settingsWindow.Topmost = false;
+        };
         var close = new MenuItem() { Header = "閉じる" };
         close.Click += (_, _) => Close();
 
