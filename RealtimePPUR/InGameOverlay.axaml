@@ -4,7 +4,7 @@
 	Title="RealtimePPUR - InGameOverlay"
 	Background="Transparent"
 	TransparencyLevelHint="AcrylicBlur"
-	FontFamily="Oxanium"
+	FontFamily="avares://RealtimePPUR/Assets/Fonts#Oxanium"
     ExtendClientAreaToDecorationsHint="True"
 	SizeToContent="WidthAndHeight"
 	ExtendClientAreaChromeHints="NoChrome"

@@ -6,7 +6,7 @@
 	Height="170"
 	Background="Transparent"
 	TransparencyLevelHint="AcrylicBlur"
-	FontFamily="Oxanium"
+	FontFamily="avares://RealtimePPUR/Assets/Fonts#Oxanium"
 	CanResize="True"
 	ExtendClientAreaChromeHints="NoChrome"
 	ExtendClientAreaToDecorationsHint="True"
