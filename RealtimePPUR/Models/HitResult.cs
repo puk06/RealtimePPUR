@@ -11,7 +11,6 @@ public sealed class HitResult : IEquatable<HitResult>
     public int Hit50 { get; set; } = 0;
     public int HitMiss { get; set; } = 0;
 
-
     public void FromOther(HitResult other)
     {
         HitGeki = other.HitGeki;
