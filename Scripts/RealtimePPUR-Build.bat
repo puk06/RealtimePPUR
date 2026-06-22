@@ -18,6 +18,3 @@ cd ..
 :skip
 REM Build the project
 Scripts/Build-Release.bat
-
-REM Run the executable
-"explorer.exe" ./bin/build
