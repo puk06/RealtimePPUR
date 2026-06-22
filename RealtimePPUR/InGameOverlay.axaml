@@ -7,7 +7,8 @@
 	FontFamily="Oxanium"
     ExtendClientAreaToDecorationsHint="True"
 	SizeToContent="WidthAndHeight"
-	ExtendClientAreaChromeHints="NoChrome">
+	ExtendClientAreaChromeHints="NoChrome"
+	Closing="OnClosing">
 	<Border Background="Transparent">
         <TextBlock x:Name="IngameOverlayValue" Text="" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="24" Margin="5"/>
     </Border>

@@ -42,6 +42,7 @@ public partial class InGameOverlay : Window
 
         var platformHandle = TryGetPlatformHandle();
         if (platformHandle != null) ProcessIntPtrManager.Register(typeof(InGameOverlay), platformHandle.Handle);
+        ShowInTaskbar = false;
     }
 
     private async void OnWindowReflesh(object? sender, EventArgs e)
@@ -95,5 +96,10 @@ public partial class InGameOverlay : Window
             IsVisible = value;
             if (value && previousForeground == targetWindow) SetForegroundWindow(targetWindow); // アクティブ時にウィンドウのフォーカスが外れるため
         }
+    }
+
+    public void OnClosing(object? sender, WindowClosingEventArgs args)
+    {
+        args.Cancel = true;
     }
 }
