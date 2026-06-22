@@ -1,3 +1,5 @@
+![Cover](Assets/Cover.png)
+
 # RealtimePPUR ![License](https://img.shields.io/github/license/puk06/RealtimePPUR?style=flat-square) ![Release](https://img.shields.io/github/v/release/puk06/RealtimePPUR?style=flat-square) ![Language](https://img.shields.io/badge/language-c%23-green?style=flat-square) ![CodeFactor](https://www.codefactor.io/repository/github/puk06/RealtimePPUR/badge)
 This software will tell you how much the offset is off, with real-time PP, UR, in the osu game.
 
