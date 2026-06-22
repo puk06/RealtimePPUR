@@ -20,6 +20,7 @@ public partial class MainWindow : Window
     private readonly HitResult simplifedHitResult = new();
 
     private readonly DispatcherTimer _smoothTimer;
+    private readonly SettingsWindow _settingsWindow;
 
     public MainWindow()
     {
@@ -37,7 +38,11 @@ public partial class MainWindow : Window
         RealtimePPCalculator.Instance.Start();
         RealtimePPCalculator.Instance.OnCalculate += OnUpdate;
 
+        _settingsWindow = new SettingsWindow();
         new InGameOverlay().Show();
+
+        var platformHandle = TryGetPlatformHandle();
+        if (platformHandle != null) ProcessIntPtrManager.Register(typeof(MainWindow), platformHandle.Handle);
     }
 
     private ContextMenu GenerateContextMenu()
@@ -45,7 +50,8 @@ public partial class MainWindow : Window
         var contextMenu = new ContextMenu();
 
         var settings = new MenuItem() { Header = "設定" };
-        var close = new MenuItem() { Header = "閉じる" }; // TODO: 作る
+        settings.Click += (_, _) => _settingsWindow.Show();
+        var close = new MenuItem() { Header = "閉じる" };
         close.Click += (_, _) => Close();
 
         contextMenu.Items.Add(settings);

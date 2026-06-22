@@ -1,0 +1,266 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="RealtimePPUR.SettingsWindow"
+	Title="RealtimePPUR Settings"
+	Background="rgb(51, 51, 51)"
+    Width="500"
+	Height="500"
+	FontFamily="Inter"
+    Closing="OnClosing">
+
+    <Window.Styles>
+		<Styles>
+
+			<Style Selector="TextBlock.settingslabel.title">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#f2f2f2"/>
+        </Style>
+
+        <Style Selector="TextBlock.settingslabel.description">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Foreground" Value="#a8a8a8"/>
+        </Style>
+
+		</Styles>
+	</Window.Styles>
+
+	<Border>
+        <Grid RowDefinitions="*,Auto">
+            <TabControl HorizontalAlignment="Stretch" SelectedIndex="1">
+            <TabItem Header="一般" Foreground="White">
+                <Panel Margin="0,10,0,0">
+                    <ScrollViewer>
+                        <StackPanel Spacing="15" Margin="0,0,15,0">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="LossModeを有効化する"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="Taiko + Maniaで、100の状態から減っていくスタイルのPP計算方法です。"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="EnableLossMode" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="PP計算頻度(ms)"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="計算後のクールダウン時間(ms)です"/>
+                                </Grid>
+
+                                <TextBox Grid.Column="1" x:Name="CalculationInterval" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="Songsフォルダ"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="Songs以外のフォルダの場合はここにパスを入力してください"/>
+                                </Grid>
+
+                                <TextBox Grid.Column="1" x:Name="CustomSongsFolder" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Panel>
+            </TabItem>
+
+            <TabItem Header="オーバーレイ" Foreground="White">
+                <Panel Margin="0,10,0,0">
+                    <ScrollViewer>
+                        <StackPanel Spacing="15" Margin="0,0,15,0">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="ゲーム内オーバーレイ"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="ゲーム内オーバーレイを有効化します"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="EnableOverlay" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="オーバーレイ位置（左）"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="左端からのpx数"/>
+                                </Grid>
+
+                                <TextBox Grid.Column="1" x:Name="OverlayLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="オーバーレイ位置（上）"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="上からのpx数"/>
+                                </Grid>
+
+                                <TextBox Grid.Column="1" x:Name="OverlayTop" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="StarRating"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="SR: 現在のSR / マップのSR"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="StarRating" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="SSPP"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="SSPP: マップのSSPP"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="SSPP" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="PP"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="PP: 現在のPP / IFFC (もしくはLossMode)"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="CurrentPP" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="Accuracy"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="ACC: 現在のACC / LossMode ACC"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="CurrentACC" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="Hits"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="Hits: 123/4/5"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="CurrentHits" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="LossMode Hits"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="LossHits: 123/4/5"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="LossModeHits" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="IFFC Hits"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="IFFCHits: 127/5/0"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="IFFCHits" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="UnstableRate"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="UR: 123.45"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="UnstableRate" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="OffsetHelp"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="OffsetHelp: -2"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="OffsetHelp" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="AverageError"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="AvgError: 2.24ms"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="AverageError" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="HP"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="HP: 32.5%"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="HealthPercentage" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="Score"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="Score: 123,456 (壊れています)"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="CurrentScore" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="Combo"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="Combo: 12 / MaxCombo"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="CurrentCombo" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="Remaining Notes"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="Notes: 1239"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="RemainingNotes" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Panel>
+            </TabItem>
+        </TabControl>
+            <Grid Grid.Row="1" ColumnDefinitions="*,*,*" Margin="10" ColumnSpacing="20">
+                <Button Grid.Column="0" Content="初期化" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FontSize="19" FontWeight="Bold" Click="ResetToDefaultClicked"/>
+                <Button Grid.Column="1" Content="変更をリセット" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FontSize="19" FontWeight="Bold" Click="ResetClicked"/>
+                <Button Grid.Column="2" Content="適用して保存" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FontSize="19" FontWeight="Bold" Click="ApplyClicked"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

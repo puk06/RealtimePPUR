@@ -20,7 +20,6 @@ public static class InGameValueBuilder
         { InGameOverlayValues.UnstableRate, UnstableRateRowBuilder },
         { InGameOverlayValues.OffsetHelp, OffsetHelpRowBuilder },
         { InGameOverlayValues.AverageError, AverageErrorRowBuilder },
-        { InGameOverlayValues.SongProgress, SongProgressRowBuilder },
         { InGameOverlayValues.HealthPercentage, HealthPercentageRowBuilder },
         { InGameOverlayValues.Score, ScoreRowBuilder },
         { InGameOverlayValues.Combo, ComboRowBuilder },
@@ -186,15 +185,6 @@ public static class InGameValueBuilder
         return GenerateInGameValueRow(
             "AvgError",
             $"{average:F2}ms"
-        );
-    }
-    private static string SongProgressRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)
-    {
-        var progress = memoryData.TotalAudioTime > 0 ? memoryData.CurrentAudioTime / memoryData.TotalAudioTime * 100 : 0;
-
-        return GenerateInGameValueRow(
-            "Progress",
-            $"{progress:F1}%"
         );
     }
     private static string HealthPercentageRowBuilder(MemoryData memoryData, RealtimePPCalculator calculator)

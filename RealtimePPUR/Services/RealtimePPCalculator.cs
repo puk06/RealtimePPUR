@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using OsuMemoryDataProvider;
+using RealtimePPUR.Data;
 using RealtimePPUR.Models;
 using RealtimePPUR.Services.PPCalculation;
 using RealtimePPUR.Utils;
@@ -30,7 +31,8 @@ public class RealtimePPCalculator
     public OsuBetmapInfo OsuBeatmapInfo { get; } = new();
     public OsuGameMode CurrentCalculationGameMode => CachedMemoryData.PreviousCalculatedGameMode;
 
-    private readonly int calculateInterval = 15;
+    private readonly SettingsManager<RuntimeSettings> settingsManager = new(SystemPath.RuntimeSettingsFilePath);
+    public RuntimeSettings RuntimeSettings => settingsManager.Settings;
 
     private RealtimePPCalculator()
     {
@@ -39,15 +41,27 @@ public class RealtimePPCalculator
     public void Start()
     {
         MemoryReader.Start();
+        settingsManager.Load();
         new Thread(Update) { IsBackground = true }.Start();
     }
+
+    public void UpdateSettings(RuntimeSettings runtimeSettings)
+    {
+        settingsManager.Update(runtimeSettings);
+    }
+
+    public void SaveSettings()
+    {
+        settingsManager.Save();
+    }
+
 
     private async void Update()
     {
         while (true)
         {
             await CalculatePerformance();
-            Thread.Sleep(calculateInterval);
+            Thread.Sleep(Math.Max(RuntimeSettings.CalculationInterval, 0));
         }
     }
 
@@ -61,12 +75,17 @@ public class RealtimePPCalculator
             var cached = CachedMemoryData;
             var current = MemoryReader.CurrentMemoryData;
 
+            string previousSongsPath = cached.PreviousSongsPath;
+            string currentSongsPath = string.IsNullOrEmpty(RuntimeSettings.CustomSongsFolder) ? current.OsuPathInfo.SongsPath : RuntimeSettings.CustomSongsFolder;
+            var songsFolderHasChanged = previousSongsPath != currentSongsPath;
+            cached.PreviousSongsPath = currentSongsPath;
+
             string previousMapPath = cached.PreviousMapPath;
             string currentMapPath = current.OsuMapInfo.RelativeBeatmapPath;
-            if (previousMapPath != currentMapPath)
+            if (songsFolderHasChanged || previousMapPath != currentMapPath)
             {
                 var fixedBeatmapPath = OsuBeatmapUtils.GetMapPath(
-                    current.OsuPathInfo.SongsPath,
+                    currentSongsPath,
                     current.OsuMapInfo.FolderName,
                     current.OsuMapInfo.FileName
                 );
@@ -262,6 +281,7 @@ public class CachedMemoryData
     public int PreviousScore { get; set; } = 0;
     public int PreviousCombo { get; set; } = 0;
     public int PreviousMods { get; set; } = 0;
+    public string PreviousSongsPath { get; set; } = string.Empty;
     public string PreviousMapPath { get; set; } = string.Empty;
     public OsuMemoryStatus PreviousOsuMemoryStatus { get; set; } = OsuMemoryStatus.Unknown;
     public OsuGameMode PreviousCalculatedGameMode { get; set; } = OsuGameMode.None;

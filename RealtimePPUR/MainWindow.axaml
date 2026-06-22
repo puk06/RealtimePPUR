@@ -45,7 +45,7 @@
 		<Panel Background="Black">
 
 			<!-- メインコンテンツ -->
-			<DockPanel Margin="15,7,15,7">
+			<DockPanel Margin="14,7,14,7">
 				<Grid DockPanel.Dock="Top" ColumnDefinitions="*,*,*">
 					<StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 						<TextBlock Classes="label" Text="SR" FontSize="21" VerticalAlignment="Center"/>

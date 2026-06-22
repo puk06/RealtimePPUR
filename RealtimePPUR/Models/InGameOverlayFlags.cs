@@ -16,9 +16,8 @@ public enum InGameOverlayValues
     UnstableRate = 1 << 7,
     OffsetHelp = 1 << 8,
     AverageError = 1 << 9,
-    SongProgress = 1 << 10,
-    HealthPercentage = 1 << 11,
-    Score = 1 << 12,
-    Combo = 1 << 13,
-    RemainingNotes = 1 << 14
+    HealthPercentage = 1 << 10,
+    Score = 1 << 11,
+    Combo = 1 << 12,
+    RemainingNotes = 1 << 13
 }

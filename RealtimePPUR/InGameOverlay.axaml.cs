@@ -2,7 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using RealtimePPUR.Models;
 using RealtimePPUR.Services;
 
 namespace RealtimePPUR;
@@ -40,6 +39,9 @@ public partial class InGameOverlay : Window
         _windowRefleshTimer.Start();
 
         RealtimePPCalculator.Instance.OnCalculate += OnCalculate;
+
+        var platformHandle = TryGetPlatformHandle();
+        if (platformHandle != null) ProcessIntPtrManager.Register(typeof(InGameOverlay), platformHandle.Handle);
     }
 
     private async void OnWindowReflesh(object? sender, EventArgs e)
@@ -53,11 +55,16 @@ public partial class InGameOverlay : Window
 
             var handle = process.MainWindowHandle;
             if (!GetWindowRect(handle, out WindowRect rect)) return;
+            
+            var runtimeSettings = RealtimePPCalculator.Instance.RuntimeSettings;
 
-            var shouldEnableOverlay = currentMemoryData.IsPlaying && handle == GetForegroundWindow();
+            var enableOverlay = runtimeSettings.EnableOverlay;
+            var currentForeground = GetForegroundWindow();
+            
+            var shouldEnableOverlay = enableOverlay && currentMemoryData.IsPlaying && (currentForeground == handle || ProcessIntPtrManager.HasValue(currentForeground));
             ToggleOverlay(shouldEnableOverlay, handle);
 
-            Position = new Avalonia.PixelPoint(rect.Left + 2, rect.Top + 25 + 50);
+            Position = new Avalonia.PixelPoint(rect.Left + 2 + runtimeSettings.OverlayLeft, rect.Top + runtimeSettings.OverlayTop);
             if (Topmost != shouldEnableOverlay) Topmost = shouldEnableOverlay;
         });
     }
@@ -71,15 +78,12 @@ public partial class InGameOverlay : Window
         });
     }
 
-    // TODO: テストだから、これを設定画面とかで管理する
-    private static InGameOverlayValues testValues = InGameOverlayValues.LossModeHits | InGameOverlayValues.Combo | InGameOverlayValues.StarRatings | InGameOverlayValues.CurrentPerformancePoint | InGameOverlayValues.CurrentAccuracy | InGameOverlayValues.CurrentHits | InGameOverlayValues.AverageError | InGameOverlayValues.HealthPercentage | InGameOverlayValues.UnstableRate | InGameOverlayValues.OffsetHelp | InGameOverlayValues.RemainingNotes | InGameOverlayValues.IfFCHits | InGameOverlayValues.Score;
-
     private static string GenerateInGameValue()
     {
         var memory = RealtimePPCalculator.Instance.CurrentMemoryData;
         var calculator = RealtimePPCalculator.Instance;
 
-        return InGameValueBuilder.Build(memory, calculator, testValues);
+        return InGameValueBuilder.Build(memory, calculator, RealtimePPCalculator.Instance.RuntimeSettings.InGameOverlayValues);
     }
 
     private void ToggleOverlay(bool value, IntPtr targetWindow)
@@ -87,8 +91,9 @@ public partial class InGameOverlay : Window
         var hasChanged = IsVisible != value;
         if (hasChanged)
         {
+            var previousForeground = GetForegroundWindow();
             IsVisible = value;
-            if (value) SetForegroundWindow(targetWindow); // アクティブ時にウィンドウのフォーカスが外れるため
+            if (value && previousForeground == targetWindow) SetForegroundWindow(targetWindow); // アクティブ時にウィンドウのフォーカスが外れるため
         }
     }
 }

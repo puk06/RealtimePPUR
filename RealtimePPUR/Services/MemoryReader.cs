@@ -63,7 +63,6 @@ public class MemoryReader
                     _memoryData.OsuMapInfo.FileName = baseAddresses.Beatmap.OsuFileName;
 
                     _memoryData.CurrentAudioTime = baseAddresses.GeneralData.AudioTime;
-                    _memoryData.TotalAudioTime = baseAddresses.GeneralData.TotalAudioTime;
 
                     _memoryData.CurrentMods = _memoryData.OsuMemoryStatus switch
                     {
@@ -142,7 +141,6 @@ public class MemoryData
     public OsuMemoryStatus OsuMemoryStatus { get; set; } = OsuMemoryStatus.Unknown;
     public OsuMapInfo OsuMapInfo { get; } = new();
     public int CurrentAudioTime { get; set; } = 0;
-    public double TotalAudioTime { get; set; } = 0;
 
     public OsuGameMode OsuGameMode { get; set; } = OsuGameMode.None;
 
