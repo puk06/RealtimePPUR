@@ -49,7 +49,7 @@ public partial class InGameOverlay : Window
     {
         try
         {
-            await Dispatcher.UIThread.InvokeAsync(() => UpdateWindowStatus());
+            await Dispatcher.UIThread.InvokeAsync(UpdateWindowStatus);
         }
         catch
         {

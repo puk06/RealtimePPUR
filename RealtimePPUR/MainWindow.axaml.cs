@@ -106,7 +106,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            await Dispatcher.UIThread.InvokeAsync(() => UpdateValues());
+            await Dispatcher.UIThread.InvokeAsync(UpdateValues);
         }
         catch
         {
