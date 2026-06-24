@@ -111,6 +111,17 @@
 
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                                 <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="背景のアクリル化"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="背景をぼかして見やすくします。※オフにする場合は再起動が必要です"/>
+                                </Grid>
+
+                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                                    <ToggleSwitch x:Name="AcrylicOverlay" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
                                     <TextBlock Classes="settingslabel title" Grid.Row="0" Text="StarRating"/>
                                     <TextBlock Classes="settingslabel description" Grid.Row="1" Text="SR: 現在のSR / マップのSR"/>
                                 </Grid>

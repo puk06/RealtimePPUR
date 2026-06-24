@@ -3,7 +3,6 @@
 	x:Class="RealtimePPUR.InGameOverlay"
 	Title="RealtimePPUR - InGameOverlay"
 	Background="Transparent"
-	TransparencyLevelHint="AcrylicBlur"
 	FontFamily="avares://RealtimePPUR/Assets/Fonts#Oxanium"
     ExtendClientAreaToDecorationsHint="True"
 	SizeToContent="WidthAndHeight"

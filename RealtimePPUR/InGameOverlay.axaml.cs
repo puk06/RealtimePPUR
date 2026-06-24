@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using RealtimePPUR.Models;
 using RealtimePPUR.Services;
 
 namespace RealtimePPUR;
@@ -43,6 +44,9 @@ public partial class InGameOverlay : Window
         var platformHandle = TryGetPlatformHandle();
         if (platformHandle != null) ProcessIntPtrManager.Register(typeof(InGameOverlay), platformHandle.Handle);
         ShowInTaskbar = false;
+
+        RealtimePPCalculator.Instance.OnSettingsUpdate += OnSettingsUpdated;
+        ApplySettings(RealtimePPCalculator.Instance.RuntimeSettings);
     }
 
     private async void OnWindowReflesh(object? sender, EventArgs e)
@@ -111,6 +115,12 @@ public partial class InGameOverlay : Window
             IsVisible = value;
             if (value && previousForeground == targetWindow) SetForegroundWindow(targetWindow); // アクティブ時にウィンドウのフォーカスが外れるため
         }
+    }
+
+    public void OnSettingsUpdated(object? sender, RuntimeSettings settings) => ApplySettings(settings);
+    public void ApplySettings(RuntimeSettings settings)
+    {
+        TransparencyLevelHint = settings.AcrylicOverlay ? [WindowTransparencyLevel.AcrylicBlur] : [];
     }
 
     public void OnClosing(object? sender, WindowClosingEventArgs args)

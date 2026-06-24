@@ -35,6 +35,11 @@ public class RealtimePPCalculator
 
     private readonly SettingsManager<RuntimeSettings> settingsManager = new(SystemPath.RuntimeSettingsFilePath);
     public RuntimeSettings RuntimeSettings => settingsManager.Settings;
+    public event EventHandler<RuntimeSettings> OnSettingsUpdate
+    {
+        add => settingsManager.SettingsChanged += value;
+        remove => settingsManager.SettingsChanged -= value;
+    }
 
     private RealtimePPCalculator()
     {

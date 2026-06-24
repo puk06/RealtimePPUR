@@ -65,6 +65,7 @@ public partial class SettingsWindow : Window
         EnableOverlay?.IsChecked = runtimeSettings.EnableOverlay;
         OverlayLeft?.Text = runtimeSettings.OverlayLeft.ToString();
         OverlayTop?.Text = runtimeSettings.OverlayTop.ToString();
+        AcrylicOverlay?.IsChecked = runtimeSettings.AcrylicOverlay;
         AutoCheckUpdateOnStartup?.IsChecked = runtimeSettings.AutoCheckUpdateOnStartup;
         SetFromInGameOverlayValues(runtimeSettings.InGameOverlayValues);
     }
@@ -81,6 +82,7 @@ public partial class SettingsWindow : Window
             EnableOverlay = EnableOverlay?.IsChecked ?? false,
             OverlayLeft = ValueParser.Int(OverlayLeft?.Text, 0),
             OverlayTop = ValueParser.Int(OverlayTop?.Text, 75),
+            AcrylicOverlay = AcrylicOverlay?.IsChecked ?? false,
             InGameOverlayValues = GetCurrentInGameOverlayValues(),
             AutoCheckUpdateOnStartup = AutoCheckUpdateOnStartup?.IsChecked ?? false,
         });

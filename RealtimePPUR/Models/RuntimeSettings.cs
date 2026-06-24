@@ -11,6 +11,7 @@ public class RuntimeSettings
     public bool EnableOverlay { get; set; } = true;
     public int OverlayLeft { get; set; } = 0;
     public int OverlayTop { get; set; } = 80;
+    public bool AcrylicOverlay { get; set; } = true;
     
     public InGameOverlayValues InGameOverlayValues { get; set; } =
         InGameOverlayValues.StarRatings |
