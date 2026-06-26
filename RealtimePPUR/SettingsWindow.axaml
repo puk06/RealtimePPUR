@@ -63,6 +63,19 @@
 
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                                 <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
+                                    <TextBlock Classes="settingslabel title" Grid.Row="0" Text="ソフトウェアモード"/>
+                                    <TextBlock Classes="settingslabel description" Grid.Row="1" Text="不要なものは非表示にできたりします"/>
+                                </Grid>
+
+                                <ComboBox Grid.Column="1" x:Name="SoftwareMode" HorizontalAlignment="Stretch">
+                                    <ComboBoxItem Content="RealtimePPUR"/>
+                                    <ComboBoxItem Content="RealtimePP"/>
+                                    <ComboBoxItem Content="OffsetHelper"/>
+                                </ComboBox>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="5">
                                     <TextBlock Classes="settingslabel title" Grid.Row="0" Text="自動アップデートチェック"/>
                                     <TextBlock Classes="settingslabel description" Grid.Row="1" Text="起動時に自動で更新を確認します"/>
                                 </Grid>

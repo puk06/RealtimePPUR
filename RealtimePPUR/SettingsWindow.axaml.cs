@@ -62,6 +62,7 @@ public partial class SettingsWindow : Window
         EnableLossMode?.IsChecked = runtimeSettings.EnableLossMode;
         CalculationInterval?.Text = runtimeSettings.CalculationInterval.ToString();
         CustomSongsFolder?.Text = runtimeSettings.CustomSongsFolder;
+        SoftwareMode.SelectedIndex = (int)runtimeSettings.SoftwareMode;
         EnableOverlay?.IsChecked = runtimeSettings.EnableOverlay;
         OverlayLeft?.Text = runtimeSettings.OverlayLeft.ToString();
         OverlayTop?.Text = runtimeSettings.OverlayTop.ToString();
@@ -79,6 +80,7 @@ public partial class SettingsWindow : Window
             EnableLossMode = EnableLossMode?.IsChecked ?? false,
             CalculationInterval = ValueParser.Int(CalculationInterval?.Text, 15),
             CustomSongsFolder = CustomSongsFolder?.Text ?? string.Empty,
+            SoftwareMode = (SoftwareMode)SoftwareMode.SelectedIndex,
             EnableOverlay = EnableOverlay?.IsChecked ?? false,
             OverlayLeft = ValueParser.Int(OverlayLeft?.Text, 0),
             OverlayTop = ValueParser.Int(OverlayTop?.Text, 75),

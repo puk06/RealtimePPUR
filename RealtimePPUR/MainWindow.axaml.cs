@@ -49,6 +49,9 @@ public partial class MainWindow : Window
 
         var platformHandle = TryGetPlatformHandle();
         if (platformHandle != null) ProcessIntPtrManager.Register(typeof(MainWindow), platformHandle.Handle);
+
+        RealtimePPCalculator.Instance.OnSettingsUpdate += OnSettingsUpdated;
+        ApplySettings(RealtimePPCalculator.Instance.RuntimeSettings);
     }
 
     public async void OnLoaded(object? sender, RoutedEventArgs args)
@@ -249,4 +252,13 @@ public partial class MainWindow : Window
             // Ignored
         }
     }
+
+    public void ApplySettings(RuntimeSettings settings)
+    {
+        RealtimeSR.IsVisible = settings.SoftwareMode != SoftwareMode.OffsetHelper;
+        RealtimePP.IsVisible = settings.SoftwareMode != SoftwareMode.OffsetHelper;
+        OffsetHelper.IsVisible = settings.SoftwareMode != SoftwareMode.PP;
+    }
+
+    public void OnSettingsUpdated(object? sender, RuntimeSettings settings) => ApplySettings(settings);
 }

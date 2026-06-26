@@ -7,6 +7,7 @@ public class RuntimeSettings
     public bool EnableLossMode { get; set; } = false;
     public int CalculationInterval { get; set; } = 15;
     public string CustomSongsFolder { get; set; } = string.Empty;
+    public SoftwareMode SoftwareMode { get; set; } = SoftwareMode.PPUR;
 
     public bool EnableOverlay { get; set; } = true;
     public int OverlayLeft { get; set; } = 0;
