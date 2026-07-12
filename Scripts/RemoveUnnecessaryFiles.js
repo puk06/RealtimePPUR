@@ -41,7 +41,8 @@ const REQUIRED_FILES = [
     "Avalonia.Controls.dll",
     "Avalonia.Desktop.dll",
     "Avalonia.Dialogs.dll",
-    "Avalonia.Fonts.Inter.dll"
+    "Avalonia.Fonts.Inter.dll",
+    "Sentry.dll"
 ];
 
 const BuildDirectory = process.argv[2];
