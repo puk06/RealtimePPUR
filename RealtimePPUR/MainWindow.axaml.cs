@@ -84,7 +84,7 @@ public partial class MainWindow : Window
     }
 
     private DateTime _lastUpdate = DateTime.Now;
-    private const double SmoothTime = 0.75;
+    private const double SmoothTime = 0.5;
 
     private static double Lerp(double current, double target, double t) => current + ((target - current) * t);
     private void OnSmoothUpdate(object? sender, EventArgs e)
@@ -140,18 +140,18 @@ public partial class MainWindow : Window
         {
             if (isLossModeAvailable && !isLossModeEnabled)
             {
-                IffcLabel.Text = "LOSS/SS";
+                IffcLabel.Text = "LM/SS";
                 ifFcString = lossModePp + " / " + ssPp;
             }
             else
             {
-                IffcLabel.Text = "IFFC/SS";
+                IffcLabel.Text = "IF/SS";
                 ifFcString = iffcPp + " / " + ssPp;
             }
         }
         else if (memoryData.IsResultScreen)
         {
-            IffcLabel.Text = "IFFC/SS";
+            IffcLabel.Text = "IF/SS";
             ifFcString = iffcPp + " / " + ssPp;
         }
         else

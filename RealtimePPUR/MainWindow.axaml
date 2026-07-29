@@ -3,8 +3,8 @@
 	xmlns:controls="clr-namespace:Avalonia.Notification.Controls;assembly=Notification.Avalonia"
 	x:Class="RealtimePPUR.MainWindow"
 	Title="RealtimePPUR"
-	Width="430"
-	Height="170"
+	Width="320"
+	Height="130"
 	Background="Transparent"
 	TransparencyLevelHint="AcrylicBlur"
 	FontFamily="avares://RealtimePPUR/Assets/Fonts#Oxanium"
@@ -50,42 +50,42 @@
 
 		<Panel Background="Black">
 			<!-- メインコンテンツ -->
-			<StackPanel Orientation="Vertical" Margin="14,7,14,7">
+			<StackPanel Orientation="Vertical" Margin="12,5,12,5">
 				<Grid x:Name="RealtimeSR" ColumnDefinitions="*,*,*">
 					<StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-						<TextBlock Classes="label" Text="SR" FontSize="21" VerticalAlignment="Center"/>
-						<TextBlock x:Name="SrValue" Classes="value" Text="0" FontSize="26" VerticalAlignment="Center"/>
+						<TextBlock Classes="label" Text="SR" FontSize="18" VerticalAlignment="Center"/>
+						<TextBlock x:Name="SrValue" Classes="value" Text="0" FontSize="22" VerticalAlignment="Center"/>
 					</StackPanel>
 
 					<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-						<TextBlock x:Name="IffcLabel" Classes="label" Text="IFFC" FontSize="21" VerticalAlignment="Center"/>
-						<TextBlock x:Name="IffcValue" Classes="value" Text="0" FontSize="26" VerticalAlignment="Center"/>
+						<TextBlock x:Name="IffcLabel" Classes="label" Text="IFFC" FontSize="18" VerticalAlignment="Center"/>
+						<TextBlock x:Name="IffcValue" Classes="value" Text="0" FontSize="22" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Grid>
 
-				<Grid x:Name="RealtimePP" ColumnDefinitions="1.7*,*">
-					<UniformGrid Grid.Column="0" Columns="3" ColumnSpacing="5" VerticalAlignment="Center">
-						<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="2">
-							<TextBlock x:Name="Count300" Classes="value" Text="0" FontSize="27" HorizontalAlignment="Center"/>
-							<Border Height="3" HorizontalAlignment="Center" Width="22" CornerRadius="2">
+				<Grid x:Name="RealtimePP" ColumnDefinitions="1.6*,*">
+					<UniformGrid Grid.Column="0" Columns="3" ColumnSpacing="5" VerticalAlignment="Bottom" Margin="0,0,0,3">
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="1">
+							<TextBlock x:Name="Count300" Classes="value" Text="0" FontSize="23" HorizontalAlignment="Center"/>
+							<Border Height="3" HorizontalAlignment="Center" Width="15" CornerRadius="2">
 								<Border.Background>
 									<SolidColorBrush Color="#60A5FA"/>
 								</Border.Background>
 							</Border>
 						</StackPanel>
 
-						<StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" Spacing="2">
-							<TextBlock x:Name="Count100" Classes="value" Text="0" FontSize="27" HorizontalAlignment="Center"/>
-							<Border Height="3" HorizontalAlignment="Center" Width="22" CornerRadius="2">
+						<StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" Spacing="1">
+							<TextBlock x:Name="Count100" Classes="value" Text="0" FontSize="23" HorizontalAlignment="Center"/>
+							<Border Height="3" HorizontalAlignment="Center" Width="15" CornerRadius="2">
 								<Border.Background>
 									<SolidColorBrush Color="#FBBF24"/>
 								</Border.Background>
 							</Border>
 						</StackPanel>
 
-						<StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Center" Spacing="2">
-							<TextBlock x:Name="CountMiss" Classes="value" Text="0" FontSize="27" HorizontalAlignment="Center"/>
-							<Border Height="3" HorizontalAlignment="Center" Width="22" CornerRadius="2">
+						<StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Center" Spacing="1">
+							<TextBlock x:Name="CountMiss" Classes="value" Text="0" FontSize="23" HorizontalAlignment="Center"/>
+							<Border Height="3" HorizontalAlignment="Center" Width="15" CornerRadius="2">
 								<Border.Background>
 									<SolidColorBrush Color="#F87171"/>
 								</Border.Background>
@@ -95,28 +95,28 @@
 
 					<Panel Grid.Column="1">
 						<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="3">
-							<TextBlock x:Name="PpValue" Classes="value" Text="0" FontSize="42" FontWeight="ExtraBold" VerticalAlignment="Center"/>
-							<TextBlock Classes="label" Text="pp" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
+							<TextBlock x:Name="PpValue" Classes="value" Text="0" FontSize="32" FontWeight="ExtraBold" VerticalAlignment="Center"/>
+							<TextBlock Classes="label" Text="pp" FontSize="19" FontWeight="Bold" VerticalAlignment="Center"/>
 						</StackPanel>
 					</Panel>
 				</Grid>
 
-				<Grid x:Name="OffsetHelper" Grid.Row="1" ColumnDefinitions="1.4*,*">
-					<Grid RowDefinitions="*,Auto" VerticalAlignment="Center">
+				<Grid x:Name="OffsetHelper" Grid.Row="1" ColumnDefinitions="1.4*,*" Margin="0,4,0,0">
+					<Grid RowDefinitions="*,Auto" VerticalAlignment="Center" RowSpacing="-5">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-							<TextBlock Classes="label" Text="Offset" FontSize="27" VerticalAlignment="Center"/>
-							<TextBlock x:Name="OffsetValue" Classes="value" Text="0" FontSize="35" VerticalAlignment="Center"/>
+							<TextBlock Classes="label" Text="Offset" FontSize="22" VerticalAlignment="Center"/>
+							<TextBlock x:Name="OffsetValue" Classes="value" Text="0" FontSize="27" VerticalAlignment="Center"/>
 						</StackPanel>
 
 						<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-							<TextBlock Classes="label" Text="Avg" FontSize="18" VerticalAlignment="Center"/>
-							<TextBlock x:Name="AvgValue" Classes="value" Text="0ms" FontSize="19" VerticalAlignment="Center"/>
+							<TextBlock Classes="label" Text="Avg" FontSize="14" VerticalAlignment="Center"/>
+							<TextBlock x:Name="AvgValue" Classes="value" Text="0ms" FontSize="17" VerticalAlignment="Center"/>
 						</StackPanel>
 					</Grid>
 					
 					<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-						<TextBlock Classes="label" Text="UR" FontSize="34" VerticalAlignment="Center"/>
-						<TextBlock x:Name="UrValue" Classes="value" Text="0" FontSize="45" VerticalAlignment="Center"/>
+						<TextBlock Classes="label" Text="UR" FontSize="26" VerticalAlignment="Center"/>
+						<TextBlock x:Name="UrValue" Classes="value" Text="0" FontSize="37" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Grid>
 			</StackPanel>
