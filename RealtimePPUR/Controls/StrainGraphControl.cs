@@ -67,7 +67,7 @@ public class StrainGraphControl : Control
     {
         base.Render(context);
 
-        var bounds = new Rect(0, 0, Bounds.Width - 10, Bounds.Height);
+        var bounds = new Rect(0, 0, Bounds.Width, Bounds.Height);
         context.FillRectangle(_backgroundBrush, bounds);
 
         if (ViewModel == null || !ViewModel.HasData || ViewModel.TotalCount == 0)
