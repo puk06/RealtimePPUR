@@ -257,6 +257,7 @@ public class SimplifiedAttributes
 {
     public DifficultyAttributes? MapDifficultyAttributes { get; set; }
     public PerformanceAttributes? MapPerformanceAttributes { get; set; }
+    public StrainList? StrainValue { get; set; }
 
     public double CurrentStarRating { get; set; } = 0;
     public double CurrentPerformancePoint { get; set; } = 0;
@@ -273,6 +274,12 @@ public class SimplifiedAttributes
 
     public HitErrorInfo HitErrorInfo { get; } = new();
     public int TotalHitObjectsCount { get; set; } = 0;
+}
+
+public class StrainList
+{
+    internal List<float[]> Strains { get; set; } = [];
+    internal string[] SkillNames { get; set; } = [];
 }
 
 public class CachedMemoryData

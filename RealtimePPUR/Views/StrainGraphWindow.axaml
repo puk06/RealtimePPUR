@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:RealtimePPUR.ViewModels"
+        xmlns:controls="using:RealtimePPUR.Controls"
+        x:Class="RealtimePPUR.Views.StrainGraphWindow"
+        x:DataType="vm:StrainGraphViewModel"
+        Title="Strain Graph"
+        Width="800"
+        Height="200"
+        Background="#1a1a1a"
+        FontFamily="Inter">
+
+    <Grid RowDefinitions="*,Auto">
+        <controls:StrainGraphControl
+            x:Name="GraphControl"
+            Margin="5"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="15,5,15,5">
+            <ItemsControl Grid.Column="0" ItemsSource="{Binding SkillItems}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="20" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:SkillVisibilityItem">
+                        <CheckBox
+                            IsChecked="{Binding IsVisible}"
+                            Content="{Binding Label}"
+                            Foreground="{Binding Brush}"
+                            Margin="0,4"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Text="{Binding CurrentTime}"
+                Foreground="White"
+                FontSize="15"/>
+        </Grid>
+    </Grid>
+</Window>

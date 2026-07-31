@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using RealtimePPUR.Data;
 using RealtimePPUR.Models;
 using RealtimePPUR.Services;
+using RealtimePPUR.Views;
 
 namespace RealtimePPUR;
 
@@ -24,7 +25,9 @@ public partial class MainWindow : Window
     private readonly HitResult simplifedHitResult = new();
 
     private readonly DispatcherTimer _smoothTimer;
+    private readonly DispatcherTimer _progressTimer;
     private readonly SettingsWindow _settingsWindow;
+    private readonly StrainGraphWindow _strainGraphWindow;
 
     public MainWindow()
     {
@@ -41,10 +44,18 @@ public partial class MainWindow : Window
         _smoothTimer.Tick += OnSmoothUpdate;
         _smoothTimer.Start();
 
+        _progressTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(1000.0 / 20)
+        };
+        _progressTimer.Tick += OnProgressUpdate;
+        _progressTimer.Start();
+
         RealtimePPCalculator.Instance.Start();
         RealtimePPCalculator.Instance.OnCalculate += OnUpdate;
 
         _settingsWindow = new SettingsWindow();
+        _strainGraphWindow = new StrainGraphWindow();
         new InGameOverlay().Show();
 
         var platformHandle = TryGetPlatformHandle();
@@ -66,6 +77,22 @@ public partial class MainWindow : Window
     {
         var contextMenu = new ContextMenu();
 
+        var strainGraph = new MenuItem() { Header = "Strain Graph" };
+        strainGraph.Click += (_, _) =>
+        {
+            _strainGraphWindow.Show();
+            _strainGraphWindow.WindowState = WindowState.Normal;
+            _strainGraphWindow.Topmost = true;
+            _strainGraphWindow.Topmost = false;
+
+            var strainValue = RealtimePPCalculator.Instance.CurrentAttributes.StrainValue;
+            if (strainValue != null)
+            {
+                var firstTime = RealtimePPCalculator.Instance.CurrentMemoryData.CurrentAudioTime;
+                _strainGraphWindow.SetValues(strainValue, firstTime);
+            }
+        };
+
         var settings = new MenuItem() { Header = "設定" };
         settings.Click += (_, _) =>
         {
@@ -77,6 +104,7 @@ public partial class MainWindow : Window
         var close = new MenuItem() { Header = "閉じる" };
         close.Click += (_, _) => Close();
 
+        contextMenu.Items.Add(strainGraph);
         contextMenu.Items.Add(settings);
         contextMenu.Items.Add(close);
 
@@ -86,6 +114,11 @@ public partial class MainWindow : Window
     private DateTime _lastUpdate = DateTime.Now;
     private const double SmoothTime = 0.5;
 
+    private void OnProgressUpdate(object? sender, EventArgs e)
+    {
+        _strainGraphWindow.UpdateSongProgress(RealtimePPCalculator.Instance.CurrentMemoryData.CurrentAudioTime);
+    }
+
     private static double Lerp(double current, double target, double t) => current + ((target - current) * t);
     private void OnSmoothUpdate(object? sender, EventArgs e)
     {
@@ -93,7 +126,6 @@ public partial class MainWindow : Window
         var deltaTime = (now - _lastUpdate).TotalSeconds;
         _lastUpdate = now;
 
-        // フレームレートに依存しないLerp係数
         var t = 1.0 - Math.Pow(0.01, deltaTime / SmoothTime);
 
         _displayedPp = Lerp(_displayedPp, _targetPp, t);
@@ -169,6 +201,13 @@ public partial class MainWindow : Window
         Count300.Text = simplifedHitResult.Hit300.ToString();
         Count100.Text = simplifedHitResult.Hit100.ToString();
         CountMiss.Text = simplifedHitResult.HitMiss.ToString();
+
+        if (attributes.StrainValue != null)
+        {
+            _strainGraphWindow.SetValues(attributes.StrainValue, 0);
+        }
+
+        _strainGraphWindow.UpdateSongProgress(memoryData.IsPlaying ? memoryData.CurrentAudioTime : 0);
     }
 
     private static void SimplifyHits(HitResult target, HitResult original, OsuGameMode mode)

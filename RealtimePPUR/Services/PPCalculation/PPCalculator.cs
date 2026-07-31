@@ -4,13 +4,14 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Catch;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Taiko;
 using osu.Game.Scoring;
 using RealtimePPUR.Models;
-using HitResult = osu.Game.Rulesets.Scoring.HitResult;
 using static RealtimePPUR.Utils.OsuBeatmapUtils;
+using HitResult = osu.Game.Rulesets.Scoring.HitResult;
 
 namespace RealtimePPUR.Services.PPCalculation;
 
@@ -44,7 +45,9 @@ public static class PPCalculator
         var playableBeatmap = workingBeatmap.GetPlayableBeatmap(ruleset.RulesetInfo, ctx.Mods);
         if (playableBeatmap == null) return;
 
-        var difficultyCalculator = ruleset.CreateDifficultyCalculator(workingBeatmap);
+        var difficultyCalculator = ruleset.GetExtendedDifficultyCalculator(workingBeatmap, ctx.GameMode);
+        if (difficultyCalculator == null) return;
+
         var performanceCalculator = PerformanceCalculatorDictionary[ctx.GameMode];
 
         var statistics = HitResultGenerator.ToSS(playableBeatmap, ctx.GameMode);
@@ -58,13 +61,50 @@ public static class PPCalculator
             Mods = ctx.Mods
         };
 
-        var difficultyAttributes = difficultyCalculator.Calculate(ctx.Mods);
+        var difficultyAttributes = ((DifficultyCalculator)difficultyCalculator).Calculate(ctx.Mods);
         var performanceAttibutes = performanceCalculator.Calculate(scoreInfo, difficultyAttributes);
 
         simplifiedAttributes.MapDifficultyAttributes = difficultyAttributes;
         simplifiedAttributes.MapPerformanceAttributes = performanceAttibutes;
+        simplifiedAttributes.StrainValue = GetStrainLists(difficultyCalculator.GetSkills());
 
         simplifiedAttributes.TotalHitObjectsCount = CountTotalHitObjects(playableBeatmap, ctx.GameMode);
+    }
+
+    // Copyright(c) 2019 ppy Pty Ltd <contact@ppy.sh>.
+    // This code is borrowed from osu-tools(https://github.com/ppy/osu-tools)
+    // osu-tools is licensed under the MIT License. https://github.com/ppy/osu-tools/blob/master/LICENCE
+    private static StrainList? GetStrainLists(Skill[] skills)
+    {
+        try
+        {
+            var strainLists = new List<float[]>(skills.Length);
+
+            foreach (var skill in skills)
+            {
+                double[] strains = [.. ((StrainSkill)skill).GetCurrentStrainPeaks()];
+
+                var skillStrainList = new List<float>(strains.Length);
+
+                for (int i = 0; i < strains.Length; i++)
+                {
+                    var strain = strains[i];
+                    skillStrainList.Add((float)strain);
+                }
+
+                strainLists.Add([.. skillStrainList]);
+            }
+
+            return new StrainList
+            {
+                Strains = strainLists,
+                SkillNames = [.. skills.Select(skill => skill.GetType().Name)]
+            };
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public static void Calculate(PerformanceCalculationContext ctx, OsuBetmapInfo osuBeatmapInfo, SimplifiedAttributes simplifiedAttributes, Models.HitResult hitResult)
