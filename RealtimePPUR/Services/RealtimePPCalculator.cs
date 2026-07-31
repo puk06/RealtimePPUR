@@ -168,6 +168,7 @@ public class RealtimePPCalculator
                 Args.IsResultScreen = current.IsResultScreen;
                 Args.IsPlaying = current.IsPlaying;
                 Args.Score = current.CurrentScore;
+                Args.Combo = current.CurrentMaxCombo;
                 Args.AudioTime = current.CurrentAudioTime;
                 Args.Mods = OsuModParser.ToOsuMods(currentGameMode, current.CurrentMods);
 
