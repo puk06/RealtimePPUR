@@ -8,7 +8,8 @@
         Width="800"
         Height="200"
         Background="#1a1a1a"
-        FontFamily="Inter">
+        FontFamily="avares://RealtimePPUR/Assets/Fonts#Oxanium"
+        Closing="OnClosing">
 
     <Grid RowDefinitions="*,Auto">
         <controls:StrainGraphControl
@@ -38,7 +39,7 @@
                 VerticalAlignment="Center"
                 Text="{Binding CurrentTime}"
                 Foreground="White"
-                FontSize="15"/>
+                FontSize="20"/>
         </Grid>
     </Grid>
 </Window>

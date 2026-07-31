@@ -24,4 +24,10 @@ public partial class StrainGraphWindow : Window
     {
         ViewModel.UpdateSongProgress(time);
     }
+
+    public void OnClosing(object? sender, WindowClosingEventArgs args)
+    {
+        args.Cancel = true;
+        Hide();
+    }
 }

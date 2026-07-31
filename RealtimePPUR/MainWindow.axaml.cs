@@ -25,7 +25,6 @@ public partial class MainWindow : Window
     private readonly HitResult simplifedHitResult = new();
 
     private readonly DispatcherTimer _smoothTimer;
-    private readonly DispatcherTimer _progressTimer;
     private readonly SettingsWindow _settingsWindow;
     private readonly StrainGraphWindow _strainGraphWindow;
 
@@ -39,17 +38,10 @@ public partial class MainWindow : Window
 
         _smoothTimer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromMilliseconds(1000.0 / 60)
+            Interval = TimeSpan.FromMilliseconds(1000.0 / 30)
         };
         _smoothTimer.Tick += OnSmoothUpdate;
         _smoothTimer.Start();
-
-        _progressTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(1000.0 / 20)
-        };
-        _progressTimer.Tick += OnProgressUpdate;
-        _progressTimer.Start();
 
         RealtimePPCalculator.Instance.Start();
         RealtimePPCalculator.Instance.OnCalculate += OnUpdate;
@@ -84,13 +76,6 @@ public partial class MainWindow : Window
             _strainGraphWindow.WindowState = WindowState.Normal;
             _strainGraphWindow.Topmost = true;
             _strainGraphWindow.Topmost = false;
-
-            var strainValue = RealtimePPCalculator.Instance.CurrentAttributes.StrainValue;
-            if (strainValue != null)
-            {
-                var firstTime = RealtimePPCalculator.Instance.CurrentMemoryData.CurrentAudioTime;
-                _strainGraphWindow.SetValues(strainValue, firstTime);
-            }
         };
 
         var settings = new MenuItem() { Header = "設定" };
@@ -114,11 +99,6 @@ public partial class MainWindow : Window
     private DateTime _lastUpdate = DateTime.Now;
     private const double SmoothTime = 0.5;
 
-    private void OnProgressUpdate(object? sender, EventArgs e)
-    {
-        _strainGraphWindow.UpdateSongProgress(RealtimePPCalculator.Instance.CurrentMemoryData.CurrentAudioTime);
-    }
-
     private static double Lerp(double current, double target, double t) => current + ((target - current) * t);
     private void OnSmoothUpdate(object? sender, EventArgs e)
     {
@@ -135,6 +115,8 @@ public partial class MainWindow : Window
         PpValue.Text = _displayedPp.ToString("F0");
         SrValue.Text = _displayedSr.ToString("F2");
         UrValue.Text = _displayedUr.ToString("F0");
+
+        _strainGraphWindow.UpdateSongProgress(RealtimePPCalculator.Instance.CurrentMemoryData.CurrentAudioTime);
     }
 
     private async void OnUpdate()
