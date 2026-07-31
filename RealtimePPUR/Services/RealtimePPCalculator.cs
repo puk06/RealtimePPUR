@@ -258,7 +258,9 @@ public class SimplifiedAttributes
 {
     public DifficultyAttributes? MapDifficultyAttributes { get; set; }
     public PerformanceAttributes? MapPerformanceAttributes { get; set; }
+
     public StrainList? StrainValue { get; set; }
+    public int FirstObjectTime { get; set; }
 
     public double CurrentStarRating { get; set; } = 0;
     public double CurrentPerformancePoint { get; set; } = 0;

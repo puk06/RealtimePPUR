@@ -186,7 +186,7 @@ public partial class MainWindow : Window
 
         if (attributes.StrainValue != null)
         {
-            _strainGraphWindow.SetValues(attributes.StrainValue, 0);
+            _strainGraphWindow.SetValues(attributes.StrainValue, attributes.FirstObjectTime);
         }
 
         _strainGraphWindow.UpdateSongProgress(memoryData.IsPlaying ? memoryData.CurrentAudioTime : 0);

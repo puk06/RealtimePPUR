@@ -67,6 +67,7 @@ public static class PPCalculator
         simplifiedAttributes.MapDifficultyAttributes = difficultyAttributes;
         simplifiedAttributes.MapPerformanceAttributes = performanceAttibutes;
         simplifiedAttributes.StrainValue = GetStrainLists(difficultyCalculator.GetSkills());
+        simplifiedAttributes.FirstObjectTime = GetFirstObjectTime(workingBeatmap);
 
         simplifiedAttributes.TotalHitObjectsCount = CountTotalHitObjects(playableBeatmap, ctx.GameMode);
     }
@@ -105,6 +106,13 @@ public static class PPCalculator
         {
             return null;
         }
+    }
+
+
+    private static int GetFirstObjectTime(IWorkingBeatmap workingBeatmap)
+    {
+        var firstObject = workingBeatmap.Beatmap.HitObjects.Count > 1 ? workingBeatmap.Beatmap.HitObjects[1] : null;
+        return (int)(firstObject?.StartTime ?? 0);
     }
 
     public static void Calculate(PerformanceCalculationContext ctx, OsuBetmapInfo osuBeatmapInfo, SimplifiedAttributes simplifiedAttributes, Models.HitResult hitResult)
