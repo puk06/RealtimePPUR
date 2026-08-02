@@ -79,11 +79,19 @@ public static class PPCalculator
     {
         try
         {
-            var strainLists = new List<float[]>(skills.Length);
+            var strainLists = new List<float[]>();
+            var skillNames = new List<string>();
+            var unsupportedSkillNames = new List<string>();
 
             foreach (var skill in skills)
             {
-                double[] strains = [.. ((StrainSkill)skill).GetCurrentStrainPeaks()];
+                if (skill is not StrainSkill strainSkill)
+                {
+                    unsupportedSkillNames.Add(skill.GetType().Name);
+                    continue;
+                }
+
+                double[] strains = [.. strainSkill.GetCurrentStrainPeaks()];
 
                 var skillStrainList = new List<float>(strains.Length);
 
@@ -94,12 +102,14 @@ public static class PPCalculator
                 }
 
                 strainLists.Add([.. skillStrainList]);
+                skillNames.Add(skill.GetType().Name);
             }
 
             return new StrainList
             {
                 Strains = strainLists,
-                SkillNames = [.. skills.Select(skill => skill.GetType().Name)]
+                SkillNames = [.. skillNames],
+                UnsupportedSkillNames = [.. unsupportedSkillNames]
             };
         }
         catch

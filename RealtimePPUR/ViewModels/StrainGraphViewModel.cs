@@ -15,6 +15,7 @@ public class SkillVisibilityItem : INotifyPropertyChanged
     public int Index { get; }
     public IBrush Brush { get; }
     public Color LineColor { get; }
+    public bool IsSupported { get; }
 
     private bool _isVisible = true;
     public bool IsVisible
@@ -34,12 +35,14 @@ public class SkillVisibilityItem : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action? VisibilityChanged;
 
-    public SkillVisibilityItem(string label, int index, Color color)
+    public SkillVisibilityItem(string label, int index, Color color, bool isSupported = true)
     {
         Label = label;
         Index = index;
         LineColor = color;
         Brush = new SolidColorBrush(color);
+        IsSupported = isSupported;
+        if (!isSupported) _isVisible = false;
     }
 }
 
@@ -114,6 +117,13 @@ public class StrainGraphViewModel : INotifyPropertyChanged
             var color = GetSkillColor(i);
             var item = new SkillVisibilityItem(_skillNames[i], i, color);
             item.VisibilityChanged += OnVisibilityChanged;
+            SkillItems.Add(item);
+        }
+
+        foreach (var unsupportedName in strainList.UnsupportedSkillNames)
+        {
+            var color = Color.FromArgb(128, 128, 128, 128);
+            var item = new SkillVisibilityItem($"Not Supported ({unsupportedName})", _skillNames.Length, color, false);
             SkillItems.Add(item);
         }
 
