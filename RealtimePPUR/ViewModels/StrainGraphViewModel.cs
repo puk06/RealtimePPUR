@@ -142,7 +142,7 @@ public class StrainGraphViewModel : INotifyPropertyChanged
     private Color GetSkillColor(int index)
     {
         if (index < DefaultColors.Length) return DefaultColors[index];
-        var hue = (index * 47.0) % 360 / 360.0;
+        var hue = ((index * 47.0) % 360) / 360.0;
         var (r, g, b) = HsvToRgb(hue, 0.8, 0.9);
         return new Color(255, r, g, b);
     }
@@ -150,10 +150,10 @@ public class StrainGraphViewModel : INotifyPropertyChanged
     private static (byte r, byte g, byte b) HsvToRgb(double h, double s, double v)
     {
         int hi = Convert.ToInt32(Math.Floor(h * 6)) % 6;
-        double f = h * 6 - Math.Floor(h * 6);
+        double f = (h * 6) - Math.Floor(h * 6);
         double p = v * (1 - s);
-        double q = v * (1 - f * s);
-        double t = v * (1 - (1 - f) * s);
+        double q = v * (1 - (f * s));
+        double t = v * (1 - ((1 - f) * s));
 
         return hi switch
         {

@@ -108,7 +108,6 @@ public static class PPCalculator
         }
     }
 
-
     private static int GetFirstObjectTime(IWorkingBeatmap workingBeatmap)
     {
         var firstObject = workingBeatmap.Beatmap.HitObjects.Count > 1 ? workingBeatmap.Beatmap.HitObjects[1] : null;
