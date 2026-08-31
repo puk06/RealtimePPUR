@@ -16,7 +16,7 @@ namespace RealtimePPUR.Services;
 
 public class RealtimePPCalculator
 {
-    public static readonly string CURRENT_VERSION = "v2.3.2";
+    public static readonly string CURRENT_VERSION = "v2.3.1";
 
     public event Action? OnCalculate = null;
     private MemoryReader MemoryReader { get; } = new();
