@@ -15,4 +15,4 @@ node "%ScriptDirectory%RemoveUnnecessaryFiles.js" "%BuildTargetDirectory%"
 
 @REM Copy Licenses
 copy "%ProjectRootDirectory%LICENSE" "%BuildTargetDirectory%\LICENSE"
-copy "%ProjectRootDirectory%THIRD_PARTY_LICENSES" "%BuildTargetDirectory%\THIRD_PARTY_LICENSES"
+copy "%ProjectRootDirectory%THIRD_PARTY_LICENSES.md" "%BuildTargetDirectory%\THIRD_PARTY_LICENSES.md"
