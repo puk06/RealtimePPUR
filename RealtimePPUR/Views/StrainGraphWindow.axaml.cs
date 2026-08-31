@@ -20,9 +20,9 @@ public partial class StrainGraphWindow : Window
         ViewModel.SetValues(strainList, firstTime);
     }
 
-    public void UpdateSongProgress(int time)
+    public void UpdateSongProgress(int time, bool isDoubleTime, bool isHalfTime)
     {
-        ViewModel.UpdateSongProgress(time);
+        ViewModel.UpdateSongProgress(time, isDoubleTime, isHalfTime);
     }
 
     public void OnClosing(object? sender, WindowClosingEventArgs args)

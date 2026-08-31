@@ -95,4 +95,7 @@ public static class OsuModParser
 
         return osuMods.ToArray();
     }
+
+    public static bool IsDoubleTime(int mods) => (mods & (1 << 6)) == (1 << 6) || (mods & (1 << 9)) == (1 << 9);
+    public static bool IsHalfTime(int mods) => (mods & (1 << 8)) == (1 << 8);
 }

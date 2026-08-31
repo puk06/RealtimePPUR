@@ -142,10 +142,14 @@ public class StrainGraphViewModel : INotifyPropertyChanged
         CurrentTime = $"~{strainTime:mm\\:ss\\.ff}";
     }
 
-    public void UpdateSongProgress(int time)
+    public void UpdateSongProgress(int time, bool isDoubleTime, bool isHalfTime)
     {
         if (_strains.Count == 0 || _totalCount == 0) return;
         var progress = (time - _firstObjectTime) / (double)_lastStrainTime;
+
+        if (isDoubleTime) progress /= 1.5;
+        else if (isHalfTime) progress /= 0.75;
+
         ProgressX = Math.Max(0, Math.Min(1, progress));
     }
 

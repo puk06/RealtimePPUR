@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using RealtimePPUR.Data;
 using RealtimePPUR.Models;
 using RealtimePPUR.Services;
+using RealtimePPUR.Utils;
 using RealtimePPUR.Views;
 
 namespace RealtimePPUR;
@@ -116,7 +117,11 @@ public partial class MainWindow : Window
         SrValue.Text = _displayedSr.ToString("F2");
         UrValue.Text = _displayedUr.ToString("F0");
 
-        _strainGraphWindow.UpdateSongProgress(RealtimePPCalculator.Instance.CurrentMemoryData.CurrentAudioTime);
+        var memoryData = RealtimePPCalculator.Instance.CurrentMemoryData;
+        var isDoubleTime = memoryData.IsPlaying && OsuModParser.IsDoubleTime(memoryData.CurrentMods);
+        var isHalfTime = memoryData.IsPlaying && OsuModParser.IsHalfTime(memoryData.CurrentMods);
+
+        _strainGraphWindow.UpdateSongProgress(memoryData.IsPlaying ? memoryData.CurrentAudioTime : 0, isDoubleTime, isHalfTime);
     }
 
     private async void OnUpdate()
@@ -188,8 +193,6 @@ public partial class MainWindow : Window
         {
             _strainGraphWindow.SetValues(attributes.StrainValue, attributes.FirstObjectTime);
         }
-
-        _strainGraphWindow.UpdateSongProgress(memoryData.IsPlaying ? memoryData.CurrentAudioTime : 0);
     }
 
     private static void SimplifyHits(HitResult target, HitResult original, OsuGameMode mode)
